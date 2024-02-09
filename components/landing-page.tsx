@@ -68,7 +68,7 @@ const LandingPage = () => {
             </Link> */}
           </div>
           <div className="flex space-x-8">
-            <OutlineButton onClick={openJoinACity}>Join a city</OutlineButton>
+            <OutlineButton onClick={()=> window.open("https://www.fora.city", "_blank")}>Join a city</OutlineButton>
             <PrimaryOutlineButton onClick={openFoundACity}>
               Found a city
             </PrimaryOutlineButton>
