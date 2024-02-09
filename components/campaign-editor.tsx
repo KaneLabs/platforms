@@ -248,7 +248,7 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
                   />
                 </div>
               </div>
-              <div className="flex space-x-4 items-center">
+              {/* <div className="flex space-x-4 items-center">
                 <div>Currency to accept</div>
                 <ToggleGroup.Root
                   className="inline-flex bg-gray-200 rounded-full shadow-md"
@@ -274,7 +274,7 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
                     USDT
                   </ToggleGroup.Item>
                 </ToggleGroup.Root>
-              </div>
+              </div> */}
             </div>
             <div className="space-y-4 my-8">
               <h2 className="text-2xl font-bold">Contributing</h2>

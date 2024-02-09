@@ -1,5 +1,9 @@
 import { ethers } from "ethers";
 import CampaignContract from '@/protocol/campaigns/out/Campaign.sol/Campaign.json';
+import CampaignERC20Contract from '@/protocol/campaigns/out/CampaignERC20.sol/CampaignERC20.json';
+
+// import CampaignFactoryContract from '@/protocol/campaigns/out/CampaignFactory.sol/CampaignFactory.json';
+
 import { toast } from "sonner";
 import { Campaign } from "@prisma/client";
 import { launchCampaign } from "@/lib/actions";

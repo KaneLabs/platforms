@@ -29,7 +29,7 @@ export default async function PublicCampaignPage(
   // }
 
   return (
-    <div className="px-24 py-12">
+    <div className="px-0 py-12">
       <CampaignPublicView
         campaignId={params.id}
         subdomain={params.subdomain}

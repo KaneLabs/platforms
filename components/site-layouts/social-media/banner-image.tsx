@@ -11,7 +11,7 @@ export default function BannerImage({
   blurDataURL?: string;
 }) {
   return (
-    <div className="mx-auto w-full max-w-5xl overflow-hidden md:rounded-3xl">
+    <div className="mx-auto w-full max-w-6xl overflow-hidden md:rounded-3xl">
       {src ? (
         <AspectRatio ratio={3 / 1} className="w-full">
           <Image

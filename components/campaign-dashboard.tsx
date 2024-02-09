@@ -26,7 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
 import CampaignResponseDataTable from "@/components/form-response-table/campaign-response-data-table";
-// import prisma from "@/lib/prisma";
 import { ETH_PRICE_IN_DOLLARS } from "@/lib/utils";
 
 export default function CampaignDashboard({

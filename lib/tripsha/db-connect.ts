@@ -40,3 +40,5 @@ async function dbConnect() {
 }
 
 export default dbConnect
+
+// why is this folder here?

@@ -17,6 +17,14 @@ contract CampaignERC20 {
   using EnumerableSet for EnumerableSet.AddressSet;
   EnumerableSet.AddressSet private authorizedContributors;
 
+  struct Tier {
+    uint256 price;
+    string name;
+    uint256 limit;
+  }
+
+  Tier[] public tiers;
+
   // Events
   event ContributionReceived(address contributor, uint256 amount);
   event ContributorAuthorized(address contributor);
@@ -35,6 +43,11 @@ contract CampaignERC20 {
     token = _token;
     totalContributions = 0;
     openToContributions = true;
+  }
+
+  function addTier(uint256 _price, string memory _name, uint256 _limit) public {
+    require(msg.sender == sponsor, "Only the sponsor can add tiers");
+    tiers.push(Tier(_price, _name, _limit));
   }
 
   function contribute(uint256 _amount) public {
