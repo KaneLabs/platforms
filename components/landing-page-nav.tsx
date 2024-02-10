@@ -31,7 +31,7 @@ export default function LandingPageNav() {
 
             <div className="flex">
               <button
-                onClick={openJoinACity}
+                onClick={()=> window.open("https://www.fora.city", "_blank")}
                 className="px-2 mr-2 font-sans font-medium text-gray-300"
               >
                 Join
