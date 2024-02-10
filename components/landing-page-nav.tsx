@@ -45,19 +45,19 @@ export default function LandingPageNav() {
           </div>
         </div>
       </nav>
-    <Link
-      href={"https://explorer.gitcoin.co/?utm_source=grants.gitcoin.co&utm_medium=internal_link&utm_campaign=gg19&utm_content=independent-rounds#/round/10/0xd875fa07bedce182377ee54488f08f017cb163d4"}
-      target="_blank"
-      className="font-serif font-medium text-brand-primary-300"
-    >
-      <Marquee
-        pauseOnHover={true}
-        speed={100}
-        className="px-2 mr-2"
+    <div className="h-10 bg-gray-900 border-b border-gray-500/10 font-medium flex items-center px-2 mr-2 text-brand-primary/75">
+      <Link
+        href={"https://explorer.gitcoin.co/?utm_source=grants.gitcoin.co&utm_medium=internal_link&utm_campaign=gg19&utm_content=independent-rounds#/round/10/0xd875fa07bedce182377ee54488f08f017cb163d4"}
+        target="_blank"
       >
-        Fora is on Gitcoin for our Zuzalu Q1-Tech Round!
-      </Marquee>
-    </Link>
+        <Marquee
+          pauseOnHover={true}
+          speed={100}
+        >
+          Fora is on Gitcoin for Zuzalu Q1 Tech Round! Your small donation helps catalyze more startup cities
+        </Marquee>
+      </Link>
+    </div>
     </div>
   );
 }
