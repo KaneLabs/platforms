@@ -57,14 +57,6 @@ export const columns: ColumnDef<User>[] = [
       return (
         <div className="flex flex-wrap space-x-1">
           {tickets.map((ticket) => {
-            // const formattedPrice = new Intl.NumberFormat("en-US", {
-            //   style: "currency",
-            //   currency: "USD",
-            // }).format(ticket.tierPrice);
-            // const formattedAmountPaid = new Intl.NumberFormat("en-US", {
-            //   style: "currency",
-            //   currency: "USD",
-            // }).format(ticket.amountPaid);
             return (
               <Badge key={ticket.id} variant="default">
                 {`${ticket.tierName}`}

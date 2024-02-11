@@ -75,19 +75,10 @@ export const MagicLinkEmail = ({ org, url }: MagicLinkEmailProps) => {
               >
                 {`Sign In`}
               </Link>
-
-            {/* <Section>
-              <Text className={"text-md text-gray-700"}>
-                {"If you did not initiate this request someone may be trying to get access to this account."}
-              </Text>
-            </Section> */}
             <Hr className="my-5 border-gray-600" />
             <Text className={"text-md text-gray-700"}>
               {org?.name || "Fora Cities, Inc."}
             </Text>
-            {/* <Text className={"text-xs text-gray-600"}>
-              1111b S Governors Avenue STE 7236 Dover, DE 19904 US
-            </Text> */}
           </Container>
         </Body>
       </Tailwind>

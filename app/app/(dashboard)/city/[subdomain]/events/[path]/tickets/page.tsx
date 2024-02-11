@@ -16,7 +16,6 @@ export default async function EventTicketsPage({
   if (!session) {
     redirect("/login");
   }
-  //   const rolesAndUsers = await getEventRoles(event.id);
   const event = await prisma.event.findFirst({
     where: {
       path: params.path,

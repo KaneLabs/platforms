@@ -3,13 +3,10 @@
 import useEthereum from "@/hooks/useEthereum";
 import { Campaign, CampaignTier } from "@prisma/client";
 import { useState, useEffect } from 'react';
-// import { ethers } from "ethers";
 import { getCampaign, createCampaignApplication, CampaignWithData } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
-// import { Button } from "@/components/ui/button";
 import CampaignContributeButton from "@/components/campaign-contribute-button";
 import CampaignPageTierCard from "@/components/campaign-page-tier-card";
-// import { Progress } from "@/components/ui/progress"
 import Link from "next/link";
 import BannerImage from "./site-layouts/social-media/banner-image";
 
@@ -24,8 +21,6 @@ export default function CampaignPublicView(
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(undefined);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // const numBackers = 12;  // TEMP
 
   const triggerRefresh = () => {
     setRefreshFlag(prev => !prev);
@@ -114,8 +109,6 @@ export default function CampaignPublicView(
             <CampaignContributeButton
               campaign={campaign}
               subdomain={subdomain}
-              // TODO createCampaignApplication only works if the user is signed in,
-              // should prompt signin if they aren't
               onComplete={() =>{
                 triggerRefresh;
                 createCampaignApplication(campaign.id);

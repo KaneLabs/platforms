@@ -40,7 +40,6 @@ function Siwe({ redirect = true, callbackUrl = "/" }) {
 
       if (response?.ok) {
         router.replace(callbackUrl)
-        // router(callbackUrl);
       }
     } catch (error) {
       window.alert(error);

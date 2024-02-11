@@ -2,26 +2,14 @@
 import PrimaryButton, {
   PrimaryButtonProps,
 } from "@/components/buttons/primary-button";
-// import { EdDSATicketPCDPackage } from "@pcd/eddsa-ticket-pcd";
 import {
   SignInMessagePayload,
-  // constructZupassPcdGetRequestUrl,
-  // openZupassPopup,
-  // useZupassPopupMessages,
   useFetchUser,
   openSignedZuzaluSignInPopup,
   useSemaphoreSignatureProof,
   useZupassPopupMessages,
   ZupassUserJson,
 } from "@pcd/passport-interface";
-// import { ArgumentTypeName } from "@pcd/pcd-types";
-// import { SemaphoreIdentityPCDPackage } from "@pcd/semaphore-identity-pcd";
-// import {
-//   EdDSATicketFieldsToReveal,
-//   ZKEdDSAEventTicketPCDArgs,
-//   ZKEdDSAEventTicketPCDPackage,
-// } from "@pcd/zk-eddsa-event-ticket-pcd";
-// import { useEffect, useState } from "react";
 import { ZUPASS_SERVER_URL, ZUPASS_URL } from "./constants";
 import {
   PCD,
@@ -32,7 +20,6 @@ import {
 import { ReactNode, useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-// import { useZupass } from "zukit";
 
 /**
  * Opens a Zupass popup to make a proof of a ZK EdDSA event ticket PCD.
@@ -155,12 +142,6 @@ function ConnectPassportButton({
       window.location.origin + "/popup",
       "consumer-client",
     );
-    //   // openZKEdDSAEventTicketPopup(
-    //   //   { revealAttendeeEmail: true },
-    //   //   BigInt(0),
-    //   //   [],
-    //   //   [],
-    //   // );
   };
 
   const [pcdStr] = useZupassPopupMessages();
@@ -172,22 +153,9 @@ function ConnectPassportButton({
     (async () => {
       if (pcdStr) {
         console.log(pcdStr);
-        // const pcd = await ZKEdDSAEventTicketPCDPackage.deserialize(
-        //   JSON.parse(pcdStr).pcd,
-        // );
-
-        // if (pcd && (await ZKEdDSAEventTicketPCDPackage.verify(pcd))) {
-        //   setResult(
-        //     `Your email address is ${pcd.claim.partialTicket.attendeeEmail}`,
-        //   );
-        // } else {
-        //   setResult("Could not verify PCD");
-        // }
       }
     })();
   }, [pcdStr]);
-
-  // console.log(pcdStr, "pcdString")
 
   const [signatureProofValid, setSignatureProofValid] = useState<
     boolean | undefined

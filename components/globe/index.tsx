@@ -1,7 +1,6 @@
 // @ts-nocheck
 "use client";
 import React, { useEffect, useMemo, useRef } from "react";
-// import { Canvas, useFrame, ThreeElements } from "@react-three/fiber"
 import ReactGlobe from "react-globe.gl";
 import countries from "./countries.geo.json";
 import cities, { CityData } from "./cities";
@@ -106,14 +105,6 @@ const World = ({
   }, []);
 
   const getAlt = (d: CityData) => d.elevation * 5e-5;
-
-  // const getTooltip = (d: CityData) => `
-  //     <div class="bg-gray-200">
-  //       <div><b>${d.name}</b>, ${d.country}</div>
-  //       <div>(${d.type})</div>
-  //       <div>Elevation: <em>${d.elevation}</em>m</div>
-  //     </div>
-  //   `;
 
   const width = size
     ? size

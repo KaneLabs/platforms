@@ -50,7 +50,6 @@ export default function UpsertOrganizationPageLinksForm({
   helpText: string;
   pageLinks: OrganizationPageLinks[];
 }) {
-  // const params = useParams() as { subdomain?: string; path?: string };
   const router = useRouter();
 
   const { subdomain, path } = useParams() as {

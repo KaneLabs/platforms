@@ -31,76 +31,31 @@ export async function genPassport() {
   const passport = new PCDCollection(await getPackages(), [identityPCD]);
 
   return { identity, identityPCD, passport };
-  //   return pcds;
-
-  //   console.log("pcds: ", pcds);
 
   await savePCDs(passport);
-
-  //   window.location.hash = "#/new-passport?email=" + encodeURIComponent(email);
-
-  //   update({ pcds });
 }
 
 const COLLECTION_KEY = "pcd_collection";
 
 export async function savePCDs(pcds: PCDCollection): Promise<void> {
   const serialized = await pcds.serializeCollection();
-  //   window.localStorage[COLLECTION_KEY] = serialized;
 }
 
 async function loadPackages(): Promise<PCDPackage[]> {
-  // await SemaphoreGroupPCDPackage.init({
-  //   wasmFilePath: "/semaphore-artifacts/16.wasm",
-  //   zkeyFilePath: "/semaphore-artifacts/16.zkey"
-  // });
 
   await SemaphoreSignaturePCDPackage.init?.({
     wasmFilePath: path.resolve(__dirname, "../feeds/artifacts/16.wasm"),
     zkeyFilePath: path.resolve(__dirname, "../feeds/artifacts/16.zkey"),
   });
 
-  // await EthereumOwnershipPCDPackage.init({
-  //   wasmFilePath: "/semaphore-artifacts/16.wasm",
-  //   zkeyFilePath: "/semaphore-artifacts/16.zkey"
-  // });
-
-  // await RSATicketPCDPackage.init({
-  //   makeEncodedVerifyLink
-  // });
-
-  // await EdDSAFrogPCDPackage.init({
-  //   makeEncodedVerifyLink
-  // });
-
   await EdDSATicketPCDPackage.init?.({
     makeEncodedVerifyLink,
   });
 
-  // await ZKEdDSAEventTicketPCDPackage.init({
-  //   wasmFilePath: "/artifacts/zk-eddsa-event-ticket-pcd/circuit.wasm",
-  //   zkeyFilePath: "/artifacts/zk-eddsa-event-ticket-pcd/circuit.zkey"
-  // });
-
-  // await ZKEdDSAFrogPCDPackage.init({
-  //   wasmFilePath: "/artifacts/zk-eddsa-frog-pcd/circuit.wasm",
-  //   zkeyFilePath: "/artifacts/zk-eddsa-frog-pcd/circuit.zkey"
-  // });
-
   return [
-    //   SemaphoreGroupPCDPackage,
     SemaphoreIdentityPCDPackage,
     SemaphoreSignaturePCDPackage,
-    //   EthereumOwnershipPCDPackage,
-    //   HaLoNoncePCDPackage,
-    //   RSAPCDPackage,
-    //   RSATicketPCDPackage,
-    //   EdDSAPCDPackage,
-    //   EdDSAFrogPCDPackage,
-    //   ZKEdDSAFrogPCDPackage,
     EdDSATicketPCDPackage,
-    //   ZKEdDSAEventTicketPCDPackage,
-    //   RSAImagePCDPackage,
     EmailPCDPackage,
   ];
 }
@@ -124,7 +79,6 @@ export async function issueEmailPCDs({
   email: string;
   identityCommitment: string;
   privateKey: string;
-  //   credential: SemaphoreSignaturePCD,
 }): Promise<EmailPCD> {
   const stableId = "attested-email-" + email;
 
@@ -151,11 +105,6 @@ export async function issueEmailPCDs({
 export async function genSignedPCDIdentity(
   identity: Identity,
 ): Promise<SerializedPCD<SemaphoreSignaturePCD>> {
-  // let cachedSignaturePCD = loadCheckinCredential(
-  //   identity.getCommitment().toString(),
-  // );
-  // if (!cachedSignaturePCD) {
-    // cachedSignaturePCD =
     return await SemaphoreSignaturePCDPackage.serialize(
       await SemaphoreSignaturePCDPackage.prove({
         identity: {
@@ -173,13 +122,6 @@ export async function genSignedPCDIdentity(
       }),
     );
 
-    // saveCheckinCredential(
-    //   identity.getCommitment().toString(),
-    //   cachedSignaturePCD,
-    // );
-  // }
-
-  // return cachedSignaturePCD;
 }
 
 export function loadCheckinCredential(

@@ -54,13 +54,6 @@ export default function OrgTableToolbar<TData>({
             options={rolesOptions}
           />
         )}
-        {/* {table.getColumn("priority") && (
-          <DataTableFacetedFilter
-            column={table.getColumn("priority")}
-            title="Priority"
-            options={priorities}
-          />
-        )} */}
         {isFiltered && (
           <Button
             variant="ghost"

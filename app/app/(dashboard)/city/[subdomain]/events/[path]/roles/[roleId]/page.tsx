@@ -31,7 +31,6 @@ export default async function EventRolesPage({
     return notFound();
   }
 
-  //   const rolesAndUsers = await getEventRoles(event.id);
   const eventRole = await prisma.eventRole.findUnique({
     where: {
       roleId_eventId: {

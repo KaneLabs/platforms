@@ -19,9 +19,6 @@ export default async function FormPage({
   params: { domain: string; id: string };
 }) {
   const session = await getSession();
-  // if (!session) {
-  //   redirect("/login");
-  // }
 
   const [form, formResponse] = await Promise.all([
     prisma.form.findUnique({

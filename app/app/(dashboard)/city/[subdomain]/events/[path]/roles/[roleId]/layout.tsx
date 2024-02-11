@@ -46,7 +46,6 @@ export default async function EventSettingsLayout({
 
   const url = `${event.organization.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${event.path}`;
 
-  //   const rolesAndUsers = await getEventRoles(event.id);
   const eventRole = await prisma.eventRole.findUnique({
     where: {
       roleId_eventId: {

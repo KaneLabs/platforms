@@ -98,7 +98,6 @@ export function HostUser({ user }: { user: User }) {
       </Avatar>
       <div>
         <p className="text-md font-semibold leading-none">{user.name}</p>
-        {/* <p className="text-muted-foreground text-sm">{getUsername(user)}</p> */}
       </div>
     </div>
   );
@@ -117,9 +116,6 @@ export function HostsCard({
     <div>
       <CardHeader>
         <CardTitle>Hosted by</CardTitle>
-        {/* <CardDescription>
-          Invite your team members to collaborate.
-        </CardDescription> */}
       </CardHeader>
       <CardContent className="grid gap-6">
         {hostUsers.map((hostUser) => (
@@ -201,10 +197,6 @@ export function RegistrationCard({
     return null;
   }
   const TitleCopy = (() => {
-    // TODO:// Remove hardcoded event id
-    // if (event.id === VITALIA_2024_EVENT) {
-    //   return <Link href="https://lu.ma/vitalia" className="hover:underline">Register Externally↗</Link>;
-    // }
 
     if (!ticketTiers || !(ticketTiers.length > 0)) {
       return "Registration options are not yet public";
@@ -255,24 +247,6 @@ export default function EventPage({
   ticketTiers: (TicketTier & { role: Role; _count: { tickets: number } })[];
   userSession?: Session;
 }) {
-  // const uniqueUsers = useMemo(
-  //   () =>
-  //     Array.from(
-  //       new Map(
-  //         rolesAndUsers.map((item) => [item.user.id, item.user]),
-  //       ).values(),
-  //     ),
-  //   [rolesAndUsers],
-  // );
-  // const uniqueRoles = useMemo(
-  //   () =>
-  //     Array.from(
-  //       new Map(
-  //         rolesAndUsers.map((item) => [item.role.id, item.role]),
-  //       ).values(),
-  //     ),
-  //   [rolesAndUsers],
-  // );
 
   const hostUsers = useMemo(
     () => rolesAndUsers.filter((ru) => ru.role.name === "Host"),
@@ -337,7 +311,6 @@ export default function EventPage({
               userIsHost={userIsHost}
             />
           </div>
-          {/* <RegistrationCard event={event} ticketTiers={ticketTiers} /> */}
           <div className="col-span-1 space-y-6">
             <HostsCard
               hostUsers={hostUsers}

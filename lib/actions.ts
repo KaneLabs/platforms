@@ -28,9 +28,7 @@ import {
 import { getSession } from "@/lib/auth";
 import {
   addDomainToVercel,
-  // getApexDomain,
   removeDomainFromVercelProject,
-  // removeDomainFromVercelTeam,
   validDomainRegex,
 } from "@/lib/domains";
 import { customAlphabet } from "nanoid";
@@ -380,7 +378,6 @@ export const createEvent = async (input: {
     orgIdOrSubdomain: organizationId,
   });
 
-  // TODO:// Role Validations
   if (!input.parentEvent) {
     if (userOrgRoles.length === 0) {
       return {
@@ -782,10 +779,6 @@ export const updateOrganization = withOrganizationAuth(
         const { data, error } = await supabase.storage
           .from("media")
           .upload(`/public/${filename}`, file);
-
-        // const { url } = await put(filename, file, {
-        //   access: "public",
-        // });
 
         if (error || !data?.path) {
           console.error(error?.message);
@@ -1278,85 +1271,8 @@ export const createOrgRole = withOrganizationAuth(
   },
 );
 
-// export const updateRole = withOrganizationAuth(
-//   async (formData: FormData, organization: Organization, roleId: string) => {
-//     const name = formData.get("name") as string;
-//     const description = formData.get("description") as string;
-
-//     try {
-//       const role = await prisma.role.update({
-//         where: {
-//           id: roleId,
-//         },
-//         data: {
-//           name,
-//           description,
-//         },
-//       });
-//       return role;
-//     } catch (error: any) {
-//       return {
-//         error: error.message,
-//       };
-//     }
-//   },
-// );
-
-// export const deleteRole = withOrganizationAuth(
-//   async (_: FormData, organization: Organization, roleId: string) => {
-//     try {
-//       const role = await prisma.role.delete({
-//         where: {
-//           id: roleId,
-//         },
-//       });
-//       return role;
-//     } catch (error: any) {
-//       return {
-//         error: error.message,
-//       };
-//     }
-//   },
-// );
-
 export async function getUsersWithRoleInOrganization(subdomain: string) {
   const start = Date.now();
-  // const users = await prisma.user.findMany({
-  //   where: {
-  //     userRoles: {
-  //       some: {
-  //         role: {
-  //           organizationRole: {
-  //             some: {
-  //               organization: {
-  //                 subdomain: subdomain,
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  //   include: {
-  //     userRoles: {
-  //       include: {
-  //         role: {
-  //           include: {
-  //             organizationRole: {
-  //               include: {
-  //                 organization: {
-  //                   select: {
-  //                     subdomain: true,
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
   console.log("Query time: ", Date.now() - start, " ms");
 
   const roleFirstStart = Date.now();
@@ -1398,33 +1314,6 @@ export async function getUsersWithRoleInOrganization(subdomain: string) {
   console.log("userRole: ", userRoles);
   console.log("Query time 2: ", Date.now() - roleFirstStart, " ms");
 
-  // const usersWithRoles = organizationRoles.reduce((acc, orgRole) => {
-  //   orgRole.role.userRoles.forEach(userRole => {
-  //     const existingUser = acc.find(user => user.id === userRole.user.id);
-  //     if (existingUser) {
-  //       existingUser.roles.push(orgRole.role);
-  //     } else {
-  //       acc.push({
-  //         ...userRole.user,
-  //         roles: [orgRole.role],
-  //       });
-  //     }
-  //   });
-  //   return acc;
-  // }, [] as never as UserAndRoles);
-
-  // const usersWithRoleInOrganization = users.map((user) => ({
-  //   ...user,
-  //   roles: user.userRoles
-  //     .filter((userRole) =>
-  //       userRole.role.organizationRole.some(
-  //         (orgRole) => orgRole.organization.subdomain === subdomain,
-  //       ),
-  //     )
-  //     .map((userRole) => userRole.role),
-  // }));
-
-  // return usersWithRoleInOrganization;
 }
 
 export async function getUniqueUsersWithRoleInOrganization(subdomain: string) {
@@ -2825,24 +2714,6 @@ export const kickAction = async ({
     return { success: false, error };
   }
 };
-
-// export async function getTotalCampaignRevenue() {
-//   const campaigns = await prisma.campaign.findMany({
-//     include: {
-//       contributions: true,
-//     },
-//   });
-
-//   const totalRevenue = campaigns.reduce((total, campaign) => {
-//     const campaignRevenue = campaign.contributions.reduce(
-//       (total, contribution) => total + contribution.amount,
-//       0,
-//     );
-//     return total + campaignRevenue;
-//   }, 0);
-
-//   return totalRevenue;
-// }
 
 export async function getCitizenCount(organizationId: string) {
   const users = await prisma.user.findMany({

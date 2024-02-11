@@ -185,7 +185,6 @@ export function QuestionSettingsForm({
                             field?.value ? new Date(field?.value) : undefined
                           }
                           onSelect={(date) => {
-                            // setToDate(date);
                             if (date) {
                               field.onChange(date.toISOString());
                               onSubmit({ toDate: date.toISOString() });
@@ -201,28 +200,6 @@ export function QuestionSettingsForm({
                 />
               </>
             )}
-            {/* <FormField
-                control={form.control}
-                name="security_emails"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                      <FormLabel>Security emails</FormLabel>
-                      <FormDescription>
-                        Receive emails about your account security.
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        disabled
-                        aria-readonly
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              /> */}
           </div>
         </div>
       </form>

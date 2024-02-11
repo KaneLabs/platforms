@@ -1,7 +1,3 @@
-// import { EdDSAPCDPackage } from "@pcd/eddsa-pcd";
-// import {  ArgumentTypeName, EdDSAPCDPackage } from "@pcd/passport-interface"
-// import { constructPassportPcdGetRequestUrl } from "@pcd/passport-interface";
-// import { ArgumentTypeName } from "@pcd/pcd-types";
 import {
   constructPassportPcdGetRequestUrl,
   ArgumentTypeName,

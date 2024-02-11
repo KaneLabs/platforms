@@ -57,11 +57,6 @@ export default function FormResponseDataTable({
       header: question.text,
       accessorKey: question.id, // Use question id to create unique accessor
       cell: ({ row }: { row: Row<any> }) => {
-        // const amount = parseFloat(row.getValue("amount"))
-        // const formatted = new Intl.NumberFormat("en-US", {
-        //   style: "currency",
-        //   currency: "USD",
-        // }).format(amount)
 
         const answer = row.getValue(question.id) as Answer;
         return (

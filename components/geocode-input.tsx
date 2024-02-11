@@ -17,20 +17,6 @@ export const GeocodeInput = ({
 
   const [results, setResults] = useState<{ formatted_address: string }[]>([]);
 
-  // const debouncedGeocode = useCallback(
-  //   (address: string) =>
-  //     debounce(
-  //       (a) =>
-  //         geocodeAction(a).then((res) => {
-  //           console.log("response: ", res);
-  //           setResults(res);
-  //         }),
-  //       500,
-  //       { leading: true, trailing: true },
-  //     ),
-  //   [],
-  // ); // 500ms delay
-
   const debouncedGeocode = useCallback(
     debounce(
       (address) => {
@@ -53,17 +39,6 @@ export const GeocodeInput = ({
       debouncedGeocode(address);
     }
   }, [address, debouncedGeocode]);
-
-  // useEffect(() => {
-  //   if (address) {
-  //     setLoading(true);
-  //     geocodeAction(address).then((res) => {
-  //       console.log("response: ", res);
-  //       setResults(res);
-  //     });
-  //     setLoading(false);
-  //   }
-  // }, [address]);
 
   return (
     <div className="mt-2">

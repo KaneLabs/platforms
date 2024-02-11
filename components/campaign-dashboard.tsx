@@ -26,7 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
 import CampaignResponseDataTable from "@/components/form-response-table/campaign-response-data-table";
-// import prisma from "@/lib/prisma";
 import { ETH_PRICE_IN_DOLLARS } from "@/lib/utils";
 
 export default function CampaignDashboard({
@@ -54,8 +53,6 @@ export default function CampaignDashboard({
   >([]);
 
   const router = useRouter();
-
-  // const numBackers = 6; // TEMP
 
   const triggerRefresh = () => {
     setRefreshFlag((prev) => !prev);
@@ -158,7 +155,6 @@ export default function CampaignDashboard({
                       ETH_PRICE_IN_DOLLARS,
                   )} funded`}
                 </p>
-                {/* <p className="text-sm">{`${numBackers} backers`}</p> */}
                 <p className="text-sm">
                   {`${Intl.NumberFormat("en-US", {
                     style: "currency",

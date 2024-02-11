@@ -12,7 +12,6 @@ export function RegistrationCardItems({
   event,
 }: RegistrationCardItemProps) {
   return (
-    // <RegistrationCardLink eventPath={event.path} ticketTierId={ticketTier.id} key={ticketTier.id}>
     <Card className="p-4 hover:border-white">
       <h3 className="font-bold">{ticketTier.name}</h3>
       <p>{ticketTier.description}</p>
@@ -25,6 +24,5 @@ export function RegistrationCardItems({
           : `${ticketTier.price} ${ticketTier.currency}`}
       </p>
     </Card>
-    // </RegistrationCardLink>
   );
 }

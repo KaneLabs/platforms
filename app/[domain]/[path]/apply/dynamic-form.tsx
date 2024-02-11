@@ -113,7 +113,6 @@ export function DynamicForm(props: { form: Form & { questions: Question[] } }) {
 
     const response = await submitFormResponse(props.form.id, formattedData);
     if ("error" in response) {
-      // TODO:// handle this error
       toast.error(response.error);
       return;
     }

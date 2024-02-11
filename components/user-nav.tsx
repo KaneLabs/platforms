@@ -13,9 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getSession } from "@/lib/auth";
 import { getTwoLetterPlaceholder, getUsername } from "@/lib/profile";
-// import { signOut } from "next-auth/react";
 import UserNavLogout from "./user-nav-logout";
-// import Siwe from "./siwe";
 import Link from "next/link";
 
 export default async function UserNav() {
@@ -51,22 +49,6 @@ export default async function UserNav() {
             </p>
           </div>
         </DropdownMenuLabel>
-        {/* <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Profile
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Billing
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Settings
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>New Team</DropdownMenuItem>
-        </DropdownMenuGroup> */}
         <DropdownMenuSeparator />
         <UserNavLogout />
       </DropdownMenuContent>

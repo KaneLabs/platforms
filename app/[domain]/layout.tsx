@@ -5,11 +5,7 @@ import { getSiteData } from "@/lib/fetchers";
 import { fontMapper } from "@/styles/fonts";
 import { Metadata } from "next";
 import { cn } from "@/lib/utils";
-// import Drawer from "@/components/site-drawer";
-// import Profile from "@/components/profile";
 import EventsAppLayout from "@/components/site-layouts/events-app";
-// import Profile from "@/components/profile";
-// import Drawer from "@/components/drawer";
 
 export async function generateMetadata({
   params,
@@ -48,37 +44,6 @@ export async function generateMetadata({
     metadataBase: new URL(`https://${domain}`),
   };
 }
-
-// export async function generateStaticParams() {
-//   const [subdomains, customDomains] = await Promise.all([
-//     prisma.organization.findMany({
-//       select: {
-//         subdomain: true,
-//       },
-//     }),
-//     prisma.organization.findMany({
-//       where: {
-//         NOT: {
-//           customDomain: null,
-//         },
-//       },
-//       select: {
-//         customDomain: true,
-//       },
-//     }),
-//   ]);
-
-//   const allPaths = [
-//     ...subdomains.map(({ subdomain }) => subdomain),
-//     ...customDomains.map(({ customDomain }) => customDomain),
-//   ].filter((path) => path) as Array<string>;
-
-//   return allPaths.map((domain) => ({
-//     params: {
-//       domain,
-//     },
-//   }));
-// }
 
 export default async function SiteLayout({
   params,

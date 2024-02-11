@@ -14,10 +14,6 @@ export default async function VisitorsCardKPI({ org }: { org: Organization }) {
       </CardHeader>
       <CardContent>
         <h5 className="text-3xl font-bold">{popupVisitors}</h5>
-
-        {/* <p className="text-muted-foreground text-xs">
-          +{popupVisitors} from last month
-        </p> */}
         <KPICardKeyAction
           title="Improve all metrics"
           links={[

@@ -61,10 +61,6 @@ export default function InviteModal({
       form.setValue("inviterId", session?.user.id);
     }
   }, [session, form]);
-  // const { subdomain, path } = useParams() as {
-  //   subdomain: string;
-  //   path: string;
-  // };
 
   async function onSubmit(data: z.infer<typeof CreateInviteSchema>) {
     try {
@@ -81,7 +77,6 @@ export default function InviteModal({
         });
       }
       router.refresh();
-      // }
       modal?.hide();
     } catch (error) {
       console.error(error);

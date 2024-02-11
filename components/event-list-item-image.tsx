@@ -19,10 +19,6 @@ export default function EventListItemImage({
           src={src ?? "/placeholder.png"}
           className="object-cover"
           fill
-          // placeholder="blur"
-          // blurDataURL={event.imageBlurhash ?? placeholderBlurhash}
-          // width={800}
-          // height={400}
         />
       </AspectRatio>
     </div>

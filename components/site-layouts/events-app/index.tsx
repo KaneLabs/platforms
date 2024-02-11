@@ -10,14 +10,6 @@ export default async function EventsAppLayout({
   children: ReactNode;
 }) {
   const session = await getSession();
-  // return (
-  //   <div className={cn(fontMapper[data.font], "min-h-screen")}>
-  //     <Drawer></Drawer>
-  //     <div className="min-h-screen dark:bg-gray-900 sm:pl-60 xl:pr-60">
-  //       {children}
-  //     </div>
-  //   </div>
-  // );
 
   if (session?.user.id) {
     return (

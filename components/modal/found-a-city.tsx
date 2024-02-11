@@ -15,7 +15,6 @@ import {
 
 import { Input } from "../ui/input";
 import { toast } from "@/components/ui/use-toast";
-// import { useRouter } from "next/navigation";
 import { useModal } from "./provider";
 import { FoundACitySchema } from "@/lib/schema";
 import FormButton from "./form-button";
@@ -31,7 +30,6 @@ export default function FoundACityModal() {
 
   const [loading, setLoading] = useState(false);
 
-  // const router = useRouter();
   const modal = useModal();
 
   async function onSubmit(data: z.infer<typeof FoundACitySchema>) {
@@ -61,13 +59,6 @@ export default function FoundACityModal() {
           <h2 className={"mb-2 font-serif text-2xl font-light"}>
             Found a new city
           </h2>
-          {/* <p
-            className={
-              "font-medium text-md text-gray-800 dark:text-gray-350"
-            }
-          >
-            Browse, visit, and apply for citizenship
-          </p> */}
           <FormField
             control={form.control}
             name="name"
@@ -111,9 +102,6 @@ export default function FoundACityModal() {
                   className="border-gray-700 dark:border-gray-300"
                   {...field}
                 />
-                {/* <FormDescription className="text-gray-800 dark:text-gray-300">
-                  Minimum 60 characters
-                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}

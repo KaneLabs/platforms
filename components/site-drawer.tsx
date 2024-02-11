@@ -1,6 +1,5 @@
 "use client";
 
-// import Link from "next/link";
 import {
   ArrowLeft,
   Edit3,
@@ -28,10 +27,8 @@ import {
   getOrganizationFromPostId,
   getUsersOrganizations,
 } from "@/lib/actions";
-// import Image from "next/image";
 import DrawerPaper from "./drawer-paper";
 import DrawerLink from "./drawer-link";
-// import CitySwitcher from "./city-switcher";
 import { useSession } from "next-auth/react";
 import { Organization, Role } from "@prisma/client";
 import CitySwitcher from "./city-switcher";
@@ -39,21 +36,6 @@ import { SessionData } from "@/lib/auth";
 import { Button } from "./ui/button";
 
 const externalLinks = [
-  // {
-  //   name: "Read announcement",
-  //   href: "https://vercel.com/blog/platforms-starter-kit",
-  //   icon: <Megaphone width={18} />,
-  // },
-  // {
-  //   name: "Star on GitHub",
-  //   href: "https://github.com/vercel/platforms",
-  //   icon: <Github width={18} />,
-  // },
-  // {
-  //   name: "Read the guide",
-  //   href: "https://vercel.com/guides/nextjs-multi-tenant-application",
-  //   icon: <FileCode width={18} />,
-  // },
   {
     name: "Powered by Fora",
     href: "https://fora.co",
@@ -256,9 +238,6 @@ export default function Drawer({ children }: { children: ReactNode }) {
       </Button>
       <DrawerPaper showSidebar={showSidebar}>
         <div className="grid gap-2 pt-10 md:pt-0">
-          {/* <div>
-            <Image  />
-          </div> */}
           <div className="grid gap-1">
             {tabs.map(({ name, href, isActive, icon }) => (
               <DrawerLink
@@ -285,7 +264,6 @@ export default function Drawer({ children }: { children: ReactNode }) {
                   {icon}
                   <span className="text-sm font-medium">{name}</span>
                 </div>
-                {/* <p className="mt-1">↗</p> */}
               </a>
             ))}
           </div>

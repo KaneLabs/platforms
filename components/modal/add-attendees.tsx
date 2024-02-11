@@ -121,17 +121,6 @@ export default function AddAttendeesModal({
             </FormItem>
           )}
         />
-        {/* <FormField
-          control={form.control}
-          name="amountPaid"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount paid so far</FormLabel>
-              <Input {...field} type="number" />
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
         <Button type="submit" >Submit</Button>
       </form>
     </Form>

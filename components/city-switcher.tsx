@@ -114,8 +114,6 @@ export default function CitySwitcher({
     setSelectedOrganization(matchOrgBySubdomain());
   }, [subdomain, usersOrgs]);
 
-  // ... rest of your component
-
   const org = usersOrgs && Object.values(usersOrgs)?.[0];
 
   const modal = useModal();

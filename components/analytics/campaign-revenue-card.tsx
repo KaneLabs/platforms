@@ -7,7 +7,6 @@ export default async function CampaignRevenueCardKPI({
 }: {
   org: Organization;
 }) {
-  //   const citizenCount = await getCitizenCount(orgId);
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -27,8 +26,6 @@ export default async function CampaignRevenueCardKPI({
       </CardHeader>
       <CardContent>
         <div className="text-3xl font-bold">$0</div>
-        {/* <p className="text-muted-foreground text-xs">+20.1% from last month</p> */}
-
         <KPICardKeyAction
           title={'Raise money for ' + org.name}
           links={[

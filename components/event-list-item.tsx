@@ -20,7 +20,6 @@ export default function EventListItem({
   if (!event.startingAt) {
     return null;
   }
-  // const url = `${event.organization.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/events/${event.path}`;
   const hosts = uniqueHosts(event);
   return (
     <div className="w-full">
@@ -40,10 +39,6 @@ export default function EventListItem({
             <HostedByInline
               users={Object.values(hosts).map((eventHost) => eventHost)}
             />
-
-            {/* <p className="mb-2 line-clamp-2 text-sm font-normal leading-snug text-gray-650 dark:text-gray-350">
-              {event.description}
-            </p> */}
           </div>
 
           <div className="p-3">

@@ -1,6 +1,5 @@
 "use client";
 
-// import Link from "next/link";
 import {
   ArrowLeft,
   BarChart3,
@@ -33,52 +32,12 @@ import {
   getOrganizationFromPostId,
   getUsersOrganizations,
 } from "@/lib/actions";
-// import Image from "next/image";
 import DrawerPaper from "./drawer-paper";
 import DrawerLink from "./drawer-link";
-// import CitySwitcher from "./city-switcher";
 import { useSession } from "next-auth/react";
 import { Organization, Role } from "@prisma/client";
 import CitySwitcher from "./city-switcher";
 import { SessionData } from "@/lib/auth";
-
-// const externalLinks = [
-//   {
-//     name: "Read announcement",
-//     href: "https://vercel.com/blog/platforms-starter-kit",
-//     icon: <Megaphone width={18} />,
-//   },
-//   {
-//     name: "Star on GitHub",
-//     href: "https://github.com/vercel/platforms",
-//     icon: <Github width={18} />,
-//   },
-//   {
-//     name: "Read the guide",
-//     href: "https://vercel.com/guides/nextjs-multi-tenant-application",
-//     icon: <FileCode width={18} />,
-//   },
-//   {
-//     name: "View demo site",
-//     href: "https://demo.vercel.pub",
-//     icon: <Layout width={18} />,
-//   },
-//   {
-//     name: "Deploy your own",
-//     href: "app.localhost:3000",
-//     icon: (
-//       <svg
-//         width={18}
-//         viewBox="0 0 76 76"
-//         fill="none"
-//         xmlns="http://www.w3.org/2000/svg"
-//         className="py-1 text-gray-700 dark:text-white"
-//       >
-//         <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" fill="currentColor" />
-//       </svg>
-//     ),
-//   },
-// ];
 
 export type UsersUniqueOrgsWithRolesRecord = Record<
   string,
@@ -154,11 +113,6 @@ export default function Drawer({ children }: { children: ReactNode }) {
           href: `/city/${subdomain}/events/${path}/preview`,
           icon: <FileSymlink width={18} />,
         },
-        // {
-        //   name: "Event Forms",
-        //   href: `/city/${subdomain}/events/${path}/forms`,
-        //   icon: <ClipboardSignature width={18} />,
-        // },
         {
           name: "Settings",
           href: `/city/${subdomain}/events/${segments[3]}/settings`,
@@ -217,12 +171,6 @@ export default function Drawer({ children }: { children: ReactNode }) {
           isActive: segments.includes("docs"),
           icon: <Newspaper width={18} />,
         },
-        // {
-        //   name: "Analytics",
-        //   href: `/city/${subdomain}/analytics`,
-        //   isActive: segments.includes("analytics"),
-        //   icon: <BarChart3 width={18} />,
-        // },
         {
           name: "Settings",
           href: `/city/${subdomain}/settings`,
@@ -260,24 +208,6 @@ export default function Drawer({ children }: { children: ReactNode }) {
         isActive: segments.length === 0,
         icon: <LayoutDashboard width={18} />,
       },
-      // {
-      //   name: "Events",
-      //   href: "/events",
-      //   isActive: segments[0] === "events",
-      //   icon: <Globe width={18} />,
-      // },
-      // {
-      //   name: "Sites",
-      //   href: "/cities",
-      //   isActive: segments[0] === "sites",
-      //   icon: <Globe width={18} />,
-      // },
-      // {
-      //   name: "Settings",
-      //   href: "/settings",
-      //   isActive: segments[0] === "settings",
-      //   icon: <Settings width={18} />,
-      // },
     ];
   }, [segments, subdomain, path, organizationSubdomain]);
 
@@ -325,23 +255,6 @@ export default function Drawer({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div>
-          {/* <div className="grid gap-1">
-            {externalLinks.map(({ name, href, icon }) => (
-              <a
-                key={name}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-all duration-150 ease-in-out hover:bg-gray-200 active:bg-gray-300 dark:text-white dark:hover:bg-gray-700 dark:active:bg-gray-800"
-              >
-                <div className="flex items-center space-x-3">
-                  {icon}
-                  <span className="text-sm font-medium">{name}</span>
-                </div>
-                <p>↗</p>
-              </a>
-            ))}
-          </div> */}
           <div className="my-2 border-t border-gray-200 dark:border-gray-700" />
           {children}
         </div>

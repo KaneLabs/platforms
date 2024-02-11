@@ -1,9 +1,6 @@
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-// import Posts from "@/components/posts";
-// import CreatePostButton from "@/components/create-post-button";
-// import CityOverviewStats from "@/components/city-overview-stats";
 import CityDashboardKPIs from "@/components/analytics/city-dashboard-kpis";
 import PageHeader from "@/components/dashboard-header";
 
@@ -18,7 +15,6 @@ export default async function SitePosts({
   }
   const data = await prisma.organization.findUnique({
     where: {
-      // id: params.id,
       subdomain: params.subdomain,
     },
   });
