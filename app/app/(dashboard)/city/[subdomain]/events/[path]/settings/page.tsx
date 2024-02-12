@@ -3,8 +3,6 @@ import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Form from "@/components/form";
 import {
-  // updatePostMetadata,
-  // getUserEventRoles,
   updateEvent,
 } from "@/lib/actions";
 import DeleteEventForm from "@/components/form/delete-event-form";
@@ -13,7 +11,6 @@ import TimePicker from "@/components/ui/time-picker";
 import UpdateEventForm from "@/components/form/update-event-placetime-form";
 import NotFoundPost from "../not-found";
 import UpdateEventPlaceTimeForm from "@/components/form/update-event-placetime-form";
-// import DeletePostForm from "@/components/form/delete-post-form";
 
 export default async function EventSettings({
   params,

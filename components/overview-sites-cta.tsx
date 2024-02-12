@@ -10,15 +10,6 @@ export default async function OverviewSitesCTA() {
     return 0;
   }
 
-  // const userRoles = await prisma.userRole.findMany({
-  //   where: {
-  //     userId: session.user.id as string,
-
-  //   },
-  // });
-
-  // const organizationIds = userRoles.map(userRole => userRole.roleId);
-
   const organizations = await prisma.organization.findMany();
 
   return organizations.length > 0 ? (

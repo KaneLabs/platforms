@@ -4,7 +4,6 @@ import { placeholderBlurhash, random } from "@/lib/utils";
 import { Post, Organization } from "@prisma/client";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import Image from "next/image";
-// import { BarChart, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 export default function PostCard({
@@ -26,7 +25,6 @@ export default function PostCard({
                 className="h-auto w-full object-cover"
                 fill
                 quality={100}
-                // blurDataURL={data.imageBlurhash ?? placeholderBlurhash}
               />
             </AspectRatio>
           </div>
@@ -45,20 +43,6 @@ export default function PostCard({
           </p>
         </div>
       </Link>
-      {/* <div className="absolute bottom-4 flex w-full px-4">
-        <a
-          href={
-            process.env.NEXT_PUBLIC_VERCEL_ENV
-              ? `https://${url}`
-              : `http://${data.organization?.subdomain}.localhost:3000/docs/${data.slug}`
-          }
-          target="_blank"
-          rel="noreferrer"
-          className="truncate rounded-md bg-gray-100 px-2 py-1 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-        >
-          {url} ↗
-        </a>
-      </div> */}
     </div>
   );
 }

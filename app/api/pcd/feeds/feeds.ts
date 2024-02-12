@@ -22,13 +22,10 @@ import { SemaphoreSignaturePCDPackage } from "@pcd/semaphore-signature-pcd";
 import _ from "lodash";
 import { Ticket, loadTickets } from "./config";
 import path from "node:path";
-// import { ZUPASS_PUBLIC_KEY } from "./main";
 
 export const ZUPASS_PUBLIC_KEY = JSON.parse(
   process.env.ZUPASS_PUBLIC_KEY as string,
 );
-// console.log('ZUPASS_PUBLIC_KEY')
-// const PUBLIC_KEY = "8afb266cb9c2f78a042d97dd02488ffc7d726def6c314112f0a1a96c30326e02"
 
 const fullPath = path.join(__dirname, "../artifacts/");
 SemaphoreSignaturePCDPackage.init?.({

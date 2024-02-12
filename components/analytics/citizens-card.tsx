@@ -33,10 +33,6 @@ export default async function CitizensCardKPI({ org }: { org: Organization }) {
               href: `/city/${org.subdomain}/people`,
               display: `Invite a friend`,
             },
-            // {
-            //   href: `/city/${org.subdomain}/forms`,
-            //   display: `Create a city application`,
-            // },
           ]}
         />
       </CardContent>

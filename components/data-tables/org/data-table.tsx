@@ -23,7 +23,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-// import { Role, TicketTier, Event } from "@prisma/client";
 
 import { useState } from "react";
 import Toolbar from "./toolbar";

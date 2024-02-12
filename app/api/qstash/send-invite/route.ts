@@ -67,20 +67,5 @@ async function handler(req: NextRequest) {
     );
   }
 
-  // // 4) Set Next State
-  // const invite = await prisma.invite.create({
-  //   data: {
-  //     ...input.data,
-  //   },
-  // });
-
-  // // 5) Notify
-  // await sendOrgInviteEmail({
-  //   invite,
-  //   inviter,
-  //   org,
-  //   role: role,
-  // });
-
   return NextResponse.json({ name: "John Doe " }, { status: 200 });
 }

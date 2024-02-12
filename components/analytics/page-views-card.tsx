@@ -45,10 +45,6 @@ export default function PageViewsCardKPI({ org }: { org: Organization }) {
               href: `/city/${org.subdomain}/docs`,
               display: `Publish your vision`,
             },
-            // {
-            //   href: `/city/${org.subdomain}/docs`,
-            //   display: `Host a meetup for citizens`,
-            // },
           ]}
         />
       </CardContent>

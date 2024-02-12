@@ -20,9 +20,6 @@ export default async function CheckoutPage({
   params: { path: string; domain: string; ticketTierId: string };
 }) {
   const session = await getSession();
-  // if (!session) {
-  //   redirect("/login");
-  // }
 
   const ticketTierId = params.ticketTierId; // Get the ticketTierId from params
 

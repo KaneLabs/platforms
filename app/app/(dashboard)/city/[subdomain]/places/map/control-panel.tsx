@@ -37,8 +37,6 @@ function ControlPanel(props: ControlPanelProps) {
           }}
         >
           <div>{area(polygon)}</div>
-
-          {/* Render your polygon data here */}
         </div>
       ))}
     </div>

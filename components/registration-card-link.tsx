@@ -1,5 +1,4 @@
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 
 export default function RegistrationCardLink({
@@ -12,7 +11,6 @@ export default function RegistrationCardLink({
   ticketTierId: string;
   children: ReactNode;
 }) {
-  // const pathname = useRouter();
   const href = `/${eventPath}/apply/${ticketTierId}`;
 
   return (

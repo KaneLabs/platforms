@@ -14,9 +14,6 @@ import { Separator } from "./ui/separator";
 
 const getPlaceholderImage = (campaign: Campaign) => {
   // @ts-ignore
-  // if (form?.image) {
-  //   // @ts-ignore
-  //   return form?.image as string;
   return undefined;
   // Add your own logic for placeholder images based on form
 };

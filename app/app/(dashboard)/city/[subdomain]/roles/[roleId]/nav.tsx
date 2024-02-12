@@ -14,16 +14,6 @@ export default function RoleNav() {
       href: `/city/${subdomain}/events/${path}/roles/${roleId}`,
       segment: null,
     },
-    // {
-    //   name: "Ticketing",
-    //   href: `/city/${subdomain}/events/${path}/roles/${roleId}/tickets`,
-    //   segment: "tickets",
-    // },
-    // {
-    //   name: "Appearance",
-    //   href: `/city/${subdomain}/events/${path}/settings/appearance`,
-    //   segment: "appearance",
-    // },
   ];
 
   return (

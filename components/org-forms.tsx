@@ -18,13 +18,9 @@ export default function OrgForms({
   })[];
   limit?: number;
 }) {
-  // const [isListView, setIsListView] = useState(false);
 
   return (
     <div>
-      {/* <button onClick={() => setIsListView(!isListView)}>
-        {isListView ? "Switch to List View" : "Switch to Card View"}
-      </button> */}
 
       {forms.length > 0 ? (
         true ? (

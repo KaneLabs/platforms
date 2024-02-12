@@ -38,8 +38,6 @@ export default function SocialHeaderMain({
       <div className="px-5 py-3 md:py-4 ">
         <HeaderMainTitle>{name}</HeaderMainTitle>
         <HeaderMainDescription>{description}</HeaderMainDescription>
-        {/* <SocialButtons sitedata={sitedata} /> */}
-        {/* <MutualAttendenceCitizens organization={sitedata} /> */}
       </div>
 
       <LineGradient />

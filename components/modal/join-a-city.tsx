@@ -15,7 +15,6 @@ import {
 
 import { Input } from "../ui/input";
 import { toast } from "@/components/ui/use-toast";
-// import { useRouter } from "next/navigation";
 import { useModal } from "./provider";
 import { JoinACitySchema } from "@/lib/schema";
 import FormButton from "./form-button";
@@ -59,13 +58,6 @@ export default function JoinACityModal() {
           <h2 className={"mb-2 font-serif text-2xl font-light "}>
             Stay informed about upcoming cities.
           </h2>
-          {/* <p
-            className={
-              "font-medium text-md text-gray-800 dark:text-gray-350"
-            }
-          >
-            Browse, visit, and apply for citizenship
-          </p> */}
           <FormField
             control={form.control}
             name="name"
@@ -108,9 +100,6 @@ export default function JoinACityModal() {
                   className="border-gray-700 dark:border-gray-300"
                   {...field}
                 />
-                {/* <FormDescription className="text-gray-800 dark:text-gray-300">
-                  Minimum 60 characters
-                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}

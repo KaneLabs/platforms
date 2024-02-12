@@ -55,11 +55,6 @@ export const columns: ColumnDef<UserAndRoles>[] = [
       <DataTableColumnHeader column={column} title="Roles" />
     ),
     cell: ({ row }) => {
-      // const amount = parseFloat(row.getValue("amount"))
-      // const formatted = new Intl.NumberFormat("en-US", {
-      //   style: "currency",
-      //   currency: "USD",
-      // }).format(amount)
 
       const roles = row.getValue("roles") as Role[];
 

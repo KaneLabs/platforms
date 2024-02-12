@@ -10,13 +10,8 @@ export default async function DocsPage({
   params: { domain: string };
 }) {
   const domain = params.domain.replace("%3A", ":");
-  // const session = await getSession();
-  // if (!session) {
-  //   redirect("/login");
-  // }
   const data = await prisma.organization.findFirst({
     where: {
-      // id: params.id,
       OR: [
         {
           subdomain: domain,

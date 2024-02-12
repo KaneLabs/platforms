@@ -47,7 +47,6 @@ export async function POST(
     await assertUserHasEventRole(session.user.id, event.id, "Admin");
 
     const { name } = (await request.json()) as { name: string };
-    // TODO: validate the json
 
     const role = await prisma.role.create({
       data: {

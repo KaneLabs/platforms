@@ -171,7 +171,6 @@ export default function FormBuilder({
   };
 
   const handleCreateNewQuestion = async (type: QuestionType) => {
-    // if (newQuestion.trim() !== "") {
     const data = {
       formId: form.id,
       text: newQuestion,
@@ -179,7 +178,6 @@ export default function FormBuilder({
     };
     handleCreateQuestion(data);
     setNewQuestion("");
-    // }
   };
 
   const block = searchParams.get("block");
@@ -298,7 +296,6 @@ export default function FormBuilder({
                           >
                             <QuestionBadge q={q} />
                             <p className="ml-3 flex flex-1 text-xs">{q.text}</p>
-                            {/* {mapQuestionTypeToInput(q.type, () => null, q.text)} */}
                             <Popover>
                               <PopoverTrigger>
                                 <MoreVertical size={16} />
@@ -379,10 +376,6 @@ export default function FormBuilder({
                             form.published ? "unpublished" : "published"
                           } your post.`,
                         );
-                        // setData((prev) => ({
-                        //   ...prev,
-                        //   published: !prev.published,
-                        // }));
                       },
                     );
                   });
@@ -474,14 +467,6 @@ const EditableQuestion = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingDsc, setIsEditingDsc] = useState(false);
 
-  // const [questionText, setQuestionText] = useState(q.text);
-
-  // const handleUpdateQuestionText = (text: string) => {
-  //   if (q.text !== text) {
-  //     handleUpdateQuestion(q.id, { text: text });
-  //   }
-  // };
-
   return (
     <div className="my-8">
       <div
@@ -565,8 +550,6 @@ const questionTypeToBadgeIcon = (type: QuestionType) => {
     case QuestionType.SELECT:
     case QuestionType.DROPDOWN:
       return <ChevronDown className="h-6 w-4 " />;
-    // case QuestionType.MULTI_SELECT:
-    //   return <Check className="h-6 w-4" />;
     case QuestionType.BOOLEAN:
       return <YesNoIcon className="h-6 w-4 fill-gray-150 dark:fill-gray-800" />;
     case QuestionType.DATE:
@@ -589,8 +572,6 @@ const questionTypeToDisplayText = (type: QuestionType) => {
     case QuestionType.SELECT:
     case QuestionType.DROPDOWN:
       return "Dropdown";
-    // case QuestionType.MULTI_SELECT:
-    //   return "Multiple Choice";
     case QuestionType.BOOLEAN:
       return "Yes/No";
     case QuestionType.DATE:
@@ -632,16 +613,6 @@ const mapQuestionTypeToInput = (q: Question) => {
           </SelectContent>
         </Select>
       );
-    // case QuestionType.MULTI_SELECT:
-    //   return (
-    //     <MultiSelect
-    //       onChange={handleChange}
-    //       selected={[]}
-    //       options={[
-    //         { label: "Multi Select", value: QuestionType.MULTI_SELECT },
-    //       ]}
-    //     />
-    //   );
     case QuestionType.DATE:
       return <DatePicker />;
     case QuestionType.DATE_RANGE:
@@ -652,39 +623,3 @@ const mapQuestionTypeToInput = (q: Question) => {
       return null;
   }
 };
-
-// const MobileControls = () => {
-//   return (
-//     <div>
-//     <div className="flex flex-col gap-y-4">
-//       <div className="flex gap-x-4">
-//         <Input
-//           value={newQuestion}
-//           onChange={(e) => setNewQuestion(e.target.value)}
-//         />
-//         <Select
-//           value={selectedQuestionType}
-//           onValueChange={(type: QuestionType) =>
-//             setSelectedQuestionType(type)
-//           }
-//         >
-//           <SelectTrigger className="w-[180px]">
-//             <SelectValue placeholder="Type" />
-//           </SelectTrigger>
-//           <SelectContent>
-//             {questionTypes.map((type) => {
-//               return (
-//                 <SelectItem key={type} value={type}>
-//                   {questionTypeToDisplayText(type)}
-//                 </SelectItem>
-//               );
-//             })}
-//           </SelectContent>
-//         </Select>
-//       </div>
-
-//       <Button onClick={handleCreateNewQuestion}>{<PlusIcon />}</Button>
-//     </div>
-//   </div>
-//   )
-// }

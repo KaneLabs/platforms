@@ -1,4 +1,3 @@
-// import { getUsersWithTicketForEvent } from "@/lib/actions";
 import { UsersWithRolesInOrg } from "@/lib/types";
 import { Card } from "../../ui/card";
 import { columns } from "./columns";

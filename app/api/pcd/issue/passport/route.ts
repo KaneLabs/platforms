@@ -10,9 +10,6 @@ export async function POST() {
   });
   passport.add(emailPCD);
 
-  //   new SemaphoreSignaturePCD('')
-  //   const signedPCDIdentity = await genSignedPCDIdentity(identity);
-
   const passportString = await passport.serializeCollection();
   const emailPCDString = passport.serialize(emailPCD);
 

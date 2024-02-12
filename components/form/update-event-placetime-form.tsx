@@ -116,7 +116,6 @@ export default function UpdateEventPlaceTimeForm({
         startingAt,
         endingAt,
         placeId,
-        // oneTimeLocation: addPlace ? placeData : undefined,
       },
       {
         params: {

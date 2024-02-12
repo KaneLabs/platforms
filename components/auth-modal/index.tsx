@@ -16,8 +16,6 @@ export default function AuthModal({
   redirect?: boolean;
 }) {
   const params = useParams();
-  // const searchParams = useSearchParams();
-  // const email = searchParams.get("email");
   const [state, setState] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -84,28 +82,6 @@ export default function AuthModal({
             <EmailForm onSubmit={onEmailSubmit} loading={loading} />
           )}
         </div>
-
-        {/* {steps[state] === 'verify' && <div>verify</div>} */}
-        {/* {steps[state] === "email" && (
-          <div className="mx-6">
-            <Siwe />
-          </div>
-        )} */}
-        {/* <Siwe /> */}
-        {/* <Suspense
-          fallback={
-            <div className="my-2 h-10 w-full rounded-md border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800" />
-          }
-        >
-          <LoginButton />
-        </Suspense>
-        <Suspense
-          fallback={
-            <div className="my-2 h-10 w-full rounded-md border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800" />
-          }
-        >
-          <Siwe />
-        </Suspense> */}
       </div>
     </div>
   );

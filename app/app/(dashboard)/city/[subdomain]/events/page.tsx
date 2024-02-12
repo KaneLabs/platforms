@@ -1,8 +1,6 @@
 import { Suspense } from "react";
 import OrganizationEvents from "@/components/events";
 import PlacholderCard from "@/components/placeholder-card";
-// import OpenModalButton from "@/components/open-modal-button";
-// import CreateEventModal from "@/components/modal/create-event";
 import prisma from "@/lib/prisma";
 import NotFoundSite from "../not-found";
 import Link from "next/link";

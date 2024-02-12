@@ -5,12 +5,7 @@ import { headers } from "next/headers";
 
 export async function GET(request: NextRequest) {
   const reqHeaders = headers();
-  //   await EdDSAPCDPackage.init?.({});
-  //   await EdDSATicketPCDPackage.init?.({});
-  //   const feedHost = await initFeedHost()
   try {
-    // const feedsRequest = (await request.json()) as ListFeedsRequest;
-    // console.log("feedsRequest", feedsRequest);
     const feedsResponse = await feedHost.handleListFeedsRequest(null);
 
     return NextResponse.json(feedsResponse);

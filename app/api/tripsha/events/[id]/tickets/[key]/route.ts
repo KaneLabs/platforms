@@ -8,8 +8,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Booking } from "@/lib/tripsha/models/bookings";
 import dbConnect from "@/lib/tripsha/db-connect";
-// import { getSession } from "@/lib/auth";
-// import prisma from "@/lib/prisma";
 import { Types } from "mongoose";
 import { headers } from "next/headers";
 
@@ -40,10 +38,6 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const allHeaders = headers();
   const apiKey = searchParams.get("key") || params.key;
-
-  if (apiKey !== process.env.TRIPSHA_API_KEY) {
-    return NextResponse.json("Invalid API Key", { status: 400 });
-  }
 
   // only allow this for one trip for now
   if (params.id !== ZUCONNECT_TRIP_ID) {

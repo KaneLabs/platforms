@@ -18,8 +18,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// import { taskSchema } from "../data/schema";
-
 interface EventTableRowActionsProps<TData> {
   row: Row<TData>;
 }
@@ -27,7 +25,6 @@ interface EventTableRowActionsProps<TData> {
 export function EventTableRowActions<TData>({
   row,
 }: EventTableRowActionsProps<TData>) {
-  //   const task = taskSchema.parse(row.original);
 
   return (
     <DropdownMenu>
@@ -44,27 +41,6 @@ export function EventTableRowActions<TData>({
         <DropdownMenuItem>
           No available actions
         </DropdownMenuItem>
-        {/* <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={"sub action"}>
-              {[{ label: "sub action", value: "sub action" }].map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

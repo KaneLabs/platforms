@@ -15,19 +15,6 @@ export const handleImageUpload = (
   } else if (file.size / 1024 / 1024 > 50) {
     toast.error("File size too big (max 50MB).");
   } else {
-    // reading locally
-    // const reader = new FileReader();
-    // reader.onload = (e) => {
-    //   const { schema } = view.state;
-    //   const node = schema.nodes.image.create({
-    //     src: e.target?.result,
-    //     alt: file,
-    //     title: file.name,
-    //   }); // creates the image element
-    //   const transaction = view.state.tr.replaceSelectionWith(node);
-    //   view.dispatch(transaction);
-    // };
-    // reader.readAsDataURL(file);
 
     // upload to Vercel Blob
     toast.promise(

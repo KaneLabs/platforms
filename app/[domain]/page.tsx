@@ -8,9 +8,7 @@ export default async function SiteHomePage({
 }: {
   params: { domain: string };
 }) {
-  // domain = domain.replace('%3A', ':');
   const domain = params.domain.replace("%3A", ":");
-  // const session = await getSession();
   const [sitedata] = await Promise.all([getSiteData(domain)]);
 
   if (!sitedata) {

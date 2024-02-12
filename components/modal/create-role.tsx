@@ -86,32 +86,6 @@ export default function CreateRoleModal() {
           />
         </div>
 
-        {/* <div className="flex flex-col space-y-2">
-          <label
-            htmlFor="subdomain"
-            className="text-gray-500 text-sm font-medium"
-          >
-            Subdomain
-          </label>
-          <div className="flex w-full max-w-md">
-            <input
-              name="subdomain"
-              type="text"
-              placeholder="subdomain"
-              value={data.subdomain}
-              onChange={(e) => setData({ ...data, subdomain: e.target.value })}
-              autoCapitalize="off"
-              pattern="[a-zA-Z0-9\-]+" // only allow lowercase letters, numbers, and dashes
-              maxLength={32}
-              required
-              className="w-full rounded-l-lg border border-gray-700 bg-gray-200 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-700 focus:border-gray-900 focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-700 dark:focus:ring-gray-100"
-            />
-            <div className="flex items-center rounded-r-lg border border-l-0 border-gray-700 bg-gray-800 px-3 text-sm font-medium text-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
-              .{process.env.NEXT_PUBLIC_ROOT_DOMAIN}
-            </div>
-          </div>
-        </div> */}
-
         <div className="flex flex-col space-y-2">
           <label
             htmlFor="description"

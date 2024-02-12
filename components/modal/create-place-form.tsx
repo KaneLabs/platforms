@@ -54,7 +54,6 @@ export default function CreatePlaceModal({
     resolver: zodResolver(CreatePlaceSchema),
     defaultValues: {},
   });
-  // const { pending } = useFormStatus();
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState("");
 
@@ -64,7 +63,6 @@ export default function CreatePlaceModal({
     subdomain: string;
     path: string;
   };
-  // const [selected, setSelected] = useState<any>();
 
   async function onSubmit(data: z.infer<typeof CreatePlaceSchema>) {
     try {
