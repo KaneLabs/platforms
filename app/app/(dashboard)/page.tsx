@@ -9,7 +9,6 @@ export default function Overview() {
   return (
     <>
       <div className="h-6 md:h-6" />
-      <NextFeaturedEvent />
       <div className="max-w-screen-3xl flex flex-col space-y-12">
         <div className="flex flex-col space-y-6 p-8">
           <div className="flex items-center justify-between">
@@ -29,9 +28,8 @@ export default function Overview() {
               </div>
             }
           >
-            <Organizations limit={4} />
           </Suspense>
-        </div> */}
+        </div>
 
         <div className="flex flex-col space-y-6">
         <h1 className="font-serif text-3xl font-light dark:text-white">
@@ -46,7 +44,6 @@ export default function Overview() {
             </div>
           }
         >
-          <Posts limit={8} />
         </Suspense>
       </div>
       </div>
