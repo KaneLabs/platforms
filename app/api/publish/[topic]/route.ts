@@ -1,3 +1,5 @@
+'use client'
+
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { Client } from "@upstash/qstash";

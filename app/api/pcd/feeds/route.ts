@@ -1,3 +1,5 @@
+'use client'
+
 import { PollFeedRequest } from "@pcd/passport-interface";
 import { NextRequest, NextResponse } from "next/server";
 import { feedHost } from "./feeds";

@@ -1,3 +1,5 @@
+'use client'
+
 import { NextRequest, NextResponse } from "next/server";
 import { feedHost } from "../feeds";
 import { notFound } from "next/navigation";
