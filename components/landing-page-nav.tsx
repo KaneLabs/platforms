@@ -56,8 +56,6 @@ export default function LandingPageNav() {
             className={"w-full overflow-clip z-550"}
           >
             Fora is on Gitcoin for Zuzalu Q1 Tech Round! Your small donation helps catalyze more startup cities 
-          Fora is on Gitcoin for Zuzalu Q1 Tech Round! Your small donation helps catalyze more startup cities
-            Fora is on Gitcoin for Zuzalu Q1 Tech Round! Your small donation helps catalyze more startup cities 
           </Marquee>
         </Link>
       </div>
