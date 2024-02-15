@@ -7,7 +7,8 @@
     "format": "prettier \"**/*.{css,js,json,jsx,ts,tsx}\"",
     "start": "next start",
     "lint": "next lint",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "eslint": "eslint ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
