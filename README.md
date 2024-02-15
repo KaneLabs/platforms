@@ -1,3 +1,5 @@
+# Fora
+
 <a href="https://app.vercel.pub">
   <img alt="Platforms Starter Kit" src="/public/thumbnail.png">
   <h1 align="center">Platforms Starter Kit</h1>
