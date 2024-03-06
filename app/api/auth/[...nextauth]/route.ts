@@ -1,5 +1,3 @@
-'use client'
-
 import { authOptions } from "@/lib/auth";
 import NextAuth from "next-auth";
 import type { NextRequest, NextResponse } from "next/server";
