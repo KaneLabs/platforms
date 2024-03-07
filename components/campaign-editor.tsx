@@ -1,7 +1,7 @@
 "use client";
 
 import useEthereum from "@/hooks/useEthereum";
-import { Campaign, CampaignTier, Form } from "@prisma/client";
+import { Campaign, CampaignTier, Form, CurrencyType } from "@prisma/client";
 import { useState, useEffect } from 'react';
 import { Result, ethers } from "ethers";
 import { getCampaign, updateCampaign, upsertCampaignTiers,
@@ -27,6 +27,7 @@ interface EditedFields {
   requireApproval?: boolean;
   deadline?: Date;
   formId?: string | null;
+  currency?: string | null;
 }
 
 interface Payload {
@@ -38,6 +39,7 @@ interface Payload {
   deadline?: Date | null;
   campaignTiers?: CampaignTier[] | null;
   formId?: string | null;
+  currency?: CurrencyType | null;
 }
 
 
@@ -56,7 +58,7 @@ export default function CampaignEditor(
   const [editedCampaign, setEditedCampaign] = useState<EditedFields>(
     { name: undefined, thresholdUSD: undefined, content: undefined,
       deadline: undefined, requireApproval: undefined,
-      formId: undefined });
+      formId: undefined, currency: undefined });
   const [editingTierIndex, setEditingTierIndex] = useState<number | null>(null);
 
   const router = useRouter();
@@ -99,6 +101,8 @@ export default function CampaignEditor(
         content: campaign.content ?? undefined,
         deadline: campaign.deadline ?? undefined,
         requireApproval: campaign.requireApproval,
+        formId: campaign.formId,
+        currency: campaign.currency,
       });
     }
   }, [campaign]);
@@ -152,8 +156,9 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
       if (editedCampaign.content) payload.content = editedCampaign.content ?? null;
       if (editedCampaign.requireApproval !== undefined) payload.requireApproval = editedCampaign.requireApproval;
       if (editedCampaign.deadline) payload.deadline = editedCampaign.deadline;
-      if (editedCampaign.formId) payload.formId = editedCampaign.formId
-
+      if (editedCampaign.formId) payload.formId = editedCampaign.formId;
+      if (editedCampaign.currency) payload.currency = editedCampaign.currency as CurrencyType;
+      
       try {
         await updateCampaign(
           payload,
@@ -189,7 +194,7 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
   else if (!campaign || !campaign.organizationId) {
     return <div>Campaign not found</div>
   }
-
+  
   return (
     <div>
       {loading ? (
@@ -252,23 +257,25 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
                 <ToggleGroup.Root
                   className="inline-flex bg-gray-200 rounded-full shadow-md"
                   type="single"
-                  defaultValue="eth"
+                  defaultValue={CurrencyType.ETH}
+                  value={editedCampaign.currency ?? CurrencyType.ETH}
+                  onValueChange={(value) => handleFieldChange('currency', value)}
                 >
                   <ToggleGroup.Item
                     className="bg-gray-800 w-20 p-2 text-gray-100 shadow hover:bg-gray-800/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90 data-[state=on]:!bg-gray-600/90 rounded-l-full"
-                    value="eth"
+                    value={CurrencyType.ETH}
                   >
                     ETH
                   </ToggleGroup.Item>
                   <ToggleGroup.Item
                     className="bg-gray-800 w-20 p-2 text-gray-100 shadow hover:bg-gray-800/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90 data-[state=on]:!bg-gray-600/90"
-                    value="usdc"
+                    value={CurrencyType.USDC}
                   >
                     USDC
                   </ToggleGroup.Item>
                   <ToggleGroup.Item
                     className="bg-gray-800 w-20 p-2 text-gray-100 shadow hover:bg-gray-800/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90 data-[state=on]:!bg-gray-600/90 rounded-r-full"
-                    value="usdt"
+                    value={CurrencyType.USDT}
                   >
                     USDT
                   </ToggleGroup.Item>
@@ -295,7 +302,7 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
                 >
                   <option value="">Select a Form</option>
                   {forms.map((form) => (
-                    <option key={form.id} value={form.id}>
+                    <option key={form.id} value={form.id} selected={form.id == editedCampaign.formId}>
                       {form.name}
                     </option>
                   ))}

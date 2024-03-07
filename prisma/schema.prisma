@@ -473,6 +473,12 @@ model EmailSubscriber {
   createdAt         DateTime                @default(now())
 }
 
+enum CurrencyType {
+  ETH
+  USDC
+  USDT
+}
+
 model Campaign {
   id                  String                 @id @default(cuid())
   name                String
@@ -493,6 +499,7 @@ model Campaign {
   campaignTiers       CampaignTier[]
   formId              String?
   CampaignApplication CampaignApplication[]
+  currency            CurrencyType?
 
   @@unique([name, organizationId])
 }
