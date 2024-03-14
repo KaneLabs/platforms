@@ -68,7 +68,6 @@ import {
   tryGetSession,
 } from "./assertions";
 import { createInviteParams } from "./auth/create-invite-params";
-import { id } from "ethers";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
@@ -2377,7 +2376,7 @@ export async function getCitizensWithMutualEventAttendance(
 export const upsertCampaignMedias = withOrganizationAuth(
   async (data: { formData: FormData; campaign: Campaign }) => {
     const medias: Partial<CampaignMedia>[] = [];
-    const images = data.formData.getAll("images") as File[];
+    const images: File[] = data.formData.getAll("images") as File[];
 
     for (const image of images) {
       const file = image;
@@ -2393,10 +2392,8 @@ export const upsertCampaignMedias = withOrganizationAuth(
         };
       }
 
-      const url = `${process.env.SUPABASE_URL}/storage/v1/object/public/media/${data.path}`;
-      
       medias.push({
-        uri: url,
+        uri: `${process.env.SUPABASE_URL}/storage/v1/object/public/media/${data.path}`
       });
     }
 
@@ -2419,7 +2416,7 @@ export const upsertCampaignMedias = withOrganizationAuth(
       }),
     ]);
 
-    const txs = result.data.medias.map((media: any) => {
+    const txs = result.data.medias.map((media) => {
       return prisma.campaignMedia.upsert({
         where: {
           id: media.id ?? "THIS_TEXT_JUST_TRIGGERS_A_NEW_ID_TO_BE_GENERATED",

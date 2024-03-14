@@ -250,7 +250,7 @@ export const UpsertCampaignTierSchemas = z.object({
 
 const CampaignMediaSchema = z.object({
   id: z.string().optional(),
-  uri: z.string().url().optional(),
+  uri: z.string().url(),
   blurhash: z.string().optional(),
 })
 
