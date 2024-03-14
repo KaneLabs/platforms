@@ -1,10 +1,10 @@
 "use client";
 
 import useEthereum from "@/hooks/useEthereum";
-import { Campaign, CampaignTier, Form, CurrencyType } from "@prisma/client";
+import { Campaign, CampaignTier, Form, CurrencyType, CampaignMedia } from "@prisma/client";
 import { useState, useEffect } from 'react';
 import { Result, ethers } from "ethers";
-import { getCampaign, updateCampaign, upsertCampaignTiers,
+import { getCampaign, updateCampaign, upsertCampaignTiers, upsertCampaignMedias,
   getOrganizationForms } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
 import { toast } from "sonner";
@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import CampaignTierEditor from "@/components/campaign-tier-editor";
 import CampaignTierCard from "@/components/campaign-tier-card";
 import { ETH_PRICE_IN_DOLLARS } from "@/lib/utils";
-
+import MultiUploader from "./form/uploader-multiple";
 
 interface EditedFields {
   name?: string;
@@ -28,6 +28,7 @@ interface EditedFields {
   deadline?: Date;
   formId?: string | null;
   currency?: string | null;
+  images?: FileList | null;
 }
 
 interface Payload {
@@ -53,6 +54,7 @@ export default function CampaignEditor(
   const [forms, setForms] = useState<Form[]>([]);
   const [campaign, setCampaign] = useState<Campaign | undefined>(undefined);
   const [campaignTiers, setCampaignTiers] = useState<Partial<CampaignTier>[]>([]);
+  const [campaignMedias, setCampaignMedias] = useState<Partial<CampaignMedia>[]>([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editedCampaign, setEditedCampaign] = useState<EditedFields>(
@@ -68,6 +70,7 @@ export default function CampaignEditor(
       if (result) {
         setCampaign(result);
         setCampaignTiers(result.campaignTiers);
+        setCampaignMedias(result.medias || []);
         getOrganizationForms(result.organizationId).then(setForms);
       }
     }).then(() => setLoading(false));
@@ -142,7 +145,7 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
     setEditingTierIndex(null);
   };
 
-  const handleFieldChange = (field: string, value: string | string[] | boolean | Date | ((prevState: string[]) => string[])) => {
+  const handleFieldChange = (field: string, value: string | string[] | FileList | boolean | Date | ((prevState: string[]) => string[])) => {
     setEditedCampaign(prev => ({ ...prev, [field]: value }));
   };
 
@@ -171,6 +174,20 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
           { params: { subdomain: subdomain as string } },
           null,
         );
+
+        if (editedCampaign.images && editedCampaign.images.length > 0) {
+          const formData = new FormData();
+          Array.from(editedCampaign.images).forEach((image: File) => {
+            formData.append('images', image);
+          });
+
+          await upsertCampaignMedias(
+            { formData, campaign },
+            { params: { subdomain } },
+            null,
+          );
+        }
+
         toast.success(`Campaign updated`);
         
         setCampaign({...campaign, ...payload});
@@ -221,6 +238,12 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
                 id="content"
                 onChange={(e) => handleFieldChange('content', e.target.value)}
                 disabled={isPublic}
+              />
+              <MultiUploader
+                values={campaignMedias.map(m => m.uri as string)}
+                name={"image"}
+                aspectRatio={"aspect-square"}
+                onChange={(files) => handleFieldChange('images', files)}
               />
             </div>
             <div className="space-y-4 mt-8">

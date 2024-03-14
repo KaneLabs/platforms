@@ -17,6 +17,7 @@ import {
   CampaignContribution,
   ApplicationStatus,
   User,
+  CampaignMedia,
 } from "@prisma/client";
 import { revalidatePath, revalidateTag } from "next/cache";
 import {
@@ -50,6 +51,7 @@ import {
   UpdateCampaignSchema,
   UpsertOrganizationLinkSchemas,
   UpsertCampaignTierSchemas,
+  UpsertCampaignMediaSchemas,
   CreateInviteSchema,
 } from "./schema";
 import { z } from "zod";
@@ -2371,6 +2373,71 @@ export async function getCitizensWithMutualEventAttendance(
   return mutualAttendees;
 }
 
+export const upsertCampaignMedias = withOrganizationAuth(
+  async (data: { formData: FormData; campaign: Campaign }) => {
+    const medias: Partial<CampaignMedia>[] = [];
+    const images: File[] = data.formData.getAll("images") as File[];
+
+    for (const image of images) {
+      const file = image;
+      const filename = `${nanoid()}.${file.type.split("/")[1]}`;
+
+      const { data, error } = await supabase.storage
+        .from("media")
+        .upload(`/public/${filename}`, file);
+
+      if (error || !data?.path) {
+        return {
+          error: "Failed to upload image.",
+        };
+      }
+
+      medias.push({
+        uri: `${process.env.SUPABASE_URL}/storage/v1/object/public/media/${data.path}`
+      });
+    }
+
+    const payload = {
+      ...data,
+      medias
+    }
+
+    const result = UpsertCampaignMediaSchemas.safeParse(payload);
+
+    if (!result.success) {
+      throw new Error(result.error.message);
+    }
+
+    await prisma.$transaction([
+      prisma.campaignMedia.deleteMany({
+        where: {
+          campaignId: data.campaign.id,
+        },
+      }),
+    ]);
+
+    const txs = result.data.medias.map((media) => {
+      return prisma.campaignMedia.upsert({
+        where: {
+          id: media.id ?? "THIS_TEXT_JUST_TRIGGERS_A_NEW_ID_TO_BE_GENERATED",
+        },
+        create: {
+          ...media,
+          campaignId: data.campaign.id,
+        },
+        update: {
+          ...media,
+          campaignId: data.campaign.id,
+        },
+      });
+    });
+
+    const response = await prisma.$transaction(txs);
+
+    return response;
+  }
+);
+
 export const updateCampaign = withOrganizationAuth(
   async (data: any, organization: Organization) => {
     const result = UpdateCampaignSchema.safeParse(data);
@@ -2385,6 +2452,7 @@ export const updateCampaign = withOrganizationAuth(
       },
       data,
     });
+
     return response;
   },
 );
@@ -2444,6 +2512,7 @@ export type CampaignWithData = Campaign & {
   organization: Organization;
   contributions: CampaignContribution[];
   campaignTiers: CampaignTier[];
+  medias: CampaignMedia[];
   form: Form | null;
 };
 
@@ -2456,6 +2525,7 @@ export const getCampaign = async (id: string) => {
       organization: true,
       contributions: true,
       campaignTiers: true,
+      medias: true,
       form: true,
     },
   });
@@ -2746,3 +2816,4 @@ export async function getUniqueEventVisitors(eventId: string) {
 
   return uniqueUserIds.size;
 }
+
