@@ -247,6 +247,17 @@ const CampaignTierSchema = z.object({
 export const UpsertCampaignTierSchemas = z.object({
   tiers: z.array(CampaignTierSchema),
 })
+
+const CampaignMediaSchema = z.object({
+  id: z.string().optional(),
+  uri: z.string().url().optional(),
+  blurhash: z.string().optional(),
+})
+
+export const UpsertCampaignMediaSchemas = z.object({
+  medias: z.array(CampaignMediaSchema),
+})
+
 export const InviteStatusEnum = z.enum(["PENDING", "ACCEPTED", "REJECTED"]);
 
 export const InviteSchema = z.object({
