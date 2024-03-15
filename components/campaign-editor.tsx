@@ -262,6 +262,7 @@ export default function CampaignEditor({
           <div>
             <h1 className="text-2xl">Campaign Settings</h1>
             <div className="my-4 space-y-4">
+              <div>What is your Campaign named?</div>
               <Input
                 type="text"
                 id="campaignName"
@@ -270,18 +271,66 @@ export default function CampaignEditor({
                 onChange={(e) => handleFieldChange("name", e.target.value)}
                 disabled={isPublic || campaign.deployed}
               />
+              <div>How would you describe it?</div>
               <Textarea
                 value={editedCampaign.content}
                 id="content"
                 onChange={(e) => handleFieldChange("content", e.target.value)}
                 disabled={isPublic}
               />
+              <div>Please upload images for your Campaign</div>
               <MultiUploader
                 values={campaignMedias.map((m) => m.uri as string)}
                 name={"image"}
                 aspectRatio={"aspect-square"}
                 onChange={(files) => handleFieldChange("images", files)}
               />
+              <div>
+                <h2 className="text-xl">Campaign Tiers</h2>
+                {campaignTiers.map((tier, index) =>
+                  editingTierIndex === index ? (
+                    <CampaignTierEditor
+                      key={index}
+                      tier={tier as CampaignTier}
+                      onSave={(updatedTier) => {
+                        updateTier(index, updatedTier);
+                        stopEditTier();
+                      }}
+                    />
+                  ) : (
+                    <div key={index}>
+                      <CampaignTierCard
+                        tier={tier as CampaignTier}
+                        onClickEdit={() => startEditTier(index)}
+                      />
+                    </div>
+                  ),
+                )}
+                <Button className="mt-2" onClick={addNewTier}>
+                  Add New Tier
+                </Button>
+              </div>
+              <div className="my-4">
+                <h2 className="text-xl">Application Form</h2>
+                <div className="my-4">What form does it link to (if any)?</div>
+                <select
+                  value={editedCampaign.formId || ""}
+                  onChange={(e) => handleFieldChange("formId", e.target.value)}
+                  disabled={isPublic}
+                  className="text-black"
+                >
+                  <option value="">Select a Form</option>
+                  {forms.map((form) => (
+                    <option
+                      key={form.id}
+                      value={form.id}
+                      selected={form.id == editedCampaign.formId}
+                    >
+                      {form.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="flex space-x-4">
                 <div>Require approval for contributors?</div>
                 <Switch
@@ -292,8 +341,8 @@ export default function CampaignEditor({
                   }
                 />
               </div>
-              <div className="flex items-center space-x-4">
-                <div>Deadline</div>
+              <div className="flex flex-col space-y-4">
+                <div>Please set a deadline</div>
                 <DatePicker
                   id="deadline"
                   date={editedCampaign.deadline}
@@ -304,95 +353,50 @@ export default function CampaignEditor({
                   }}
                 />
               </div>
-              <div className="flex items-center space-x-4">
-                <p className="mr-2">Goal</p>
-                <Input
-                  type="text"
-                  value={editedCampaign.thresholdUSD}
-                  id="thresholdUSD"
-                  placeholder="Fundraising goal"
-                  onChange={(e) =>
-                    handleFieldChange("thresholdUSD", e.target.value)
-                  }
-                  disabled={isPublic || campaign.deployed}
-                />
-              </div>
-              <div className="flex items-center space-x-4">
-                <div>Currency</div>
-                <ToggleGroup.Root
-                  className="inline-flex rounded-full bg-gray-200 shadow-md"
-                  type="single"
-                  defaultValue={CurrencyType.ETH}
-                  value={editedCampaign.currency ?? CurrencyType.ETH}
-                  onValueChange={(value) =>
-                    handleFieldChange("currency", value)
-                  }
-                >
-                  <ToggleGroup.Item
-                    className="w-20 rounded-l-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
-                    value={CurrencyType.ETH}
-                  >
-                    ETH
-                  </ToggleGroup.Item>
-                  <ToggleGroup.Item
-                    className="w-20 bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
-                    value={CurrencyType.USDC}
-                  >
-                    USDC
-                  </ToggleGroup.Item>
-                  <ToggleGroup.Item
-                    className="w-20 rounded-r-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
-                    value={CurrencyType.USDT}
-                  >
-                    USDT
-                  </ToggleGroup.Item>
-                </ToggleGroup.Root>
-              </div>
-            </div>
-            <div className="my-4">
-              <h2 className="text-xl">Application Form</h2>
-              <select
-                value={editedCampaign.formId || ""}
-                onChange={(e) => handleFieldChange("formId", e.target.value)}
-                disabled={isPublic}
-                className="text-black"
-              >
-                <option value="">Select a Form</option>
-                {forms.map((form) => (
-                  <option
-                    key={form.id}
-                    value={form.id}
-                    selected={form.id == editedCampaign.formId}
-                  >
-                    {form.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <h2 className="text-xl">Campaign Tiers</h2>
-              {campaignTiers.map((tier, index) =>
-                editingTierIndex === index ? (
-                  <CampaignTierEditor
-                    key={index}
-                    tier={tier as CampaignTier}
-                    onSave={(updatedTier) => {
-                      updateTier(index, updatedTier);
-                      stopEditTier();
-                    }}
+              <div className="flex flex-col space-y-4">
+                <div>Please set your contribution threshold & token</div>
+                <div className="flex space-x-4">
+                  <Input
+                    className="w-1/5"
+                    type="text"
+                    value={editedCampaign.thresholdUSD}
+                    id="thresholdUSD"
+                    placeholder="Fundraising goal"
+                    onChange={(e) =>
+                      handleFieldChange("thresholdUSD", e.target.value)
+                    }
+                    disabled={isPublic || campaign.deployed}
                   />
-                ) : (
-                  <div key={index}>
-                    <CampaignTierCard
-                      tier={tier as CampaignTier}
-                      onClickEdit={() => startEditTier(index)}
-                    />
-                  </div>
-                ),
-              )}
-              <Button className="mt-2" onClick={addNewTier}>
-                Add New Tier
-              </Button>
+                  <ToggleGroup.Root
+                    className="inline-flex rounded-full bg-gray-200 shadow-md"
+                    type="single"
+                    defaultValue={CurrencyType.ETH}
+                    value={editedCampaign.currency ?? CurrencyType.ETH}
+                    onValueChange={(value) =>
+                      handleFieldChange("currency", value)
+                    }
+                  >
+                    <ToggleGroup.Item
+                      className="w-20 rounded-l-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                      value={CurrencyType.ETH}
+                    >
+                      ETH
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      className="w-20 bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                      value={CurrencyType.USDC}
+                    >
+                      USDC
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      className="w-20 rounded-r-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                      value={CurrencyType.USDT}
+                    >
+                      USDT
+                    </ToggleGroup.Item>
+                  </ToggleGroup.Root>
+                </div>
+              </div>
             </div>
           </div>
 
