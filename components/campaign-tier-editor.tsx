@@ -59,7 +59,7 @@ export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorP
           placeholder="Tier description"
           onChange={(e) => handleFieldChange('description', e.target.value)}
         />
-        <div>How many spots are available in this Tier?</div>
+        <div>How many spots are available in this Tier? (Optional)</div>
           <Input 
             type="number" 
             id="quantity"
