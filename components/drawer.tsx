@@ -174,7 +174,7 @@ export default function Drawer({ children }: { children: ReactNode }) {
         {
           name: "Settings",
           href: `/city/${subdomain}/settings`,
-          isActive: segments.includes("settings"),
+          isActive: segments.includes("settings") && segments.length <= 3,
           icon: <Settings width={18} />,
         },
       ];
