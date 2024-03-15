@@ -59,7 +59,7 @@ export default function MultiUploader({
       <label
         htmlFor={`${name}-upload`}
         className={cn(
-          "group relative mt-2 flex cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-300 shadow-sm transition-all hover:bg-gray-50 h-28",
+          "group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-300 shadow-sm transition-all hover:bg-gray-50 h-28",
           ratio
         )}
       >
@@ -113,14 +113,14 @@ export default function MultiUploader({
             <path d="M12 12v9"></path>
             <path d="m16 16-4-4-4 4"></path>
           </svg>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="text-center text-sm text-gray-600">
             Click to upload.
           </p>
           <span className="sr-only">Photo uploads</span>
         </div>
       </label>
       {data && data.map((src, index) => (
-        <div className="mt-2 flex flex-wrap rounded-xl" key={index}>
+        <div className="flex flex-wrap rounded-xl" key={index}>
             <img
               src={src}
               alt="Preview"

@@ -1,11 +1,22 @@
 "use client";
 
 import useEthereum from "@/hooks/useEthereum";
-import { Campaign, CampaignTier, Form, CurrencyType, CampaignMedia } from "@prisma/client";
-import { useState, useEffect } from 'react';
+import {
+  Campaign,
+  CampaignTier,
+  Form,
+  CurrencyType,
+  CampaignMedia,
+} from "@prisma/client";
+import { useState, useEffect } from "react";
 import { Result, ethers } from "ethers";
-import { getCampaign, updateCampaign, upsertCampaignTiers, upsertCampaignMedias,
-  getOrganizationForms } from "@/lib/actions";
+import {
+  getCampaign,
+  updateCampaign,
+  upsertCampaignTiers,
+  upsertCampaignMedias,
+  getOrganizationForms,
+} from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -13,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/form-builder/date-picker";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import * as ToggleGroup from '@radix-ui/react-toggle-group';
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { useRouter } from "next/navigation";
 import CampaignTierEditor from "@/components/campaign-tier-editor";
 import CampaignTierCard from "@/components/campaign-tier-card";
@@ -43,37 +54,52 @@ interface Payload {
   currency?: CurrencyType | null;
 }
 
-
-export default function CampaignEditor(
-  {campaignId, subdomain, isPublic}:
-  {campaignId: string, subdomain: string, isPublic: boolean}
-) {
+export default function CampaignEditor({
+  campaignId,
+  subdomain,
+  isPublic,
+}: {
+  campaignId: string;
+  subdomain: string;
+  isPublic: boolean;
+}) {
   const { getContributionTotal, getContractBalance } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(0);
   const [contractBalance, setContractBalance] = useState(BigInt(0));
   const [forms, setForms] = useState<Form[]>([]);
   const [campaign, setCampaign] = useState<Campaign | undefined>(undefined);
-  const [campaignTiers, setCampaignTiers] = useState<Partial<CampaignTier>[]>([]);
-  const [campaignMedias, setCampaignMedias] = useState<Partial<CampaignMedia>[]>([]);
+  const [campaignTiers, setCampaignTiers] = useState<Partial<CampaignTier>[]>(
+    [],
+  );
+  const [campaignMedias, setCampaignMedias] = useState<
+    Partial<CampaignMedia>[]
+  >([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [editedCampaign, setEditedCampaign] = useState<EditedFields>(
-    { name: undefined, thresholdUSD: undefined, content: undefined,
-      deadline: undefined, requireApproval: undefined,
-      formId: undefined, currency: undefined });
+  const [editedCampaign, setEditedCampaign] = useState<EditedFields>({
+    name: undefined,
+    thresholdUSD: undefined,
+    content: undefined,
+    deadline: undefined,
+    requireApproval: undefined,
+    formId: undefined,
+    currency: undefined,
+  });
   const [editingTierIndex, setEditingTierIndex] = useState<number | null>(null);
 
   const router = useRouter();
 
   useEffect(() => {
-    getCampaign(campaignId).then(result => {
-      if (result) {
-        setCampaign(result);
-        setCampaignTiers(result.campaignTiers);
-        setCampaignMedias(result.medias || []);
-        getOrganizationForms(result.organizationId).then(setForms);
-      }
-    }).then(() => setLoading(false));
+    getCampaign(campaignId)
+      .then((result) => {
+        if (result) {
+          setCampaign(result);
+          setCampaignTiers(result.campaignTiers);
+          setCampaignMedias(result.medias || []);
+          getOrganizationForms(result.organizationId).then(setForms);
+        }
+      })
+      .then(() => setLoading(false));
   }, [refreshFlag, campaignId]);
 
   useEffect(() => {
@@ -93,14 +119,17 @@ export default function CampaignEditor(
     }
     fetchContractBalance();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaign]);
 
   useEffect(() => {
     if (campaign) {
       setEditedCampaign({
         name: campaign.name,
-        thresholdUSD: (parseFloat(ethers.formatEther(campaign.thresholdWei)) * ETH_PRICE_IN_DOLLARS).toString(),
+        thresholdUSD: (
+          parseFloat(ethers.formatEther(campaign.thresholdWei)) *
+          ETH_PRICE_IN_DOLLARS
+        ).toString(),
         content: campaign.content ?? undefined,
         deadline: campaign.deadline ?? undefined,
         requireApproval: campaign.requireApproval,
@@ -112,30 +141,31 @@ export default function CampaignEditor(
 
   const addNewTier = () => {
     const newNumTiers = campaignTiers.length + 1;
-    setCampaignTiers([...campaignTiers, { name: '', description: '',
-      quantity: null, price: 0 }]);
+    setCampaignTiers([
+      ...campaignTiers,
+      { name: "", description: "", quantity: null, price: 0 },
+    ]);
     startEditTier(newNumTiers - 1);
   };
 
-const updateTier = (index: number, updatedTier: EditedFields) => {
+  const updateTier = (index: number, updatedTier: EditedFields) => {
     const updatedTiers = [...campaignTiers];
     let newTier: Partial<CampaignTier> = { ...updatedTiers[index] };
 
     Object.entries(updatedTier).forEach(([key, value]) => {
-        switch (key) {
-            case "quantity":
-            case "price":
-                newTier[key] = value === '' ? null : Number(value);
-                break;
-            default:
-                newTier[key as keyof CampaignTier] = value || null;
-        }
+      switch (key) {
+        case "quantity":
+        case "price":
+          newTier[key] = value === "" ? null : Number(value);
+          break;
+        default:
+          newTier[key as keyof CampaignTier] = value || null;
+      }
     });
 
     updatedTiers[index] = newTier;
     setCampaignTiers(updatedTiers);
-};
-
+  };
 
   const startEditTier = (index: number) => {
     setEditingTierIndex(index);
@@ -145,8 +175,17 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
     setEditingTierIndex(null);
   };
 
-  const handleFieldChange = (field: string, value: string | string[] | FileList | boolean | Date | ((prevState: string[]) => string[])) => {
-    setEditedCampaign(prev => ({ ...prev, [field]: value }));
+  const handleFieldChange = (
+    field: string,
+    value:
+      | string
+      | string[]
+      | FileList
+      | boolean
+      | Date
+      | ((prevState: string[]) => string[]),
+  ) => {
+    setEditedCampaign((prev) => ({ ...prev, [field]: value }));
   };
 
   const submitChanges = async () => {
@@ -154,20 +193,21 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
     if (campaign) {
       let payload: Payload = { id: campaignId };
       if (editedCampaign.name) payload.name = editedCampaign.name;
-      if (editedCampaign.thresholdUSD !== undefined) payload.thresholdWei =
-        ethers.parseEther(editedCampaign.thresholdUSD) / BigInt(ETH_PRICE_IN_DOLLARS);
-      if (editedCampaign.content) payload.content = editedCampaign.content ?? null;
-      if (editedCampaign.requireApproval !== undefined) payload.requireApproval = editedCampaign.requireApproval;
+      if (editedCampaign.thresholdUSD !== undefined)
+        payload.thresholdWei =
+          ethers.parseEther(editedCampaign.thresholdUSD) /
+          BigInt(ETH_PRICE_IN_DOLLARS);
+      if (editedCampaign.content)
+        payload.content = editedCampaign.content ?? null;
+      if (editedCampaign.requireApproval !== undefined)
+        payload.requireApproval = editedCampaign.requireApproval;
       if (editedCampaign.deadline) payload.deadline = editedCampaign.deadline;
       if (editedCampaign.formId) payload.formId = editedCampaign.formId;
-      if (editedCampaign.currency) payload.currency = editedCampaign.currency as CurrencyType;
-      
+      if (editedCampaign.currency)
+        payload.currency = editedCampaign.currency as CurrencyType;
+
       try {
-        await updateCampaign(
-          payload,
-          { params: { subdomain } },
-          null,
-        );
+        await updateCampaign(payload, { params: { subdomain } }, null);
 
         await upsertCampaignTiers(
           { tiers: campaignTiers, campaign: campaign },
@@ -178,7 +218,7 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
         if (editedCampaign.images && editedCampaign.images.length > 0) {
           const formData = new FormData();
           Array.from(editedCampaign.images).forEach((image: File) => {
-            formData.append('images', image);
+            formData.append("images", image);
           });
 
           await upsertCampaignMedias(
@@ -189,29 +229,28 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
         }
 
         toast.success(`Campaign updated`);
-        
-        setCampaign({...campaign, ...payload});
-        router.refresh();
 
+        setCampaign({ ...campaign, ...payload });
+        router.refresh();
       } catch (error: any) {
-        console.error('Error updating campaign or tiers', error);
+        console.error("Error updating campaign or tiers", error);
         toast.error(error.message);
       }
     }
   };
 
   const saveChanges = () => {
-    submitChanges()
-    .then(() => router.push(`/city/${subdomain}/campaigns/${campaignId}`))
+    submitChanges().then(() =>
+      router.push(`/city/${subdomain}/campaigns/${campaignId}`),
+    );
   };
 
   if (loading) {
-    return <LoadingDots color="#808080" />
+    return <LoadingDots color="#808080" />;
+  } else if (!campaign || !campaign.organizationId) {
+    return <div>Campaign not found</div>;
   }
-  else if (!campaign || !campaign.organizationId) {
-    return <div>Campaign not found</div>
-  }
-  
+
   return (
     <div>
       {loading ? (
@@ -219,123 +258,36 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
       ) : !campaign || !campaign.organizationId ? (
         <div>Campaign not found</div>
       ) : (
-        <div className="max-w-[500px]">
+        <div>
           <div>
-            <h1 className="text-3xl">
-              Campaign Settings
-            </h1>
-            <div className="space-y-4 my-4">
+            <h1 className="text-2xl">Campaign Settings</h1>
+            <div className="my-4 space-y-4">
+              <div>What is your Campaign named?</div>
               <Input
-                type="text" 
+                type="text"
                 id="campaignName"
                 value={editedCampaign.name}
                 placeholder="Campaign name"
-                onChange={(e) => handleFieldChange('name', e.target.value)} 
+                onChange={(e) => handleFieldChange("name", e.target.value)}
                 disabled={isPublic || campaign.deployed}
               />
-              <Textarea 
-                value={editedCampaign.content} 
+              <div>How would you describe it?</div>
+              <Textarea
+                value={editedCampaign.content}
                 id="content"
-                onChange={(e) => handleFieldChange('content', e.target.value)}
+                onChange={(e) => handleFieldChange("content", e.target.value)}
                 disabled={isPublic}
               />
+              <div>Please upload images for your Campaign</div>
               <MultiUploader
-                values={campaignMedias.map(m => m.uri as string)}
+                values={campaignMedias.map((m) => m.uri as string)}
                 name={"image"}
                 aspectRatio={"aspect-square"}
-                onChange={(files) => handleFieldChange('images', files)}
+                onChange={(files) => handleFieldChange("images", files)}
               />
-            </div>
-            <div className="space-y-4 mt-8">
-              <h2 className="text-2xl font-bold">Goal</h2>
-              <div className="flex space-x-8 items-center">
-                <div className="flex items-center">
-                  <p className="mr-2">$</p>
-                  <Input
-                    type="text"
-                    value={editedCampaign.thresholdUSD}
-                    id="thresholdUSD"
-                    placeholder="Fundraising goal"
-                    onChange={(e) => handleFieldChange('thresholdUSD', e.target.value)}
-                    disabled={isPublic || campaign.deployed}
-                  />
-                </div>
-                <div className="flex space-x-4 items-center">
-                  <div>
-                    Deadline
-                  </div>
-                  <DatePicker
-                    id="deadline"
-                    date={editedCampaign.deadline}
-                    onSelect={(date) => {
-                      if (date) {
-                        handleFieldChange('deadline', date);
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="flex space-x-4 items-center">
-                <div>Currency to accept</div>
-                <ToggleGroup.Root
-                  className="inline-flex bg-gray-200 rounded-full shadow-md"
-                  type="single"
-                  defaultValue={CurrencyType.ETH}
-                  value={editedCampaign.currency ?? CurrencyType.ETH}
-                  onValueChange={(value) => handleFieldChange('currency', value)}
-                >
-                  <ToggleGroup.Item
-                    className="bg-gray-800 w-20 p-2 text-gray-100 shadow hover:bg-gray-800/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90 data-[state=on]:!bg-gray-600/90 rounded-l-full"
-                    value={CurrencyType.ETH}
-                  >
-                    ETH
-                  </ToggleGroup.Item>
-                  <ToggleGroup.Item
-                    className="bg-gray-800 w-20 p-2 text-gray-100 shadow hover:bg-gray-800/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90 data-[state=on]:!bg-gray-600/90"
-                    value={CurrencyType.USDC}
-                  >
-                    USDC
-                  </ToggleGroup.Item>
-                  <ToggleGroup.Item
-                    className="bg-gray-800 w-20 p-2 text-gray-100 shadow hover:bg-gray-800/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90 data-[state=on]:!bg-gray-600/90 rounded-r-full"
-                    value={CurrencyType.USDT}
-                  >
-                    USDT
-                  </ToggleGroup.Item>
-                </ToggleGroup.Root>
-              </div>
-            </div>
-            <div className="space-y-4 my-8">
-              <h2 className="text-2xl font-bold">Contributing</h2>
-              <div className="flex space-x-4">
-                  <div>Require approval for contributors?</div>
-                  <Switch
-                    id="requireApproval"
-                    checked={editedCampaign.requireApproval}
-                    onCheckedChange={(val) => handleFieldChange('requireApproval', val)}
-                  />
-              </div>
-              <div className="my-4">
-                <h3>Application Form</h3>
-                <select
-                  value={editedCampaign.formId || ""}
-                  onChange={(e) => handleFieldChange('formId', e.target.value)}
-                  disabled={isPublic}
-                  className="text-black mt-2"
-                >
-                  <option value="">Select a Form</option>
-                  {forms.map((form) => (
-                    <option key={form.id} value={form.id} selected={form.id == editedCampaign.formId}>
-                      {form.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="mt-4">
-              <h2 className="text-2xl font-bold mb-2">Campaign Tiers</h2>
-              {
-                campaignTiers.map((tier, index) => (
+              <div>
+                <h2 className="text-xl">Campaign Tiers</h2>
+                {campaignTiers.map((tier, index) =>
                   editingTierIndex === index ? (
                     <CampaignTierEditor
                       key={index}
@@ -347,26 +299,110 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
                     />
                   ) : (
                     <div key={index}>
-                      <CampaignTierCard tier={tier as CampaignTier} onClickEdit={() => startEditTier(index)} />
+                      <CampaignTierCard
+                        tier={tier as CampaignTier}
+                        onClickEdit={() => startEditTier(index)}
+                      />
                     </div>
-                  )
-                ))
-              }
-              <Button
-                className="mt-2"
-                onClick={addNewTier}
-              >
-                Add New Tier
-              </Button>
+                  ),
+                )}
+                <Button className="mt-2" onClick={addNewTier}>
+                  Add New Tier
+                </Button>
+              </div>
+              <div className="my-4">
+                <h2 className="text-xl">Application Form</h2>
+                <div className="my-4">What form does it link to (if any)?</div>
+                <select
+                  value={editedCampaign.formId || ""}
+                  onChange={(e) => handleFieldChange("formId", e.target.value)}
+                  disabled={isPublic}
+                  className="text-black"
+                >
+                  <option value="">Select a Form</option>
+                  {forms.map((form) => (
+                    <option
+                      key={form.id}
+                      value={form.id}
+                      selected={form.id == editedCampaign.formId}
+                    >
+                      {form.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex space-x-4">
+                <div>Require approval for contributors?</div>
+                <Switch
+                  id="requireApproval"
+                  checked={editedCampaign.requireApproval}
+                  onCheckedChange={(val) =>
+                    handleFieldChange("requireApproval", val)
+                  }
+                />
+              </div>
+              <div className="flex flex-col space-y-4">
+                <div>Please set a deadline</div>
+                <DatePicker
+                  id="deadline"
+                  date={editedCampaign.deadline}
+                  onSelect={(date) => {
+                    if (date) {
+                      handleFieldChange("deadline", date);
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex flex-col space-y-4">
+                <div>Please set your contribution threshold & token</div>
+                <div className="flex space-x-4">
+                  <Input
+                    className="w-1/5"
+                    type="text"
+                    value={editedCampaign.thresholdUSD}
+                    id="thresholdUSD"
+                    placeholder="Fundraising goal"
+                    onChange={(e) =>
+                      handleFieldChange("thresholdUSD", e.target.value)
+                    }
+                    disabled={isPublic || campaign.deployed}
+                  />
+                  <ToggleGroup.Root
+                    className="inline-flex rounded-full bg-gray-200 shadow-md"
+                    type="single"
+                    defaultValue={CurrencyType.ETH}
+                    value={editedCampaign.currency ?? CurrencyType.ETH}
+                    onValueChange={(value) =>
+                      handleFieldChange("currency", value)
+                    }
+                  >
+                    <ToggleGroup.Item
+                      className="w-20 rounded-l-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                      value={CurrencyType.ETH}
+                    >
+                      ETH
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      className="w-20 bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                      value={CurrencyType.USDC}
+                    >
+                      USDC
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      className="w-20 rounded-r-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                      value={CurrencyType.USDT}
+                    >
+                      USDT
+                    </ToggleGroup.Item>
+                  </ToggleGroup.Root>
+                </div>
+              </div>
             </div>
           </div>
 
           {!isPublic && (
-            <Button
-              className="float-right"
-              onClick={saveChanges}
-            >
-              {'Save Changes'}
+            <Button className="float-right" onClick={saveChanges}>
+              {"Save Changes"}
             </Button>
           )}
         </div>
