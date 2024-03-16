@@ -1,19 +1,21 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { CampaignTier } from "@prisma/client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CampaignTier, Form } from "@prisma/client";
 import { useState, useEffect } from 'react';
 
 
 interface CampaignTierEditorProps {
   tier: CampaignTier;
+  forms: Form[];
   onSave: (tier: Partial<CampaignTier>) => void;
 }
 
-export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorProps) {
+export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTierEditorProps) {
   const [editedTier, setEditedTier] = useState<Partial<CampaignTier>>(
     { name: tier.name, description: tier.description, quantity: tier.quantity,
-      price: tier.price });
+      price: tier.price, formId: tier.formId });
 
   useEffect(() => {
     if (tier) {
@@ -25,6 +27,7 @@ export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorP
         description: tier.description ?? undefined,
         quantity: tier.quantity ?? undefined,
         price: tier.price > 0 ? tier.price : undefined,
+        formId: tier.formId
       });
     }
   }, [tier]);
@@ -59,6 +62,29 @@ export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorP
           placeholder="Tier description"
           onChange={(e) => handleFieldChange('description', e.target.value)}
         />
+        <div>What form does it link to (if any)?</div>
+        <Select
+          value={editedTier.formId || ""}
+          onValueChange={(value) => {
+            handleFieldChange("formId", value)
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a Form" />
+          </SelectTrigger>
+          <SelectContent>
+            {forms.map((form) => {
+              return (
+                <SelectItem 
+                  key={form.id}
+                  value={form.id}
+                >
+                  {form.name}
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
         <div>How many spots are available in this Tier? (Optional)</div>
           <Input 
             type="number" 
