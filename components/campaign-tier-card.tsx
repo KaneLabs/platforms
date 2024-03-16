@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 
 export default function CampaignTierCard({ tier, onClickEdit }:
-  { tier: CampaignTier, onClickEdit: () => void })
+  { tier: CampaignTier, onClickEdit?: () => void })
 {
   return (
     <div className="space-y-4 my-4 rounded-md border border-gray-500 p-4">
@@ -28,7 +28,7 @@ export default function CampaignTierCard({ tier, onClickEdit }:
           </div>
         }
       </div>
-      <Button onClick={onClickEdit}>Edit</Button>
+      {onClickEdit && <Button onClick={onClickEdit}>Edit</Button>}
     </div>
   );
 }

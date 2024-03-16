@@ -210,7 +210,6 @@ export default function CampaignDashboard({
               {campaign.campaignTiers.map(
                 (tier: CampaignTier, index: number) => (
                   <CampaignTierCard
-                    onClickEdit={() => console.log("Unimplemented")}
                     key={index}
                     tier={tier}
                   />
