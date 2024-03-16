@@ -302,6 +302,7 @@ export default function CampaignEditor({
                     <div key={index}>
                       <CampaignTierCard
                         tier={tier as CampaignTier}
+                        currency={editedCampaign.currency as CurrencyType}
                         onClickEdit={() => startEditTier(index)}
                       />
                     </div>

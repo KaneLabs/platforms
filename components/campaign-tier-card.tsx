@@ -1,34 +1,30 @@
 import React from 'react';
-import { CampaignTier } from "@prisma/client";
-import { Button } from "@/components/ui/button";
+import { CampaignTier, CurrencyType } from "@prisma/client";
+import { Edit } from 'lucide-react';
 
-
-export default function CampaignTierCard({ tier, onClickEdit }:
-  { tier: CampaignTier, onClickEdit?: () => void })
+export default function CampaignTierCard({ tier, currency, onClickEdit }:
+  { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void })
 {
   return (
-    <div className="space-y-4 my-4 rounded-md border border-gray-500 p-4">
-      <div>
-        <h1 className="text-2xl font-bold">{tier.name}</h1>
+    <div className="flex flex-col space-y-4 my-4 rounded-lg border border-gray-500 p-4">
+      <div className='relative'>
+        <div className="flex flex-row items-start justify-between gap-[20px] flex-wrap">
+          <div className="text-2xl font-semibold">{tier.name}</div>
+          {tier.price && 
+            <div className="flex space-x-4 items-center text-2xl font-semibold">
+              {tier.price} {currency}
+            </div>
+          }
+        </div>
         {tier.description && 
-          <div className="mb-6 flex flex-col space-y-4">
+          <div className="mb-2 mt-2 flex flex-col space-y-4 italic">
             {tier.description}
           </div>
         }
-        {tier.quantity && 
-          <div className="flex space-x-4 items-center">
-            {`${tier.quantity} total`}
-          </div>
-        }
-        {tier.price && 
-          <div className="flex space-x-4 items-center">
-            {`${Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
-                .format(tier.price)}
-            `}
-          </div>
-        }
+        <div className="flex justify-end w-full">
+          {onClickEdit && <Edit className="cursor-pointer" onClick={onClickEdit} width={18} />}
+        </div>
       </div>
-      {onClickEdit && <Button onClick={onClickEdit}>Edit</Button>}
     </div>
   );
 }

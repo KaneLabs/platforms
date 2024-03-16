@@ -212,6 +212,7 @@ export default function CampaignDashboard({
                   <CampaignTierCard
                     key={index}
                     tier={tier}
+                    currency={campaign.currency}
                   />
                 ),
               )}
