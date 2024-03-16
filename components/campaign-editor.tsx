@@ -143,7 +143,7 @@ export default function CampaignEditor({
     const newNumTiers = campaignTiers.length + 1;
     setCampaignTiers([
       ...campaignTiers,
-      { name: "", description: "", quantity: null, price: 0 },
+      { name: "", description: "", quantity: null, price: 0, formId: null },
     ]);
     startEditTier(newNumTiers - 1);
   };
@@ -156,7 +156,7 @@ export default function CampaignEditor({
       switch (key) {
         case "quantity":
         case "price":
-          newTier[key] = value === "" ? null : Number(value);
+          newTier[key] = value === "" || value == undefined ? null : Number(value);
           break;
         default:
           newTier[key as keyof CampaignTier] = value || null;
@@ -292,6 +292,7 @@ export default function CampaignEditor({
                     <CampaignTierEditor
                       key={index}
                       tier={tier as CampaignTier}
+                      forms={forms}
                       onSave={(updatedTier) => {
                         updateTier(index, updatedTier);
                         stopEditTier();
@@ -309,27 +310,6 @@ export default function CampaignEditor({
                 <Button className="mt-2" onClick={addNewTier}>
                   Add New Tier
                 </Button>
-              </div>
-              <div className="my-4">
-                <h2 className="text-xl">Application Form</h2>
-                <div className="my-4">What form does it link to (if any)?</div>
-                <select
-                  value={editedCampaign.formId || ""}
-                  onChange={(e) => handleFieldChange("formId", e.target.value)}
-                  disabled={isPublic}
-                  className="text-black"
-                >
-                  <option value="">Select a Form</option>
-                  {forms.map((form) => (
-                    <option
-                      key={form.id}
-                      value={form.id}
-                      selected={form.id == editedCampaign.formId}
-                    >
-                      {form.name}
-                    </option>
-                  ))}
-                </select>
               </div>
               <div className="flex space-x-4">
                 <div>Require approval for contributors?</div>

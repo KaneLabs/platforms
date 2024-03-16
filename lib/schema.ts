@@ -242,6 +242,7 @@ const CampaignTierSchema = z.object({
   quantity: z.number().nullish().optional(),
   price: z.number().optional(),
   currency: z.string().nullish(),
+  formId: z.string().nullish(),
 })
 
 export const UpsertCampaignTierSchemas = z.object({
