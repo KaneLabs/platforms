@@ -85,15 +85,7 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
             })}
           </SelectContent>
         </Select>
-        <div>How many spots are available in this Tier? (Optional)</div>
-          <Input 
-            type="number" 
-            id="quantity"
-            value={editedTier.quantity ?? ''}
-            placeholder="Number of spots "
-            onChange={(e) => handleFieldChange('quantity', e.target.value)}
-          />
-        </div>
+      </div>
       <div className="flex justify-end">
         <Button
           className="mt-2"

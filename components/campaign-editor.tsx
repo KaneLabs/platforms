@@ -156,7 +156,7 @@ export default function CampaignEditor({
       switch (key) {
         case "quantity":
         case "price":
-          newTier[key] = value === "" ? null : Number(value);
+          newTier[key] = value === "" || value == undefined ? null : Number(value);
           break;
         default:
           newTier[key as keyof CampaignTier] = value || null;
