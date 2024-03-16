@@ -260,7 +260,7 @@ export default function CampaignEditor({
       ) : (
         <div>
           <div>
-            <h1 className="text-2xl">Campaign Settings</h1>
+            <h1 className="text-3xl">Campaign Settings</h1>
             <div className="my-4 space-y-4">
               <div>What is your Campaign named?</div>
               <Input

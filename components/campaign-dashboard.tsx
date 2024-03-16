@@ -121,13 +121,9 @@ export default function CampaignDashboard({
       ) : (
         <div>
           <div className="my-4 space-y-4">
-            <h1 className="my-6 text-2xl font-bold">{campaign.name}</h1>
-            <div className="mb-6 flex flex-col space-y-4">
-              <div className="flex justify-between space-x-4">
-                <Progress
-                  value={getProgress(totalContributions, campaign.thresholdWei)}
-                  className="h-6 w-[80%]"
-                />
+            <div className="flex flex-row my-6 items-start justify-between gap-[20px] flex-wrap">
+              <h1 className="text-3xl font-semibold">{campaign.name}</h1>
+              <div className="flex flex-row gap-2">
                 <Button
                   onClick={() =>
                     router.push(
@@ -137,6 +133,19 @@ export default function CampaignDashboard({
                 >
                   Edit
                 </Button>
+                {!campaign.deployed && <LaunchCampaignButton
+                    campaign={campaign}
+                    subdomain={subdomain}
+                    onComplete={triggerRefresh}
+                  />}
+                </div>
+            </div>
+            <div className="mb-6 flex flex-col space-y-1">
+              <div className="flex justify-between space-x-4">
+                <Progress
+                  value={getProgress(totalContributions, campaign.thresholdWei)}
+                  className="h-6 w-full"
+                />
               </div>
               <div className="flex space-x-8">
                 <p className="text-sm">
@@ -166,42 +175,24 @@ export default function CampaignDashboard({
                 </p>
               </div>
             </div>
-            <p>{campaign.content}</p>
-            {campaign.deadline && (
-              <div className="flex items-center space-x-4">
-                {`Deadline: ${campaign.deadline.toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}`}
-              </div>
-            )}
-            <div className="my=2">
-              {campaign.requireApproval
-                ? "Requires approval"
-                : "Anyone can contribute"}
+            <div className="my-6">
+              {campaign.content}
             </div>
-            <div className="my-2">
-              {campaign.deployed
-                ? `Launched ${campaign.timeDeployed!.toLocaleString(undefined, {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: undefined,
-                    timeZoneName: undefined,
-                  })}`
-                : "Not launched yet"}
-            </div>
-            <div className="mt-4">
-              {!campaign.deployed && (
-                <LaunchCampaignButton
-                  campaign={campaign}
-                  subdomain={subdomain}
-                  onComplete={triggerRefresh}
-                />
-              )}
+            <div className="flex flex-wrap gap-2">
+              {campaign.medias 
+                ? campaign.medias.map(m => {
+                  return (
+                    <div className="flex flex-wrap rounded-md" key={m.id}>
+                        <img
+                          src={m.uri}
+                          alt="Preview"
+                          className="h-[96px] w-[200px] rounded-md object-cover object-center"
+                        />
+                    </div>
+                   )
+                  })
+                : null
+              }
             </div>
           </div>
           {campaign.campaignTiers && (
