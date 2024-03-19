@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CampaignTier, CurrencyType } from "@prisma/client";
 import { Edit } from 'lucide-react';
 
-export default function CampaignTierCard({ tier, currency, onClickEdit }:
-  { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void })
-{
+export default function CampaignTierCard({ tier, currency, onClickEdit, isSelected, onClickSelect }:
+  { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void, isSelected?: boolean, onClickSelect?: () => void }) {
+
   return (
-    <div className="flex flex-col space-y-4 my-4 rounded-lg border border-gray-500 p-4">
+    <div
+      className={`flex flex-col space-y-4 my-4 rounded-lg border p-4 bg-gray-100 transition ease-in-out ${onClickSelect && isSelected ? 'border border-blue-500' : 'border border-gray-500'} ${onClickSelect && 'cursor-pointer hover:bg-white'} `}
+      onClick={() => {
+        if (onClickSelect) {
+          onClickSelect();
+        }
+      }}
+    >
       <div className='relative'>
         <div className="flex flex-row items-start justify-between gap-[20px] flex-wrap">
           <div className="text-2xl">{tier.name}</div>
@@ -22,7 +29,16 @@ export default function CampaignTierCard({ tier, currency, onClickEdit }:
           </div>
         }
         <div className="flex justify-end w-full">
-          {onClickEdit && <Edit className="cursor-pointer" onClick={onClickEdit} width={18} />}
+          {onClickEdit && 
+            <Edit 
+              className="cursor-pointer" 
+              onClick={(e) => {
+                e.stopPropagation();
+                onClickEdit();
+              }} 
+              width={18} 
+            />
+          }
         </div>
       </div>
     </div>
