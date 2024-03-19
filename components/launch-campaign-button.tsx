@@ -19,7 +19,7 @@ export default function LaunchCampaignButton({ campaign, subdomain, onComplete }
   }
   return (
     <Button onClick={onClick}>
-      Launch campaign
+      Launch Campaign
     </Button>
   );
 }

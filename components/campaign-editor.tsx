@@ -260,7 +260,7 @@ export default function CampaignEditor({
       ) : (
         <div>
           <div>
-            <h1 className="text-2xl">Campaign Settings</h1>
+            <h1 className="text-3xl">Campaign Settings</h1>
             <div className="my-4 space-y-4">
               <div>What is your Campaign named?</div>
               <Input
@@ -302,6 +302,7 @@ export default function CampaignEditor({
                     <div key={index}>
                       <CampaignTierCard
                         tier={tier as CampaignTier}
+                        currency={editedCampaign.currency as CurrencyType}
                         onClickEdit={() => startEditTier(index)}
                       />
                     </div>
