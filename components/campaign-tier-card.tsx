@@ -7,7 +7,7 @@ export default function CampaignTierCard({ tier, currency, onClickEdit, isSelect
 
   return (
     <div
-      className={`flex flex-col space-y-4 my-4 rounded-lg border p-4 bg-gray-100 transition ease-in-out ${onClickSelect && isSelected ? 'border border-blue-500' : 'border border-gray-500'} ${onClickSelect && 'cursor-pointer hover:bg-white'} `}
+      className={`flex flex-col space-y-4 my-4 rounded-lg border p-4 bg-gray-100 transition ease-in-out ${onClickSelect && isSelected ? 'border border-blue-500 bg-white' : 'border border-gray-500'} ${onClickSelect && 'cursor-pointer hover:bg-white'} `}
       onClick={() => {
         if (onClickSelect) {
           onClickSelect();
