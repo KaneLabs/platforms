@@ -3,14 +3,14 @@ import { CampaignTier, CurrencyType } from "@prisma/client";
 import { Edit } from 'lucide-react';
 
 export default function CampaignTierCard({ tier, currency, onClickEdit, isSelected, onClickSelect }:
-  { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void, isSelected?: boolean, onClickSelect?: () => void }) {
+  { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void, isSelected?: boolean, onClickSelect?: (tierId: string) => void }) {
 
   return (
     <div
       className={`flex flex-col space-y-4 my-4 rounded-lg border p-4 bg-gray-100 transition ease-in-out ${onClickSelect && isSelected ? 'border border-blue-500 bg-white' : 'border border-gray-500'} ${onClickSelect && 'cursor-pointer hover:bg-white'} `}
       onClick={() => {
         if (onClickSelect) {
-          onClickSelect();
+          onClickSelect(tier.id);
         }
       }}
     >
