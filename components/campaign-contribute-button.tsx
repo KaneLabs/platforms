@@ -58,10 +58,10 @@ export default function CampaignContributeButton({
       {campaign.requireApproval ? (
         <div className="mt-4">
           <Button
-            onClick={() => router.push(`/forms/${campaign?.form?.id}`)}
+            onClick={() => router.push(`${campaign.id}/checkout/tiers`)}
             className="hover:bg-gray-700"
           >
-            Apply and Fund
+            Fund
           </Button>
         </div>
         ) : (

@@ -74,7 +74,13 @@ export default function CampaignPublicTiers({
           </div>
           <div className="self-end">
             <Button
-              onClick={() => router.push(`/forms/${selectedTier?.formId}`)}
+              onClick={() => {
+                if (selectedTier?.formId) {
+                  router.push(`${selectedTier?.id}/`)
+                } else {
+                  router.push(`fund/`)
+                }
+              }}
               className="hover:bg-gray-700"
               disabled={!selectedTier}
             >
