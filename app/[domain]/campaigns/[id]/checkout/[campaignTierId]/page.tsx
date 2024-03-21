@@ -40,7 +40,7 @@ export default async function CheckoutPage({
           <PaperDoc className="mx-auto">
             <FormTitle>{campaignTier.name}</FormTitle>
             {session && campaignTier.Form && (
-              <DynamicForm form={campaignTier.Form} onSubmitRoute={`/campaigns/${campaignTier.campaign.id}/checkout/fund`} />
+              <DynamicForm form={campaignTier.Form} onSubmitRoute={`/campaigns/${campaignTier.campaign.id}/checkout/${campaignTier.id}/fund`} />
             )}
           </PaperDoc>
         </div>

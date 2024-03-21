@@ -78,7 +78,7 @@ export default function CampaignPublicTiers({
                 if (selectedTier?.formId) {
                   router.push(`${selectedTier?.id}/`)
                 } else {
-                  router.push(`fund/`)
+                  router.push(`${selectedTier?.id}/fund/`)
                 }
               }}
               className="hover:bg-gray-700"
