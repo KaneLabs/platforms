@@ -6,7 +6,7 @@ import FormTitle from "@/components/form-title";
 import DynamicForm from "./dynamic-form";
 import AuthModalCoverProvider from "@/components/auth-modal-cover-provider";
 
-export default async function CheckoutPage({
+export default async function CheckoutForm({
   params,
 }: {
   params: { domain: string; campaignTierId: string };

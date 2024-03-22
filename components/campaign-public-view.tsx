@@ -125,7 +125,6 @@ export default function CampaignPublicView(
           <div className="flex-grow 0 flex-basis 1/3">
             <CampaignContributeButton
               campaign={campaign}
-              subdomain={subdomain}
               onComplete={() =>{
                 triggerRefresh;
                 createCampaignApplication(campaign.id);

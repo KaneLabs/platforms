@@ -13,14 +13,12 @@ import { ETH_PRICE_IN_DOLLARS } from "@/lib/utils";
 
 interface CampaignContributeButtonProps {
   campaign: CampaignWithData;
-  subdomain: string;
   onComplete: () => void;
   className: string;
 }
 
 export default function CampaignContributeButton({ 
   campaign, 
-  subdomain,
   onComplete,
   className
 }: CampaignContributeButtonProps) {

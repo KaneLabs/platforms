@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { CampaignTier, CurrencyType } from "@prisma/client";
 import { Edit } from 'lucide-react';
