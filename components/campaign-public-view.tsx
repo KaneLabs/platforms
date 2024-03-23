@@ -5,8 +5,8 @@ import { Campaign, CampaignTier } from "@prisma/client";
 import { useState, useEffect } from 'react';
 import { getCampaign, createCampaignApplication, CampaignWithData } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
-import CampaignContributeButton from "@/components/campaign-contribute-button";
-import CampaignPageTierCard from "@/components/campaign-page-tier-card";
+import CampaignContributeSection from "@/components/campaign-contribute-section";
+import CampaignTierCard from "@/components/campaign-tier-card";
 import Link from "next/link";
 import BannerImage from "./site-layouts/social-media/banner-image";
 
@@ -61,14 +61,6 @@ export default function CampaignPublicView(
     return <div>Campaign not found</div>
   }
 
-  const getProgress = (contributions: bigint, thresholdWei: bigint) => {
-    if (contributions < thresholdWei) {
-      return Number(contributions * BigInt(100) / thresholdWei);
-    } else {
-      return 100;
-    }
-  }
-
   return (
     <div>
       {loading ? (
@@ -77,7 +69,7 @@ export default function CampaignPublicView(
         <div>Campaign not found</div>
       ) : (
         <div className="flex space-x-16">
-          <BannerImage />
+          {/* <BannerImage /> */}
           <div className="flex-grow 0 flex-basis 2/3">
             <div className="space-y-4">
               <h1 className="text-2xl font-bold mb-6">{campaign.name}</h1>
@@ -92,13 +84,30 @@ export default function CampaignPublicView(
                 </div>
               </div>
               <p>{campaign.content}</p>
+              <div className="flex flex-wrap gap-2">
+                {campaign.medias 
+                  ? campaign.medias.map(m => {
+                    return (
+                      <div className="flex flex-wrap rounded-md" key={m.id}>
+                          <img
+                            src={m.uri}
+                            alt="Preview"
+                            className="h-[96px] w-[200px] rounded-md object-cover object-center"
+                          />
+                      </div>
+                    )
+                    })
+                  : null
+                }
+              </div>
               {campaign.campaignTiers &&
                 <div>
-                  <h2 className="text-xl">Campaign Tiers</h2>
+                  <h2 className="text-xl">Contributor Tiers</h2>
                   {campaign.campaignTiers.map((tier: CampaignTier, index: number) =>
-                    <CampaignPageTierCard
+                    <CampaignTierCard
                       key={index}
                       tier={tier}
+                      currency={campaign.currency}
                     />
                   )}
                 </div>
@@ -106,13 +115,8 @@ export default function CampaignPublicView(
             </div>
           </div>
           <div className="flex-grow 0 flex-basis 1/3">
-            <CampaignContributeButton
+            <CampaignContributeSection
               campaign={campaign}
-              subdomain={subdomain}
-              onComplete={() =>{
-                triggerRefresh;
-                createCampaignApplication(campaign.id);
-              }}
               className={"p-4 border border-gray-500 rounded-md min-w-52"}
             />
           </div>
