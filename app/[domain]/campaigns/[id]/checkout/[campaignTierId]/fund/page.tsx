@@ -2,7 +2,7 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import AuthModalCoverProvider from "@/components/auth-modal-cover-provider";
-import CheckoutSummary from "@/components/campaign-public-fund-summary";
+import CheckoutSummary, { CampaignTierWithData } from "@/components/campaign-public-fund-summary";
 
 export default async function CheckoutFund({
   params,
@@ -43,7 +43,7 @@ export default async function CheckoutFund({
   return (
     <AuthModalCoverProvider show={!session}>
       <CheckoutSummary
-        campaignTier={campaignTier}
+        campaignTier={campaignTier as CampaignTierWithData}
       />
     </AuthModalCoverProvider>
   );

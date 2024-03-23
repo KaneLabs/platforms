@@ -5,15 +5,17 @@ import { formatAnswer } from "@/components/form-response-table/utils";
 import { Button } from "@/components/ui/button";
 import CampaignFundButton from "@/components/campaign-fund-button";
 import { createCampaignApplication } from "@/lib/actions";
-import { Answer, Campaign, CampaignTier, Form, FormResponse } from "@prisma/client";
+import { Answer, Campaign, CampaignTier, Form, FormResponse, Question } from "@prisma/client";
+
+export type CampaignTierWithData = CampaignTier & { campaign: Campaign } & { Form: Form & { formResponse: Array<FormResponse & { answers: Array<Answer & { question: Question }> }> }};
 
 export default async function CheckoutSummary({
   campaignTier,
 }: {
-  campaignTier: any
+  campaignTier: CampaignTierWithData
 }) {
   let formattedFormAnswers = campaignTier.Form?.formResponse[0].answers.map(
-    (value: any) => {
+    (value) => {
       const question = value.question;
 
       return (
