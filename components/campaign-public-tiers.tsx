@@ -76,7 +76,7 @@ export default function CampaignPublicTiers({
             <Button
               onClick={() => {
                 if (selectedTier?.formId) {
-                  router.push(`${selectedTier?.id}/`)
+                  router.push(`${selectedTier?.id}/form/`)
                 } else {
                   router.push(`${selectedTier?.id}/fund/`)
                 }
