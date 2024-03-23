@@ -5,7 +5,7 @@ import { Campaign, CampaignTier } from "@prisma/client";
 import { useState, useEffect } from 'react';
 import { getCampaign, createCampaignApplication, CampaignWithData } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
-import CampaignContributeButton from "@/components/campaign-contribute-button";
+import CampaignContributeSection from "@/components/campaign-contribute-section";
 import CampaignTierCard from "@/components/campaign-tier-card";
 import Link from "next/link";
 import BannerImage from "./site-layouts/social-media/banner-image";
@@ -59,14 +59,6 @@ export default function CampaignPublicView(
   }
   else if (!campaign || !campaign.organizationId) {
     return <div>Campaign not found</div>
-  }
-
-  const getProgress = (contributions: bigint, thresholdWei: bigint) => {
-    if (contributions < thresholdWei) {
-      return Number(contributions * BigInt(100) / thresholdWei);
-    } else {
-      return 100;
-    }
   }
 
   return (
@@ -123,12 +115,8 @@ export default function CampaignPublicView(
             </div>
           </div>
           <div className="flex-grow 0 flex-basis 1/3">
-            <CampaignContributeButton
+            <CampaignContributeSection
               campaign={campaign}
-              onComplete={() =>{
-                triggerRefresh;
-                createCampaignApplication(campaign.id);
-              }}
               className={"p-4 border border-gray-500 rounded-md min-w-52"}
             />
           </div>
