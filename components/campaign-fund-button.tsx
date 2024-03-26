@@ -3,23 +3,17 @@
 import { Button } from "./ui/button";
 import React, { useState } from "react";
 import useEthereum from "@/hooks/useEthereum";
-import { useRouter } from "next/navigation";
-import { Campaign } from "@prisma/client";
 
 interface CampaignFundButtonProps {
-  campaign: Campaign;
   amount: number;
   onComplete: () => void;
 }
 
 export default function CampaignFundButton({
-  campaign,
   amount,
   onComplete,
 }: CampaignFundButtonProps) {
   const { contribute } = useEthereum();
-
-  const router = useRouter();
 
   const isValidAmount = () => {
     return !isNaN(amount) && amount > 0;
