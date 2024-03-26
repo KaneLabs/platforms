@@ -1,6 +1,6 @@
 "use client";
 
-import { Form, Question, QuestionType } from "@prisma/client";
+import { Form, FormResponse, Question, QuestionType } from "@prisma/client";
 import { useMemo } from "react";
 import {
   Form as CustomForm,
@@ -93,7 +93,7 @@ export const DynamicFormDesc = ({ children }: { children: string }) => {
 
 export function DynamicForm(props: {
   form: Form & { questions: Question[] };
-  onSubmitRoute?: string;
+  onSubmitCallback?: (response: FormResponse) => void;
 }) {
   const orderedQuestions = useMemo(
     () => props.form.questions.sort((q1, q2) => q1.order - q2.order),
@@ -123,8 +123,8 @@ export function DynamicForm(props: {
     if ("id" in response) {
       toast.success("Successfully submitted response to " + props.form.name);
       
-      if (props.onSubmitRoute) {
-        router.push(props.onSubmitRoute);
+      if (props.onSubmitCallback) {
+        props.onSubmitCallback(response);
       } else {
         router.refresh();
       }

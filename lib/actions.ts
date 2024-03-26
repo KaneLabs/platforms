@@ -2619,7 +2619,7 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
-export const createCampaignApplication = async (campaignId: string) => {
+export const createCampaignApplication = async (campaignId: string, formResponseId: string) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {
@@ -2627,10 +2627,20 @@ export const createCampaignApplication = async (campaignId: string) => {
     };
   }
 
-  const campaignApplication = await prisma.campaignApplication.create({
+
+  const campaignContribution = await prisma.campaignContribution.create({
     data: {
       campaignId: campaignId,
+      userId: session.user.id
+    }
+  });
+
+  const campaignApplication = await prisma.campaignApplication.create({
+    data: {
+      campaignId,
+      formResponseId,
       userId: session.user.id,
+      contributionId: campaignContribution.id
     },
   });
 

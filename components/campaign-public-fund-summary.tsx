@@ -9,7 +9,7 @@ import { Answer, Campaign, CampaignTier, Form, FormResponse, Question } from "@p
 
 export type CampaignTierWithData = CampaignTier & { campaign: Campaign } & { Form: Form & { formResponse: Array<FormResponse & { answers: Array<Answer & { question: Question }> }> }};
 
-export default async function CheckoutSummary({
+export default function CampaignPublicCheckoutSummary({
   campaignTier,
 }: {
   campaignTier: CampaignTierWithData
@@ -49,7 +49,7 @@ export default async function CheckoutSummary({
           campaign={campaignTier.campaign}
           amount={campaignTier.price as number}
           onComplete={() => {
-            createCampaignApplication(campaignTier.campaign.id);
+            createCampaignApplication(campaignTier.campaign.id, campaignTier.Form.formResponse[0].id);
           }}
         />
       </div>

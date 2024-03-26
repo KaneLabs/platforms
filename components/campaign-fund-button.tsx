@@ -27,7 +27,8 @@ export default function CampaignFundButton({
 
   const handleContribution = async () => {
     if (isValidAmount()) {
-      contribute(amount.toString(), campaign).then(onComplete);
+      // await contribute(amount.toString(), campaign).then(onComplete);
+      onComplete();
     }
   };
 
