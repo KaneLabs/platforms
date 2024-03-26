@@ -24,6 +24,7 @@ export default function CampaignPublicCheckoutSummary({
       return (
         <div key={value.id}>
           <h2 className="text-xl">{question.text}</h2>
+          <h2 className="text-xl">{question.description}</h2>
           <p className="text-sm">
             {formatAnswer(question!, value)}
           </p>
