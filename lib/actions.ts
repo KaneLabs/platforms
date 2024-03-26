@@ -1872,6 +1872,51 @@ export const submitFormResponse = async (
   }
 };
 
+export const createFormResponse = async (
+  formId: string,
+  answers: { questionId: string; value: any }[],
+) => {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+
+  try {
+    // Create the FormResponse
+    const formResponse = await prisma.formResponse.create({
+      data: {
+        userId: session.user.id,
+        formId,
+      },
+      include: {
+        answers: {
+          include: {},
+        },
+      }
+    });
+
+    // Start a transaction to ensure all database operations succeed or fail together
+    const questions = await prisma.$transaction([
+      // Create the Answers
+      ...answers.map((answer) =>
+        prisma.answer.create({
+          data: {
+            ...answer,
+            answersId: formResponse.id,
+          }
+        }),
+      ),
+    ]);
+    return { ...formResponse, questions };
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};
+
 export const getUsersOrganizations = async (userId: string) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -2619,7 +2664,7 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
-export const createCampaignApplication = async (campaignId: string, formResponseId: string) => {
+export const createCampaignApplication = async (campaignId: string, formResponseId?: string) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {

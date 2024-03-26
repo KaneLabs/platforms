@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { DatePicker } from "@/components/form-builder/date-picker";
 import { DateRangePicker } from "@/components/form-builder/date-range-picker";
-import { submitFormResponse } from "@/lib/actions";
+import { createFormResponse } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -115,7 +115,7 @@ export function DynamicForm(props: {
       value,
     }));
 
-    const response = await submitFormResponse(props.form.id, formattedData);
+    const response = await createFormResponse(props.form.id, formattedData);
     if ("error" in response) {
       toast.error(response.error);
       return;
