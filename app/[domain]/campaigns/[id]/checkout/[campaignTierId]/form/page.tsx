@@ -5,7 +5,7 @@ import AuthModalCoverProvider from "@/components/auth-modal-cover-provider";
 import CampaignPublicForm from "@/components/campaign-public-form";
 import { CampaignTierWithData } from "@/components/campaign-public-form";
 
-export default async function CheckoutForm({
+export default async function CheckoutFormPage({
   params,
 }: {
   params: { domain: string; campaignTierId: string };

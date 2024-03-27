@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import CampaignPublicTiers from "@/components/campaign-public-tiers";
 
-export default async function PublicCampaignPage({
+export default async function CheckoutTiersPage({
   params,
 }: {
   params: { id: string; subdomain: string };

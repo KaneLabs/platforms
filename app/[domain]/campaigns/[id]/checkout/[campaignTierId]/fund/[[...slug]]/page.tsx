@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import AuthModalCoverProvider from "@/components/auth-modal-cover-provider";
 import CampaignPublicCheckoutSummary, { CampaignTierWithData } from "@/components/campaign-public-fund-summary";
 
-export default async function CheckoutFund({
+export default async function CheckoutFundPage({
   params,
 }: {
   params: { domain: string; campaignTierId: string, slug: string[] };
