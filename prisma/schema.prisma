@@ -282,36 +282,37 @@ model TicketTier {
 }
 
 model CampaignTier {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  quantity    Int?
-  price       Int?
-  currency    String?
-  campaignId  String
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-  Form        Form?    @relation(fields: [formId], references: [id])
-  formId      String?
+  id                   String                @id @default(cuid())
+  name                 String
+  description          String?
+  quantity             Int?
+  price                Int?
+  currency             String?
+  campaignId           String
+  campaign             Campaign              @relation(fields: [campaignId], references: [id])
+  Form                 Form?                 @relation(fields: [formId], references: [id])
+  formId               String?
+  campaignApplications CampaignApplication[]
 }
 
 model Form {
-  id                  String                @id @default(cuid())
-  name                String                @default("My Form")
-  published           Boolean               @default(false)
+  id                String         @id @default(cuid())
+  name              String         @default("My Form")
+  published         Boolean        @default(false)
   // You are applying for this role, at this event, for this time span.
-  organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  organizationId      String
-  event               Event?                @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  eventId             String?
-  image               String?
-  endingTitle         String?               @default("Thank you for your submission!")
-  endingDescription   String?               @default("We have received your response and will process it shortly.")
-  questions           Question[]
-  formResponse        FormResponse[]
-  role                Role[]
-  ticketTier          TicketTier[]
-  campaignTier        CampaignTier[]
-  Campaign            Campaign[]
+  organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  organizationId    String
+  event             Event?         @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  eventId           String?
+  image             String?
+  endingTitle       String?        @default("Thank you for your submission!")
+  endingDescription String?        @default("We have received your response and will process it shortly.")
+  questions         Question[]
+  formResponse      FormResponse[]
+  role              Role[]
+  ticketTier        TicketTier[]
+  campaignTier      CampaignTier[]
+  Campaign          Campaign[]
 }
 
 model Question {
@@ -355,15 +356,15 @@ model Answer {
 }
 
 model FormResponse {
-  id                  String                @id @default(cuid())
-  userId              String
-  formId              String
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  user                User                  @relation(fields: [userId], references: [id])
-  form                Form                  @relation(fields: [formId], references: [id])
-  answers             Answer[]
-  application         CampaignApplication?
+  id          String               @id @default(cuid())
+  userId      String
+  formId      String
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  user        User                 @relation(fields: [userId], references: [id])
+  form        Form                 @relation(fields: [formId], references: [id])
+  answers     Answer[]
+  applications CampaignApplication?
 }
 
 model Place {
@@ -512,12 +513,13 @@ model Campaign {
 }
 
 model CampaignContribution {
-  id                  String                @id @default(cuid())
-  userId              String
-  user                User?                 @relation(fields: [userId], references: [id])
-  campaign            Campaign?             @relation(fields: [campaignId], references: [id])
-  campaignId          String?
-  application         CampaignApplication?
+  id          String               @id @default(cuid())
+  amount      Int?                
+  userId      String
+  user        User?                @relation(fields: [userId], references: [id])
+  campaign    Campaign?            @relation(fields: [campaignId], references: [id])
+  campaignId  String?
+  application CampaignApplication?
 }
 
 model Invite {
@@ -555,6 +557,8 @@ model CampaignApplication {
   formResponse   FormResponse?         @relation(fields: [formResponseId], references: [id])
   contributionId String?               @unique
   contribution   CampaignContribution? @relation(fields: [contributionId], references: [id])
+  campaignTier   CampaignTier?         @relation(fields: [campaignTierId], references: [id])
+  campaignTierId String?
 }
 
 enum ApplicationStatus {

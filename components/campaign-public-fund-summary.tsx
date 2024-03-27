@@ -16,6 +16,7 @@ export default function CampaignPublicCheckoutSummary({
 }) {
   const router = useRouter();
   const formResponse = campaignTier.Form?.formResponse?.[0];
+  const amount = Number(campaignTier.price);
 
   const formattedFormAnswers = formResponse && formResponse.answers.map(
     (value) => {
@@ -50,9 +51,9 @@ export default function CampaignPublicCheckoutSummary({
       </div>
       <div className="self-end ">
         <CampaignFundButton 
-          amount={campaignTier.price as number}
+          amount={amount}
           onComplete={async () => {
-            await createCampaignApplication(campaignTier.campaign.id, formResponse ? formResponse.id : undefined);
+            await createCampaignApplication(campaignTier.campaign.id, campaignTier.id, amount, formResponse?.id);
             router.push(`/campaigns/${campaignTier.campaign.id}`);
           }}
         />

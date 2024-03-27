@@ -1822,15 +1822,8 @@ export const submitFormResponse = async (
   // const entries = formData.entries();
 
   try {
-    const formResponse = await prisma.formResponse.upsert({
-      where: {
-        userId_formId: {
-          userId: session.user.id,
-          formId,
-        },
-      },
-      update: {},
-      create: {
+    const formResponse = await prisma.formResponse.create({
+      data: {
         userId: session.user.id,
         formId,
       },
@@ -2650,6 +2643,32 @@ export const getFormQuestions = async (formId: string) => {
   return questions;
 };
 
+export const getCampaignApplications = async (
+  campaignId: string,
+) => {
+  const campaignApplications = await prisma.campaignApplication.findMany({
+    where: {
+      campaignId: campaignId,
+    },
+    include: {
+      user: true,
+      contribution: true,
+      campaignTier: true,
+      formResponse: {
+        include: {
+          answers: {
+            include: {
+              question: true
+            }
+          },
+        },
+      }
+    }
+  });
+
+  return campaignApplications;
+};
+
 export const getUserCampaignApplication = async (
   campaignId: string,
   userId: string,
@@ -2664,7 +2683,7 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
-export const createCampaignApplication = async (campaignId: string, formResponseId?: string) => {
+export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number | null, formResponseId: string | undefined) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {
@@ -2676,7 +2695,8 @@ export const createCampaignApplication = async (campaignId: string, formResponse
   const campaignContribution = await prisma.campaignContribution.create({
     data: {
       campaignId: campaignId,
-      userId: session.user.id
+      userId: session.user.id,
+      amount: contributionAmount
     }
   });
 
@@ -2685,7 +2705,8 @@ export const createCampaignApplication = async (campaignId: string, formResponse
       campaignId,
       formResponseId,
       userId: session.user.id,
-      contributionId: campaignContribution.id
+      contributionId: campaignContribution.id,
+      campaignTierId: campaignTierId
     },
   });
 

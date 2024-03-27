@@ -5,21 +5,20 @@ import CampaignWithdrawButton from "@/components/campaign-withdraw-button";
 import CampaignTierCard from "@/components/campaign-tier-card";
 import useEthereum from "@/hooks/useEthereum";
 import {
-  Campaign,
   CampaignTier,
-  Question,
-  Form,
   FormResponse,
   Answer,
   User,
+  CampaignApplication,
+  CampaignContribution,
+  Question,
 } from "@prisma/client";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import {
   getCampaign,
   CampaignWithData,
-  getFormResponses,
-  getFormQuestions,
+  getCampaignApplications,
 } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Button } from "@/components/ui/button";
@@ -44,12 +43,8 @@ export default function CampaignDashboard({
   );
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [deadline, setDeadline] = useState(undefined);
-  const [formQuestions, setFormQuestions] = useState<
-    (Question & { form: Form })[] | undefined
-  >([]);
-  const [formResponses, setFormResponses] = useState<
-    (FormResponse & { answers: Answer[]; user: User })[] | undefined
+  const [applications, setApplicatons] = useState<
+    Array<CampaignApplication & { user: User | null } & { campaignTier: CampaignTier | null } & { formResponse: FormResponse & { answers: Array<Answer & { question: Question }> } | null } & { contribution: CampaignContribution | null }> | undefined
   >([]);
 
   const router = useRouter();
@@ -85,16 +80,14 @@ export default function CampaignDashboard({
     }
     fetchContractBalance();
 
-    async function fetchFormResponses() {
-      if (campaign && campaign.formId) {
-        const questions = await getFormQuestions(campaign.formId);
-        setFormQuestions(questions);
-
-        const formResponses = await getFormResponses(campaign.formId);
-        setFormResponses(formResponses);
+    async function fetchCampaignApplications() {
+      if (campaign) {
+        const applications = await getCampaignApplications(campaign.id);
+        setApplicatons(applications);
       }
     }
-    fetchFormResponses();
+    fetchCampaignApplications();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaign]);
 
@@ -209,13 +202,12 @@ export default function CampaignDashboard({
               )}
             </div>
           )}
-          {formQuestions && formResponses && (
+          {applications && applications.length > 0 && (
             <div className="mt-12">
               <h2 className="text-xl">Applications</h2>
               <CampaignResponseDataTable
                 campaign={campaign}
-                questions={formQuestions}
-                formResponses={formResponses}
+                applications={applications}
               />
             </div>
           )}
