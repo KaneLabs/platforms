@@ -356,15 +356,15 @@ model Answer {
 }
 
 model FormResponse {
-  id          String               @id @default(cuid())
-  userId      String
-  formId      String
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
-  user        User                 @relation(fields: [userId], references: [id])
-  form        Form                 @relation(fields: [formId], references: [id])
-  answers     Answer[]
-  applications CampaignApplication?
+  id                   String               @id @default(cuid())
+  userId               String
+  formId               String
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  user                 User                 @relation(fields: [userId], references: [id])
+  form                 Form                 @relation(fields: [formId], references: [id])
+  answers              Answer[]
+  campaignApplications CampaignApplication?
 }
 
 model Place {
@@ -514,7 +514,7 @@ model Campaign {
 
 model CampaignContribution {
   id          String               @id @default(cuid())
-  amount      Int?                
+  amount      Int?
   userId      String
   user        User?                @relation(fields: [userId], references: [id])
   campaign    Campaign?            @relation(fields: [campaignId], references: [id])

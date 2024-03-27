@@ -63,7 +63,7 @@ export default function CampaignApplicationsDataTable({
     }
 
     formatCampaignApplicationRows();
-  }, [applications]);
+  }, [applications, campaign]);
 
   const handleRowClick = (row: Row<any>) => {
     setSelectedRow(row);
@@ -122,7 +122,7 @@ export default function CampaignApplicationsDataTable({
         }
 
         return (
-          <div className="mt-4">
+          <div className="mt-4" key={status}>
             <div>{status} - {statusData.length}</div>
             <DataTable columns={columns} data={statusData} />
           </div>
