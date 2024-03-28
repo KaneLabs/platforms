@@ -2683,7 +2683,7 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
-export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number | null, formResponseId: string | undefined) => {
+export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {

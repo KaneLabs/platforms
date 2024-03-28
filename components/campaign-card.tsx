@@ -21,12 +21,10 @@ const getPlaceholderImage = (campaign: Campaign) => {
 export default function CampaignCard({
   campaign,
   name,
-  threshold,
   organization,
 }: {
   campaign: Campaign;
   name: string;
-  threshold: bigint;
   organization: Organization;
 }) {
   const campaignImage = getPlaceholderImage(campaign);

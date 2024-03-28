@@ -21,7 +21,7 @@ export default function CampaignContributeSection({
     <div className={`flex flex-col ${className}`}>
       <div>
         <div className="text-2xl">
-          {campaign.thresholdWei.toString()} {campaign.currency}
+          {campaign.threshold} {campaign.currency}
         </div>
         <div>Goal</div>
       </div>

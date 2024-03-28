@@ -20,7 +20,6 @@ export default function Campaigns({
               key={campaign.id}
               campaign={campaign}
               name={campaign.name}
-              threshold={campaign.thresholdWei}
               organization={organization}
             />
           ))}
