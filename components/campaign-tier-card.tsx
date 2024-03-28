@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CampaignTier, CurrencyType } from "@prisma/client";
-import { Edit } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { getCurrencySymbol } from '@/lib/utils';
 
-export default function CampaignTierCard({ tier, currency, onClickEdit, isSelected, onClickSelect }:
-  { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void, isSelected?: boolean, onClickSelect?: (tierId: string) => void }) {
+export default function CampaignTierCard({ tier, currency, onClickEdit, onClickDelete, isSelected, onClickSelect }:
+  { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void, onClickDelete?: () => void, isSelected?: boolean, onClickSelect?: (tierId: string) => void }) {
 
   return (
     <div
@@ -38,6 +38,16 @@ export default function CampaignTierCard({ tier, currency, onClickEdit, isSelect
               onClick={(e) => {
                 e.stopPropagation();
                 onClickEdit();
+              }} 
+              width={18} 
+            />
+          }
+          {onClickDelete && 
+            <Trash2 
+              className="cursor-pointer ml-2" 
+              onClick={(e) => {
+                e.stopPropagation();
+                onClickDelete();
               }} 
               width={18} 
             />

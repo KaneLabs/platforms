@@ -2577,21 +2577,33 @@ export const upsertCampaignTiers = withOrganizationAuth(
       throw new Error(result.error.message);
     }
 
-    const txs = result.data.tiers.map((tier) => {
-      return prisma.campaignTier.upsert({
-        where: {
-          id: tier.id ?? "THIS_TEXT_JUST_TRIGGERS_A_NEW_ID_TO_BE_GENERATED",
+    const deleteTx = prisma.campaignTier.deleteMany({
+      where: {
+        campaignId: data.campaign.id,
+        id: {
+          notIn: result.data.tiers.map(({ id }) => id).filter(id => !!id) as string[],
         },
-        create: {
-          ...tier,
-          campaignId: data.campaign.id,
-        },
-        update: {
-          ...tier,
-          campaignId: data.campaign.id,
-        },
-      });
+      },
     });
+
+    const txs = [
+      deleteTx,
+      ...result.data.tiers.map((tier) => {
+        return prisma.campaignTier.upsert({
+          where: {
+            id: tier.id ?? "THIS_TEXT_JUST_TRIGGERS_A_NEW_ID_TO_BE_GENERATED",
+          },
+          create: {
+            ...tier,
+            campaignId: data.campaign.id,
+          },
+          update: {
+            ...tier,
+            campaignId: data.campaign.id,
+          },
+        });
+      })
+    ];
 
     const tiers = await prisma.$transaction(txs);
 

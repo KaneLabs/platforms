@@ -135,11 +135,17 @@ export default function CampaignEditor({
     }
   }, [campaign]);
 
+  const deleteTier = (index: number) => {
+    const updatedTiers = [...campaignTiers];
+    updatedTiers.splice(index, 1);
+    setCampaignTiers(updatedTiers);
+  };
+
   const addNewTier = () => {
     const newNumTiers = campaignTiers.length + 1;
     setCampaignTiers([
       ...campaignTiers,
-      { name: "", description: "", quantity: null, price: 0, formId: null },
+      { name: "", description: "", price: null, formId: null },
     ]);
     startEditTier(newNumTiers - 1);
   };
@@ -302,6 +308,7 @@ export default function CampaignEditor({
                         tier={tier as CampaignTier}
                         currency={editedCampaign.currency as CurrencyType}
                         onClickEdit={() => startEditTier(index)}
+                        onClickDelete={() => deleteTier(index)}
                       />
                     </div>
                   ),
