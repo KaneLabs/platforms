@@ -161,7 +161,7 @@ model Event {
   parentId       String?
   parent         Event?       @relation("EventToEvent", fields: [parentId], references: [id])
   children       Event[]      @relation("EventToEvent")
-  eventPlaces EventPlace[]
+  eventPlaces    EventPlace[]
 }
 
 model EventPlace {
@@ -282,16 +282,17 @@ model TicketTier {
 }
 
 model CampaignTier {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  quantity    Int?
-  price       Int?
-  currency    String?
-  campaignId  String
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-  Form        Form?    @relation(fields: [formId], references: [id])
-  formId      String?
+  id                   String                @id @default(cuid())
+  name                 String
+  description          String?
+  quantity             Int?
+  price                Int?
+  currency             String?
+  campaignId           String
+  campaign             Campaign              @relation(fields: [campaignId], references: [id])
+  Form                 Form?                 @relation(fields: [formId], references: [id])
+  formId               String?
+  campaignApplications CampaignApplication[]
 }
 
 model Form {
@@ -355,16 +356,15 @@ model Answer {
 }
 
 model FormResponse {
-  id        String   @id @default(cuid())
-  userId    String
-  formId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  form      Form     @relation(fields: [formId], references: [id])
-  answers   Answer[]
-
-  @@unique([userId, formId])
+  id                   String               @id @default(cuid())
+  userId               String
+  formId               String
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  user                 User                 @relation(fields: [userId], references: [id])
+  form                 Form                 @relation(fields: [formId], references: [id])
+  answers              Answer[]
+  campaignApplications CampaignApplication?
 }
 
 model Place {
@@ -388,8 +388,7 @@ model Place {
   user              User?               @relation(fields: [userId], references: [id])
   media             Media[]
   accommodationUnit AccommodationUnit[]
-  eventPlaces EventPlace[]
-
+  eventPlaces       EventPlace[]
 }
 
 model Media {
@@ -480,11 +479,11 @@ enum CurrencyType {
 }
 
 model CampaignMedia {
-  id                  String                 @id @default(cuid())
-  uri                 String                 
-  blurhash            String?                @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC") @db.Text
-  campaignId          String?
-  campaign            Campaign?              @relation(fields: [campaignId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id         String    @id @default(cuid())
+  uri        String
+  blurhash   String?   @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC") @db.Text
+  campaignId String?
+  campaign   Campaign? @relation(fields: [campaignId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Campaign {
@@ -514,11 +513,13 @@ model Campaign {
 }
 
 model CampaignContribution {
-  id               String    @id @default(cuid())
-  senderEthAddress String
-  user             User?     @relation(fields: [senderEthAddress], references: [eth_address])
-  Campaign         Campaign? @relation(fields: [campaignId], references: [id])
-  campaignId       String?
+  id          String               @id @default(cuid())
+  amount      Int?
+  userId      String
+  user        User?                @relation(fields: [userId], references: [id])
+  campaign    Campaign?            @relation(fields: [campaignId], references: [id])
+  campaignId  String?
+  application CampaignApplication?
 }
 
 model Invite {
@@ -544,14 +545,20 @@ enum InviteStatus {
 }
 
 model CampaignApplication {
-  id         String            @id @default(cuid())
-  user       User              @relation(fields: [userId], references: [id])
-  campaign   Campaign          @relation(fields: [campaignId], references: [id])
-  status     ApplicationStatus @default(PENDING)
-  createdAt  DateTime          @default(now())
-  acceptedAt DateTime?
-  userId     String
-  campaignId String
+  id             String                @id @default(cuid())
+  user           User                  @relation(fields: [userId], references: [id])
+  campaign       Campaign              @relation(fields: [campaignId], references: [id])
+  status         ApplicationStatus     @default(PENDING)
+  createdAt      DateTime              @default(now())
+  acceptedAt     DateTime?
+  userId         String
+  campaignId     String
+  formResponseId String?               @unique
+  formResponse   FormResponse?         @relation(fields: [formResponseId], references: [id])
+  contributionId String?               @unique
+  contribution   CampaignContribution? @relation(fields: [contributionId], references: [id])
+  campaignTier   CampaignTier?         @relation(fields: [campaignTierId], references: [id])
+  campaignTierId String?
 }
 
 enum ApplicationStatus {

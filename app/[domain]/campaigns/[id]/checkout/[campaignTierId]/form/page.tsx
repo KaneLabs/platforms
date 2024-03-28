@@ -1,12 +1,11 @@
-import PaperDoc from "@/components/paper-doc";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
-import FormTitle from "@/components/form-title";
-import DynamicForm from "./dynamic-form";
+import { notFound } from "next/navigation";
 import AuthModalCoverProvider from "@/components/auth-modal-cover-provider";
+import CampaignPublicForm from "@/components/campaign-public-form";
+import { CampaignTierWithData } from "@/components/campaign-public-form";
 
-export default async function CheckoutForm({
+export default async function CheckoutFormPage({
   params,
 }: {
   params: { domain: string; campaignTierId: string };
@@ -35,16 +34,9 @@ export default async function CheckoutForm({
 
   return (
     <AuthModalCoverProvider show={!session}>
-      <div className="flex flex-col space-y-6">
-        <div className="flex flex-col space-y-6">
-          <PaperDoc className="mx-auto">
-            <FormTitle>{campaignTier.name}</FormTitle>
-            {session && campaignTier.Form && (
-              <DynamicForm form={campaignTier.Form} onSubmitRoute={`/campaigns/${campaignTier.campaign.id}/checkout/${campaignTier.id}/fund`} />
-            )}
-          </PaperDoc>
-        </div>
-      </div>
+      <CampaignPublicForm 
+        campaignTier={campaignTier as CampaignTierWithData}
+      />
     </AuthModalCoverProvider>
   );
 }

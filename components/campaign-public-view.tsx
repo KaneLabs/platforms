@@ -3,7 +3,7 @@
 import useEthereum from "@/hooks/useEthereum";
 import { Campaign, CampaignTier } from "@prisma/client";
 import { useState, useEffect } from 'react';
-import { getCampaign, createCampaignApplication, CampaignWithData } from "@/lib/actions";
+import { getCampaign, CampaignWithData } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
 import CampaignContributeSection from "@/components/campaign-contribute-section";
 import CampaignTierCard from "@/components/campaign-tier-card";

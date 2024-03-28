@@ -1,30 +1,32 @@
 "use client";
+
 import {
   Answer,
   ApplicationStatus,
   Campaign,
+  CampaignApplication,
+  CampaignContribution,
+  CampaignTier,
+  CurrencyType,
   Form,
   FormResponse,
   Question,
   User,
 } from "@prisma/client";
 import DataTable from "./data-table";
-import { Row } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { formatAnswer } from "./utils";
-import { getUserCampaignApplication } from "@/lib/actions";
 import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
 import { useRouter } from "next/navigation";
 
 
-export default function CampaignResponseDataTable({
+export default function CampaignApplicationsDataTable({
   campaign,
-  formResponses,
-  questions,
+  applications,
 }: {
-  campaign: Campaign;
-  questions: (Question & { form: Form })[];
-  formResponses: (FormResponse & { answers: Answer[]; user: User })[];
+  campaign: Campaign,
+  applications: Array<CampaignApplication & { user: User | null } & { campaignTier: CampaignTier | null } & { formResponse: FormResponse & { answers: Array<Answer & { question: Question }> } | null } & { contribution: CampaignContribution | null }>
 }) {
   const [data, setData] = useState<Row<any>[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -34,89 +36,98 @@ export default function CampaignResponseDataTable({
   const router = useRouter();
 
   useEffect(() => {
-    async function fetchCampaignApplications() {
-      const updatedFormResponses = await Promise.all(
-        formResponses.map(async (formResponse) => {
-          const campaignApplication = await getUserCampaignApplication(
-            campaign.id, formResponse.user.id);
-          if (campaignApplication) {
-            return {
-              ...formResponse,
-              status: campaignApplication!.status,
-              applicationId: campaignApplication!.id,
-            };
-          } else {
-            return null;
-          }
-        })
-      );
+    async function formatCampaignApplicationRows() {
+      const formattedData = applications.map((application) => {
+        const contribution = application.contribution?.amount && application.contribution?.amount > 0 
+          ? campaign.currency === CurrencyType.ETH ? "♦" : "$" + application.contribution?.amount + " " + campaign.currency 
+          : "";
+        const row: { [key: string]: any } = {
+          id: application.id,
+          applicant: application.user?.email,
+          tier: application.campaignTier?.name,
+          contribution,
+          status: application.status
+        };
 
-      const formattedData = updatedFormResponses.map((formResponse) => {
-        if (formResponse) {
-          const row: { [key: string]: any } = {
-            id: formResponse.id,
-            user: formResponse.user.name,
-            status: formResponse.status,
-            applicationId: formResponse.applicationId,
-          };
-
-          formResponse.answers.forEach((answer: Answer) => {
+        if (application.formResponse) {
+          application.formResponse.answers.forEach((answer: Answer) => {
             row[answer.questionId] = answer;
           });
-
-          return row as Row<any>;
-        } else {
-          return null;
         }
+
+        return row as Row<any>;
       });
 
       const nonNullFormattedData = formattedData.filter(row => row !== null) as Row<any>[];
       setData(nonNullFormattedData);      
     }
 
-    fetchCampaignApplications();
-    setQuestionsData(questions);
-  }, [formResponses]);
+    formatCampaignApplicationRows();
+  }, [applications, campaign]);
 
   const handleRowClick = (row: Row<any>) => {
     setSelectedRow(row);
-    setModalOpen(true);
+    // setModalOpen(true);
   };
 
-  const columns = questions
-    .sort((a, b) => a.order - b.order)
-    .map((question) => ({
-      header: question.text,
-      accessorKey: question.id, // Use question id to create unique accessor
-      cell: ({ row }: { row: Row<any> }) => {
-        const answer = row.getValue(question.id) as Answer;
-        return (
-          <div
-            className="flex flex-wrap space-x-1 truncate max-w-[220px] cursor-pointer"
-            onClick={() => handleRowClick(row)}
-          >
-            {formatAnswer(question, answer)}
-          </div>
-        );
-      },
-    }));
-
-  columns.push({
-    header: "Status",
-    accessorKey: "status",
+  const columns: ColumnDef<any, any>[] = [{
+    header: "Applicant",
+    accessorKey: "applicant",
     cell: ({ row }: { row: Row<any> }) => {
-      const answer = row.getValue("status") as ApplicationStatus;
       return (
         <div className="flex flex-wrap space-x-1">
-          {answer}
+          {row.original.applicant}
         </div>
       );
     },
-  })
+  }, {
+    header: "Tier",
+    accessorKey: "tier",
+    cell: ({ row }: { row: Row<any> }) => {
+      return (
+        <div className="flex flex-wrap space-x-1">
+          {row.original.tier}
+        </div>
+      );
+    },
+  }, {
+    header: "Contribution",
+    accessorKey: "contribution",
+    cell: ({ row }: { row: Row<any> }) => {
+      return (
+        <div className="flex flex-wrap space-x-1">
+          {row.original.contribution}
+        </div>
+      );
+    },
+  }, {
+    header: "Status",
+    accessorKey: "status",
+    cell: ({ row }: { row: Row<any> }) => {
+      return (
+        <div className="flex flex-wrap space-x-1">
+          {row.original.status}
+        </div>
+      );
+    },
+  }];
 
   return (
     <div className="mt-6">
-      <DataTable columns={columns} data={data} />
+      {Object.keys(ApplicationStatus).map(status => {
+        const statusData = data.filter((d: any) => d.status === status);
+
+        if (statusData.length === 0) {
+          return null; 
+        }
+
+        return (
+          <div className="mt-4" key={status}>
+            <div>{status} - {statusData.length}</div>
+            <DataTable columns={columns} data={statusData} />
+          </div>
+        );
+      })}
       <ResponseModal
         isOpen={isModalOpen}
         onClose={() => {setModalOpen(false); router.refresh()}}

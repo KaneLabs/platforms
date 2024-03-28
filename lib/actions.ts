@@ -1822,15 +1822,8 @@ export const submitFormResponse = async (
   // const entries = formData.entries();
 
   try {
-    const formResponse = await prisma.formResponse.upsert({
-      where: {
-        userId_formId: {
-          userId: session.user.id,
-          formId,
-        },
-      },
-      update: {},
-      create: {
+    const formResponse = await prisma.formResponse.create({
+      data: {
         userId: session.user.id,
         formId,
       },
@@ -1861,6 +1854,51 @@ export const submitFormResponse = async (
             ...answer,
             answersId: formResponse.id,
           },
+        }),
+      ),
+    ]);
+    return { ...formResponse, questions };
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};
+
+export const createFormResponse = async (
+  formId: string,
+  answers: { questionId: string; value: any }[],
+) => {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+
+  try {
+    // Create the FormResponse
+    const formResponse = await prisma.formResponse.create({
+      data: {
+        userId: session.user.id,
+        formId,
+      },
+      include: {
+        answers: {
+          include: {},
+        },
+      }
+    });
+
+    // Start a transaction to ensure all database operations succeed or fail together
+    const questions = await prisma.$transaction([
+      // Create the Answers
+      ...answers.map((answer) =>
+        prisma.answer.create({
+          data: {
+            ...answer,
+            answersId: formResponse.id,
+          }
         }),
       ),
     ]);
@@ -2605,6 +2643,32 @@ export const getFormQuestions = async (formId: string) => {
   return questions;
 };
 
+export const getCampaignApplications = async (
+  campaignId: string,
+) => {
+  const campaignApplications = await prisma.campaignApplication.findMany({
+    where: {
+      campaignId: campaignId,
+    },
+    include: {
+      user: true,
+      contribution: true,
+      campaignTier: true,
+      formResponse: {
+        include: {
+          answers: {
+            include: {
+              question: true
+            }
+          },
+        },
+      }
+    }
+  });
+
+  return campaignApplications;
+};
+
 export const getUserCampaignApplication = async (
   campaignId: string,
   userId: string,
@@ -2619,7 +2683,7 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
-export const createCampaignApplication = async (campaignId: string) => {
+export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number | null, formResponseId: string | undefined) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {
@@ -2627,10 +2691,22 @@ export const createCampaignApplication = async (campaignId: string) => {
     };
   }
 
-  const campaignApplication = await prisma.campaignApplication.create({
+
+  const campaignContribution = await prisma.campaignContribution.create({
     data: {
       campaignId: campaignId,
       userId: session.user.id,
+      amount: contributionAmount
+    }
+  });
+
+  const campaignApplication = await prisma.campaignApplication.create({
+    data: {
+      campaignId,
+      formResponseId,
+      userId: session.user.id,
+      contributionId: campaignContribution.id,
+      campaignTierId: campaignTierId
     },
   });
 

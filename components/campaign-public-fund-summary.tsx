@@ -2,32 +2,37 @@
 
 import CampaignTierCard from "@/components/campaign-tier-card";
 import { formatAnswer } from "@/components/form-response-table/utils";
-import { Button } from "@/components/ui/button";
 import CampaignFundButton from "@/components/campaign-fund-button";
 import { createCampaignApplication } from "@/lib/actions";
 import { Answer, Campaign, CampaignTier, Form, FormResponse, Question } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
-export type CampaignTierWithData = CampaignTier & { campaign: Campaign } & { Form: Form & { formResponse: Array<FormResponse & { answers: Array<Answer & { question: Question }> }> }};
+export type CampaignTierWithData = CampaignTier & { campaign: Campaign } & { Form: Form & { formResponse?: Array<FormResponse & { answers: Array<Answer & { question: Question }> }> }};
 
-export default async function CheckoutSummary({
+export default function CampaignPublicCheckoutSummary({
   campaignTier,
 }: {
   campaignTier: CampaignTierWithData
 }) {
-  let formattedFormAnswers = campaignTier.Form?.formResponse[0].answers.map(
+  const router = useRouter();
+  const formResponse = campaignTier.Form?.formResponse?.[0];
+  const amount = Number(campaignTier.price);
+
+  const formattedFormAnswers = formResponse && formResponse.answers.map(
     (value) => {
       const question = value.question;
 
       return (
         <div key={value.id}>
           <h2 className="text-xl">{question.text}</h2>
+          <h2 className="text-xl">{question.description}</h2>
           <p className="text-sm">
             {formatAnswer(question!, value)}
           </p>
         </div>
       );
     },
-  );
+  ); 
 
   return (
     <div className="flex flex-col min-h-full max-w-lg space-y-4 mx-6 my-6">
@@ -46,10 +51,10 @@ export default async function CheckoutSummary({
       </div>
       <div className="self-end ">
         <CampaignFundButton 
-          campaign={campaignTier.campaign}
-          amount={campaignTier.price as number}
-          onComplete={() => {
-            createCampaignApplication(campaignTier.campaign.id);
+          amount={amount}
+          onComplete={async () => {
+            await createCampaignApplication(campaignTier.campaign.id, campaignTier.id, amount, formResponse?.id);
+            router.push(`/campaigns/${campaignTier.campaign.id}`);
           }}
         />
       </div>
