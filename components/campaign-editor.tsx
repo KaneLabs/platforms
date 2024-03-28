@@ -28,12 +28,11 @@ import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { useRouter } from "next/navigation";
 import CampaignTierEditor from "@/components/campaign-tier-editor";
 import CampaignTierCard from "@/components/campaign-tier-card";
-import { ETH_PRICE_IN_DOLLARS } from "@/lib/utils";
 import MultiUploader from "./form/uploader-multiple";
 
 interface EditedFields {
   name?: string;
-  thresholdUSD?: string;
+  threshold?: number;
   content?: string;
   requireApproval?: boolean;
   deadline?: Date;
@@ -45,7 +44,7 @@ interface EditedFields {
 interface Payload {
   id: string;
   name?: string;
-  thresholdWei?: bigint;
+  threshold?: number;
   content?: string | null;
   requireApproval?: boolean;
   deadline?: Date | null;
@@ -78,7 +77,7 @@ export default function CampaignEditor({
   const [loading, setLoading] = useState(true);
   const [editedCampaign, setEditedCampaign] = useState<EditedFields>({
     name: undefined,
-    thresholdUSD: undefined,
+    threshold: undefined,
     content: undefined,
     deadline: undefined,
     requireApproval: undefined,
@@ -126,10 +125,7 @@ export default function CampaignEditor({
     if (campaign) {
       setEditedCampaign({
         name: campaign.name,
-        thresholdUSD: (
-          parseFloat(ethers.formatEther(campaign.thresholdWei)) *
-          ETH_PRICE_IN_DOLLARS
-        ).toString(),
+        threshold: campaign.threshold ?? undefined,
         content: campaign.content ?? undefined,
         deadline: campaign.deadline ?? undefined,
         requireApproval: campaign.requireApproval,
@@ -178,6 +174,7 @@ export default function CampaignEditor({
   const handleFieldChange = (
     field: string,
     value:
+      | number
       | string
       | string[]
       | FileList
@@ -193,10 +190,8 @@ export default function CampaignEditor({
     if (campaign) {
       let payload: Payload = { id: campaignId };
       if (editedCampaign.name) payload.name = editedCampaign.name;
-      if (editedCampaign.thresholdUSD !== undefined)
-        payload.thresholdWei =
-          ethers.parseEther(editedCampaign.thresholdUSD) /
-          BigInt(ETH_PRICE_IN_DOLLARS);
+      if (editedCampaign.threshold !== undefined)
+        payload.threshold = editedCampaign.threshold;
       if (editedCampaign.content)
         payload.content = editedCampaign.content ?? null;
       if (editedCampaign.requireApproval !== undefined)
@@ -206,43 +201,46 @@ export default function CampaignEditor({
       if (editedCampaign.currency)
         payload.currency = editedCampaign.currency as CurrencyType;
 
-      try {
-        await updateCampaign(payload, { params: { subdomain } }, null);
+      await updateCampaign(payload, { params: { subdomain } }, null);
 
-        await upsertCampaignTiers(
-          { tiers: campaignTiers, campaign: campaign },
-          { params: { subdomain: subdomain as string } },
+      await upsertCampaignTiers(
+        { tiers: campaignTiers, campaign: campaign },
+        { params: { subdomain: subdomain as string } },
+        null,
+      );
+
+      if (editedCampaign.images && editedCampaign.images.length > 0) {
+        const formData = new FormData();
+        Array.from(editedCampaign.images).forEach((image: File) => {
+          formData.append("images", image);
+        });
+
+        await upsertCampaignMedias(
+          { formData, campaign },
+          { params: { subdomain } },
           null,
         );
-
-        if (editedCampaign.images && editedCampaign.images.length > 0) {
-          const formData = new FormData();
-          Array.from(editedCampaign.images).forEach((image: File) => {
-            formData.append("images", image);
-          });
-
-          await upsertCampaignMedias(
-            { formData, campaign },
-            { params: { subdomain } },
-            null,
-          );
-        }
-
-        toast.success(`Campaign updated`);
-
-        setCampaign({ ...campaign, ...payload });
-        router.refresh();
-      } catch (error: any) {
-        console.error("Error updating campaign or tiers", error);
-        toast.error(error.message);
       }
+
+      toast.success(`Campaign updated`);
+
+      setCampaign({ ...campaign, ...payload });
+      router.refresh();
     }
   };
 
   const saveChanges = () => {
-    submitChanges().then(() =>
-      router.push(`/city/${subdomain}/campaigns/${campaignId}`),
-    );
+    setLoading(true);
+    submitChanges()
+    .then(() => {
+      router.push(`/city/${subdomain}/campaigns/${campaignId}`)
+    })
+    .catch((error: any) => {
+      console.error("Error updating campaign or tiers", error);
+      toast.error(error.message);
+    }).finally(() => {
+      setLoading(false);
+    });
   };
 
   if (loading) {
@@ -339,14 +337,14 @@ export default function CampaignEditor({
                 <div className="flex space-x-4">
                   <Input
                     className="w-1/5"
-                    type="text"
-                    value={editedCampaign.thresholdUSD}
-                    id="thresholdUSD"
+                    type="number"
+                    value={editedCampaign.threshold}
+                    id="threshold"
                     placeholder="Fundraising goal"
-                    onChange={(e) =>
-                      handleFieldChange("thresholdUSD", e.target.value)
-                    }
-                    disabled={isPublic || campaign.deployed}
+                    onChange={(e) => {
+                      handleFieldChange("threshold", e.target.valueAsNumber)
+                    }}
+                    disabled={campaign.deployed}
                   />
                   <ToggleGroup.Root
                     className="inline-flex rounded-full bg-gray-200 shadow-md"
@@ -380,12 +378,9 @@ export default function CampaignEditor({
               </div>
             </div>
           </div>
-
-          {!isPublic && (
-            <Button className="float-right" onClick={saveChanges}>
-              {"Save Changes"}
-            </Button>
-          )}
+          <Button className="float-right" disabled={loading} onClick={saveChanges}>
+            {loading ? <LoadingDots color="#808080" /> : "Save Changes"}
+          </Button>
         </div>
       )}
     </div>

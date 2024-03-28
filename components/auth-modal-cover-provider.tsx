@@ -12,7 +12,7 @@ const AuthModalProvider = ({
     <>
       {children}
       {show && (
-        <div className="fixed inset-0 bottom-0 left-0 right-0 top-10 flex items-center justify-center backdrop-blur-sm">
+        <div className="fixed inset-0 bottom-0 left-0 right-0 flex items-center justify-center backdrop-blur-sm">
           <AuthModal />
         </div>
       )}

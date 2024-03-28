@@ -1,4 +1,4 @@
-import { Bed, Organization } from "@prisma/client";
+import { Bed, CurrencyType, Organization } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import _ from 'lodash';
@@ -108,7 +108,14 @@ export const getCityUrl = (org: Organization) => {
 
 export const ETH_PRICE_IN_DOLLARS = 2347;  // this is just for testing/demo, TODO query Alchemy or something
 
-
+export const getCurrencySymbol = (currency: CurrencyType | null | undefined) => {
+  const symbols = {
+    [CurrencyType.ETH]: "Ξ",
+    [CurrencyType.USDC]: "$",
+    [CurrencyType.USDT]: "$",
+  };
+  return currency && symbols[currency] ? symbols[currency] : "";
+}
 
 export const getSubdomainFromDomain = (domain: string) => domain.replace('%3A', ':').endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
 ? domain.replace('%3A', ':').replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")

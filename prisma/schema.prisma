@@ -286,7 +286,7 @@ model CampaignTier {
   name                 String
   description          String?
   quantity             Int?
-  price                Int?
+  price                Float?
   currency             String?
   campaignId           String
   campaign             Campaign              @relation(fields: [campaignId], references: [id])
@@ -490,6 +490,7 @@ model Campaign {
   id                  String                 @id @default(cuid())
   name                String
   thresholdWei        BigInt                 @default(0)
+  threshold           Float?                 
   content             String?                @db.Text
   createdAt           DateTime               @default(now())
   updatedAt           DateTime               @updatedAt
@@ -514,11 +515,11 @@ model Campaign {
 
 model CampaignContribution {
   id          String               @id @default(cuid())
-  amount      Int?
+  amount      Float                         
   userId      String
-  user        User?                @relation(fields: [userId], references: [id])
-  campaign    Campaign?            @relation(fields: [campaignId], references: [id])
-  campaignId  String?
+  user        User                 @relation(fields: [userId], references: [id])
+  campaign    Campaign             @relation(fields: [campaignId], references: [id])
+  campaignId  String
   application CampaignApplication?
 }
 

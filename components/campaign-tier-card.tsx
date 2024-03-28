@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { CampaignTier, CurrencyType } from "@prisma/client";
 import { Edit } from 'lucide-react';
+import { getCurrencySymbol } from '@/lib/utils';
 
 export default function CampaignTierCard({ tier, currency, onClickEdit, isSelected, onClickSelect }:
   { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void, isSelected?: boolean, onClickSelect?: (tierId: string) => void }) {
@@ -19,9 +20,9 @@ export default function CampaignTierCard({ tier, currency, onClickEdit, isSelect
       <div className='relative'>
         <div className="flex flex-row items-start justify-between gap-[20px] flex-wrap">
           <div className="text-2xl">{tier.name}</div>
-          {tier.price && 
+          {tier.price &&
             <div className="flex space-x-4 items-center text-2xl">
-              {tier.price} {currency}
+              {getCurrencySymbol(currency)}{tier.price} {currency}
             </div>
           }
         </div>

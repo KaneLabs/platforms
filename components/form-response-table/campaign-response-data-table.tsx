@@ -19,6 +19,7 @@ import { formatAnswer } from "./utils";
 import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
 import { useRouter } from "next/navigation";
+import { getCurrencySymbol } from "@/lib/utils";
 
 
 export default function CampaignApplicationsDataTable({
@@ -39,7 +40,7 @@ export default function CampaignApplicationsDataTable({
     async function formatCampaignApplicationRows() {
       const formattedData = applications.map((application) => {
         const contribution = application.contribution?.amount && application.contribution?.amount > 0 
-          ? campaign.currency === CurrencyType.ETH ? "♦" : "$" + application.contribution?.amount + " " + campaign.currency 
+          ? getCurrencySymbol(campaign.currency) + application.contribution?.amount + " " + campaign.currency 
           : "";
         const row: { [key: string]: any } = {
           id: application.id,

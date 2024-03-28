@@ -19,14 +19,11 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
 
   useEffect(() => {
     if (tier) {
-      if (tier.price === null) {
-        tier.price = 0;
-      }
       setEditedTier({
         name: tier.name,
         description: tier.description ?? undefined,
         quantity: tier.quantity ?? undefined,
-        price: tier.price > 0 ? tier.price : undefined,
+        price: tier.price ?? null,
         formId: tier.formId
       });
     }
@@ -51,9 +48,9 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
         <Input
           type="number"
           id="price"
-          value={editedTier.price ?? ''}
+          value={editedTier.price?.toString()}
           placeholder="Price"
-          onChange={(e) => handleFieldChange('price', e.target.value)}
+          onChange={(e) => handleFieldChange('price', e.target.valueAsNumber)}
         />
         <div>How would you describe it to your citizens?</div>
         <Textarea 

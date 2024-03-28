@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CampaignWithData } from "@/lib/actions";
+import { getCurrencySymbol } from "@/lib/utils";
 
 interface CampaignContributeSectionProps {
   campaign: CampaignWithData;
@@ -21,7 +22,7 @@ export default function CampaignContributeSection({
     <div className={`flex flex-col ${className}`}>
       <div>
         <div className="text-2xl">
-          {campaign.thresholdWei.toString()} {campaign.currency}
+          {getCurrencySymbol(campaign.currency)}{campaign.threshold} {campaign.currency}
         </div>
         <div>Goal</div>
       </div>
