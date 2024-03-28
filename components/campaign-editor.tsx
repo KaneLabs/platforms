@@ -230,6 +230,7 @@ export default function CampaignEditor({
   };
 
   const saveChanges = () => {
+    setLoading(true);
     submitChanges()
     .then(() => {
       router.push(`/city/${subdomain}/campaigns/${campaignId}`)
@@ -237,6 +238,8 @@ export default function CampaignEditor({
     .catch((error: any) => {
       console.error("Error updating campaign or tiers", error);
       toast.error(error.message);
+    }).finally(() => {
+      setLoading(false);
     });
   };
 
@@ -375,8 +378,8 @@ export default function CampaignEditor({
               </div>
             </div>
           </div>
-          <Button className="float-right" onClick={saveChanges}>
-            {"Save Changes"}
+          <Button className="float-right" disabled={loading} onClick={saveChanges}>
+            {loading ? <LoadingDots color="#808080" /> : "Save Changes"}
           </Button>
         </div>
       )}
