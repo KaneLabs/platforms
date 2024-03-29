@@ -19,7 +19,7 @@ import { formatAnswer } from "./utils";
 import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
 import { useRouter } from "next/navigation";
-import { getCurrencySymbol } from "@/lib/utils";
+import { getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
 
 
 export default function CampaignApplicationsDataTable({
@@ -107,7 +107,7 @@ export default function CampaignApplicationsDataTable({
     cell: ({ row }: { row: Row<any> }) => {
       return (
         <div className="flex flex-wrap space-x-1">
-          {row.original.status}
+          {getApplicationStatusText(row.original.status)}
         </div>
       );
     },
@@ -124,7 +124,7 @@ export default function CampaignApplicationsDataTable({
 
         return (
           <div className="mt-4" key={status}>
-            <div>{status} - {statusData.length}</div>
+            <div className="mb-2">{getApplicationStatusText(status as ApplicationStatus)} - {statusData.length}</div>
             <DataTable columns={columns} data={statusData} />
           </div>
         );
