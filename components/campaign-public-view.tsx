@@ -68,34 +68,38 @@ export default function CampaignPublicView(
       ) : !campaign || !campaign.organizationId ? (
         <div>Campaign not found</div>
       ) : (
-        <div className="flex space-x-16">
-          {/* <BannerImage /> */}
-          <div className="flex-grow 0 flex-basis 2/3">
-            <div className="space-y-4">
-              <h1 className="text-2xl font-bold mb-6">{campaign.name}</h1>
-              <div>
-                Hosted by
-                <Link href={`/`} className="font-bold">
-                  {` ${campaign.organization.name}`}
-                </Link>
+        <div className="flex flex-col">
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-bold mb-6">{campaign.name}</h1>
+            <div className="mb-4">
+              Hosted by
+              <Link href={`/`} className="font-bold">
+                {` ${campaign.organization.name}`}
+              </Link>
+            </div>
+            <div className="mb-6 flex flex-col space-y-4">
+              <div className="flex space-x-8">
+                <BannerImage src={campaign.medias[0]?.uri} />
               </div>
-              <div className="mb-6 flex flex-col space-y-4">
-                <div className="flex space-x-8">
-                </div>
-              </div>
+            </div>
+          </div>
+          <div className="flex space-x-16">
+            <div className="flex flex-col grow space-y-4">
               <p>{campaign.content}</p>
               <div className="flex flex-wrap gap-2">
                 {campaign.medias 
-                  ? campaign.medias.map(m => {
-                    return (
-                      <div className="flex flex-wrap rounded-md" key={m.id}>
-                          <img
-                            src={m.uri}
-                            alt="Preview"
-                            className="h-[96px] w-[200px] rounded-md object-cover object-center"
-                          />
-                      </div>
-                    )
+                  ? campaign.medias.map((m, i) => {
+                      if (i > 0) {
+                        return (
+                          <div className="flex flex-wrap rounded-md" key={m.id}>
+                            <img
+                              src={m.uri}
+                              alt="Preview"
+                              className="h-[96px] w-[200px] rounded-md object-cover object-center"
+                              />
+                          </div>
+                        )
+                      }
                     })
                   : null
                 }
@@ -113,12 +117,12 @@ export default function CampaignPublicView(
                 </div>
               }
             </div>
-          </div>
-          <div className="flex-grow 0 flex-basis 1/3">
-            <CampaignContributeSection
-              campaign={campaign}
-              className={"p-4 border border-gray-500 rounded-md min-w-52"}
-            />
+            <div className="flex flex-none">
+              <CampaignContributeSection
+                campaign={campaign}
+                className={"p-4 border border-gray-500 rounded-md min-w-52"}
+              />
+            </div>
           </div>
         </div>
       )}
