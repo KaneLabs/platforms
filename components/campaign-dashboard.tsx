@@ -120,7 +120,7 @@ export default function CampaignDashboard({
                 <Button
                   onClick={() =>
                     router.push(
-                      `/city/${subdomain}/campaigns/${campaignId}/settings`,
+                      `/city/${subdomain}/campaigns/${campaignId}/settings/basic`,
                     )
                   }
                 >
