@@ -2696,6 +2696,7 @@ export const getUserCampaignApplication = async (
 };
 
 export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined) => {
+  console.log(typeof window === 'undefined');
   const session = await getSession();
   if (!session?.user.id) {
     return {
@@ -2703,26 +2704,36 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
     };
   }
 
+  const result = await prisma.$transaction(async (tx) => {
+    const campaign = await tx.campaign.findFirst({
+      where: {
+        id: campaignId
+      }
+    });
 
-  const campaignContribution = await prisma.campaignContribution.create({
-    data: {
-      campaignId: campaignId,
-      userId: session.user.id,
-      amount: contributionAmount
-    }
+    const campaignContribution = await tx.campaignContribution.create({
+      data: {
+        campaignId: campaignId,
+        userId: session.user.id,
+        amount: contributionAmount
+      }
+    });
+
+    const campaignApplication = await tx.campaignApplication.create({
+      data: {
+        campaignId,
+        formResponseId,
+        userId: session.user.id,
+        contributionId: campaignContribution.id,
+        campaignTierId: campaignTierId,
+        status: campaign?.requireApproval ? ApplicationStatus.PENDING : ApplicationStatus.NOT_SUBMITTED 
+      },
+    });
+
+    return campaignApplication;
   });
 
-  const campaignApplication = await prisma.campaignApplication.create({
-    data: {
-      campaignId,
-      formResponseId,
-      userId: session.user.id,
-      contributionId: campaignContribution.id,
-      campaignTierId: campaignTierId
-    },
-  });
-
-  return campaignApplication;
+  return result;
 };
 
 export const respondToCampaignApplication = async (
