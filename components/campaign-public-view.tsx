@@ -70,12 +70,19 @@ export default function CampaignPublicView(
       ) : (
         <div className="flex flex-col">
           <div className="flex flex-col">
-            <h1 className="text-2xl font-bold mb-6">{campaign.name}</h1>
-            <div className="mb-4">
-              Hosted by
-              <Link href={`/`} className="font-bold">
-                {` ${campaign.organization.name}`}
-              </Link>
+            <h1 className="font-serif text-4xl mb-4">{campaign.name}</h1>
+            <div className="flex items-center mb-4">
+              {campaign.organization.image && campaign.organization.name && <img
+                className="w-12 h-12 rounded-full mr-4"
+                src={campaign.organization.image}
+                alt={campaign.organization.name}
+              />}
+              <p className="text-lg italic">
+                Hosted by
+                <Link href={`/`} className="font-medium">
+                  {` ${campaign.organization.name}`}
+                </Link>
+              </p>
             </div>
             <div className="mb-6 flex flex-col space-y-4">
               <div className="flex space-x-8">
@@ -84,8 +91,8 @@ export default function CampaignPublicView(
             </div>
           </div>
           <div className="flex space-x-16">
-            <div className="flex flex-col grow space-y-4">
-              <p>{campaign.content}</p>
+            <div className="flex flex-col grow space-y-6">
+              <p className="italic">{campaign.content}</p>
               <div className="flex flex-wrap gap-2">
                 {campaign.medias 
                   ? campaign.medias.map((m, i) => {
@@ -106,7 +113,7 @@ export default function CampaignPublicView(
               </div>
               {campaign.campaignTiers &&
                 <div>
-                  <h2 className="text-xl">Contributor Tiers</h2>
+                  <h2 className="text-xl mt-6 font-semibold">Contributor Tiers</h2>
                   {campaign.campaignTiers.map((tier: CampaignTier, index: number) =>
                     <CampaignTierCard
                       key={index}
@@ -120,7 +127,7 @@ export default function CampaignPublicView(
             <div className="flex flex-none">
               <CampaignContributeSection
                 campaign={campaign}
-                className={"p-4 border border-gray-500 rounded-md min-w-52"}
+                className={"p-8 border border-gray-500 rounded-xl min-w-52 max-h-44 shadow-md"}
               />
             </div>
           </div>

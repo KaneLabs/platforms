@@ -172,7 +172,7 @@ export default function CampaignDashboard({
             <div className="my-6">
               {campaign.content}
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="pt-6 flex flex-wrap gap-2">
               {campaign.medias 
                 ? campaign.medias.map(m => {
                   return (
@@ -191,7 +191,7 @@ export default function CampaignDashboard({
           </div>
           {campaign.campaignTiers && (
             <div className="mt-12">
-              <h2 className="text-xl">Campaign Tiers</h2>
+              <h2 className="text-xl font-medium">Campaign Tiers</h2>
               {campaign.campaignTiers.map(
                 (tier: CampaignTier, index: number) => (
                   <CampaignTierCard
@@ -205,7 +205,7 @@ export default function CampaignDashboard({
           )}
           {applications && applications.length > 0 && (
             <div className="mt-12">
-              <h2 className="text-xl">Applications</h2>
+              <h2 className="text-xl font-medium">Applications</h2>
               <CampaignResponseDataTable
                 campaign={campaign}
                 applications={applications}

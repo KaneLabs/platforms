@@ -58,7 +58,7 @@ export default function CampaignEditor({
   subdomain,
   isPublic,
   segment,
-  editType
+  editType,
 }: {
   campaignId: string;
   subdomain: string;
@@ -244,9 +244,13 @@ export default function CampaignEditor({
     submitChanges()
       .then(() => {
         if (segment === "basic") {
-          router.push(`/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`);
+          router.push(
+            `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
+          );
         } else if (segment === "tiers") {
-          router.push(`/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`);
+          router.push(
+            `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
+          );
         } else {
           router.push(`/city/${subdomain}/campaigns/${campaignId}`);
         }
@@ -254,7 +258,7 @@ export default function CampaignEditor({
       .catch((error: any) => {
         console.error("Error updating campaign", error);
         toast.error(error.message);
-      })
+      });
   };
 
   if (loading) {
@@ -272,72 +276,84 @@ export default function CampaignEditor({
       ) : (
         <div>
           <div>
-            <div className="mb-4 space-y-4 text-gray-800 font-medium">
+            <div className="mb-4 space-y-8 font-medium text-gray-800">
               {segment === "basic" && (
                 <>
-                  <div>What is your Campaign named?</div>
-                  <Input
-                    type="text"
-                    id="campaignName"
-                    value={editedCampaign.name}
-                    placeholder="Campaign name"
-                    onChange={(e) => handleFieldChange("name", e.target.value)}
-                    disabled={isPublic || campaign.deployed}
-                  />
-                  <div>How would you describe it?</div>
-                  <Textarea
-                    value={editedCampaign.content}
-                    id="content"
-                    onChange={(e) =>
-                      handleFieldChange("content", e.target.value)
-                    }
-                    disabled={isPublic}
-                  />
-                  <div>Please upload images for your Campaign</div>
-                  <MultiUploader
-                    values={campaignMedias.map((m) => m.uri as string)}
-                    name={"image"}
-                    aspectRatio={"aspect-square"}
-                    onChange={(files) => handleFieldChange("images", files)}
-                  />
-                  <div className="text-sm truncate rounded-md font-medium text-gray-600 transition-colors">Your first image will be used as a campaign cover image.</div>
+                  <div className="flex flex-col space-y-4">
+                    <div>What is your Campaign named?</div>
+                    <Input
+                      type="text"
+                      id="campaignName"
+                      value={editedCampaign.name}
+                      placeholder="Campaign name"
+                      onChange={(e) =>
+                        handleFieldChange("name", e.target.value)
+                      }
+                      disabled={isPublic || campaign.deployed}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>How would you describe it?</div>
+                    <Textarea
+                      value={editedCampaign.content}
+                      id="content"
+                      onChange={(e) =>
+                        handleFieldChange("content", e.target.value)
+                      }
+                      disabled={isPublic}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>Please upload images for your Campaign</div>
+                    <MultiUploader
+                      values={campaignMedias.map((m) => m.uri as string)}
+                      name={"image"}
+                      aspectRatio={"aspect-square"}
+                      onChange={(files) => handleFieldChange("images", files)}
+                    />
+                    <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
+                      Your first image will be used as a campaign cover image.
+                    </div>
+                  </div>
                 </>
               )}
               {segment === "tiers" && (
-                  <>
-                    {campaignTiers.map((tier, index) =>
-                      editingTierIndex === index ? (
-                        <CampaignTierEditor
-                          key={index}
+                <>
+                  {campaignTiers.map((tier, index) =>
+                    editingTierIndex === index ? (
+                      <CampaignTierEditor
+                        key={index}
+                        tier={tier as CampaignTier}
+                        forms={forms}
+                        onSave={(updatedTier) => {
+                          updateTier(index, updatedTier);
+                          stopEditTier();
+                        }}
+                      />
+                    ) : (
+                      <div key={index}>
+                        <CampaignTierCard
                           tier={tier as CampaignTier}
-                          forms={forms}
-                          onSave={(updatedTier) => {
-                            updateTier(index, updatedTier);
-                            stopEditTier();
-                          }}
+                          currency={editedCampaign.currency as CurrencyType}
+                          onClickEdit={() => startEditTier(index)}
+                          onClickDelete={() => deleteTier(index)}
                         />
-                      ) : (
-                        <div key={index}>
-                          <CampaignTierCard
-                            tier={tier as CampaignTier}
-                            currency={editedCampaign.currency as CurrencyType}
-                            onClickEdit={() => startEditTier(index)}
-                            onClickDelete={() => deleteTier(index)}
-                          />
-                        </div>
-                      ),
-                    )}
-                    <Button className="mt-2" onClick={addNewTier}>
-                      Add New Tier
-                    </Button>
-                  </>
+                      </div>
+                    ),
+                  )}
+                  <Button className="mt-2" onClick={addNewTier}>
+                    Add New Tier
+                  </Button>
+                </>
               )}
               {segment === "details" && (
                 <>
                   <div className="flex flex-col space-y-4">
                     <div>
                       Please set a deadline
-                      <div className="text-sm truncate rounded-md font-medium text-gray-600 transition-colors">Contributions will be closed after this date</div>
+                      <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
+                        Contributions will be closed after this date
+                      </div>
                     </div>
                     <DatePicker
                       id="deadline"
@@ -352,7 +368,10 @@ export default function CampaignEditor({
                   <div className="flex flex-col space-y-4">
                     <div>
                       Please set your contribution threshold & token
-                      <div className="text-sm truncate rounded-md font-medium text-gray-600 transition-colors">Once set, your contribution threshold is set, it cannot be decreased, only increased.</div>
+                      <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
+                        Once set, your contribution threshold is set, it cannot
+                        be decreased, only increased.
+                      </div>
                     </div>
                     <div className="flex space-x-4">
                       <Input

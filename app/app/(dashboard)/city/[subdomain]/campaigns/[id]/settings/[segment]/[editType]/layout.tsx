@@ -45,7 +45,7 @@ export default async function CampaignSettingsLayout({
   return (
     <>
       <div className="flex flex-col items-start space-y-2">
-        <h1 className="font-serif text-3xl text-gray-800 font-semibold dark:text-white">
+        <h1 className="font-serif text-3xl text-gray-800 dark:text-white">
           {params.editType === "create" ? "Create Campaign" : "Edit Campaign"} 
         </h1>
         <h4 className="truncate rounded-md bg-gray-100 py-1 font-medium text-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-400">

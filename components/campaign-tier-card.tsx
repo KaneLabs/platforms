@@ -10,7 +10,7 @@ export default function CampaignTierCard({ tier, currency, onClickEdit, onClickD
 
   return (
     <div
-      className={`flex flex-col space-y-4 my-4 rounded-lg border p-4 bg-gray-100 transition ease-in-out ${onClickSelect && isSelected ? 'border border-blue-500 bg-white' : 'border border-gray-500'} ${onClickSelect && 'cursor-pointer hover:bg-white'} `}
+      className={`flex flex-col space-y-4 my-4 rounded-lg border py-6 px-8 bg-gray-100 transition ease-in-out ${onClickSelect && isSelected ? 'border border-blue-500 bg-white' : 'border border-gray-500'} ${onClickSelect && 'cursor-pointer hover:bg-white'} `}
       onClick={() => {
         if (onClickSelect) {
           onClickSelect(tier.id);
@@ -19,9 +19,9 @@ export default function CampaignTierCard({ tier, currency, onClickEdit, onClickD
     >
       <div className='relative'>
         <div className="flex flex-row items-start justify-between gap-[20px] flex-wrap">
-          <div className="text-2xl">{tier.name}</div>
+          <div className="text-2xl font-semibold">{tier.name}</div>
           {tier.price &&
-            <div className="flex space-x-4 items-center text-2xl">
+            <div className="flex space-x-4 items-center text-2xl font-semibold">
               {getCurrencySymbol(currency)}{tier.price} {currency}
             </div>
           }
