@@ -22,12 +22,9 @@ export default function CampaignPublicForm({
   return (
     <div className="flex flex-col space-y-6">
       <div className="flex flex-col space-y-6">
-        <PaperDoc className="mx-auto">
-          <FormTitle>{campaignTier.name}</FormTitle>
-          {campaignTier.Form && (
-            <DynamicForm form={campaignTier.Form} onSubmitCallback={onSubmit} />
-          )}
-        </PaperDoc>
+        {campaignTier.Form && (
+          <DynamicForm form={campaignTier.Form} onSubmitCallback={onSubmit} />
+        )}
       </div>
     </div>
   );

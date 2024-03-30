@@ -27,7 +27,7 @@ export default function CampaignFundButton({
   };
 
   return (
-    <div className={"mt-4 flex flex-col space-y-4"}>
+    <div className={"flex flex-col space-y-4"}>
       <Button
         onClick={handleContribution}
         disabled={!isValidAmount()}

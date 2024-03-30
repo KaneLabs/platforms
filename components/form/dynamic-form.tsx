@@ -121,11 +121,10 @@ export function DynamicForm(props: {
       return;
     }
     if ("id" in response) {
-      toast.success("Successfully submitted response to " + props.form.name);
-      
       if (props.onSubmitCallback) {
         props.onSubmitCallback(response);
       } else {
+        toast.success("Successfully submitted response to " + props.form.name);
         router.refresh();
       }
     }

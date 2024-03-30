@@ -70,7 +70,7 @@ export default function CampaignPublicView(
       ) : (
         <div className="flex flex-col">
           <div className="flex flex-col">
-            <h1 className="font-serif text-4xl mb-4">{campaign.name}</h1>
+            <h1 className="font-serif text-4xl mb-4 font-semibold">{campaign.name}</h1>
             <div className="flex items-center mb-4">
               {campaign.organization.image && campaign.organization.name && <img
                 className="w-12 h-12 rounded-full mr-4"

@@ -35,11 +35,11 @@ export default function CampaignPublicCheckoutSummary({
   ); 
 
   return (
-    <div className="flex flex-col min-h-full max-w-lg space-y-4 mx-6 my-6">
-      <div>Here’s a summary of your application</div>
-      <div className="w-full transform overflow-hidden rounded-2xl bg-gray-500 p-6 text-left align-middle shadow-xl transition-all">
-        <div className="mt-2 flex flex-col space-y-6">
-          {formattedFormAnswers}
+    <div className="flex flex-col min-h-full max-w-lg space-y-4 my-6">
+      <div>Here's a summary of your application</div>
+      <div className="w-full transform overflow-hidden rounded-2xl border border-gray-500 py-8 px-8 text-left align-middle shadow-xl transition-all">
+        <div className="flex flex-col space-y-6">
+          {formattedFormAnswers || "Tier"}
         </div>
         <CampaignTierCard
           tier={campaignTier}
