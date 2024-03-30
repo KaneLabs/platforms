@@ -34,7 +34,7 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
   };
 
   return (
-    <div className="mb-4 p-4 border rounded-lg">
+    <div className="mb-4 px-8 py-6 border rounded-lg">
       <div className="space-y-4">
         <div>Please name your Contributor Tier</div>
         <Input
