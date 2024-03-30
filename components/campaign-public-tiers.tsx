@@ -72,6 +72,7 @@ export default function CampaignPublicTiers({
           <div className="self-end">
             <Button
               onClick={() => {
+                setLoading(true);
                 if (selectedTier?.formId) {
                   router.push(`${selectedTier?.id}/form/`)
                 } else {

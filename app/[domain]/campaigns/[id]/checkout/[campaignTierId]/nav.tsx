@@ -13,16 +13,19 @@ export default function CampaignCheckoutNav() {
       name: "Select Tier",
       href: `/campaigns/${id}/checkout/tiers/`,
       segment: "tiers",
+      disabled: false
     },
     {
       name: "Questions",
       href: `/campaigns/${id}/checkout/${campaignTierId}/form`,
       segment: "form",
+      disabled: true
     },
     {
       name: "Summary",
       href: `/campaigns/${id}/checkout/${campaignTierId}/fund`,
       segment: "fund",
+      disabled: true
     },
   ];
 
@@ -36,6 +39,9 @@ export default function CampaignCheckoutNav() {
           // Change style depending on whether the link is active
           className={cn(
             "rounded-md px-2 py-1 text-lg font-medium transition-colors active:bg-gray-200 dark:active:bg-gray-600",
+            item.disabled 
+              ? "pointer-events-none cursor-not-allowed"
+              : "",
             segment === item.segment
               ? "text-gray-800 dark:bg-gray-800 dark:text-gray-400"
               : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800",
