@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CampaignTier, CurrencyType } from "@prisma/client";
-import { Edit } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { getCurrencySymbol } from '@/lib/utils';
 
-export default function CampaignTierCard({ tier, currency, onClickEdit, isSelected, onClickSelect }:
-  { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void, isSelected?: boolean, onClickSelect?: (tierId: string) => void }) {
+export default function CampaignTierCard({ tier, currency, onClickEdit, onClickDelete, isSelected, onClickSelect }:
+  { tier: CampaignTier, currency?: CurrencyType | null, onClickEdit?: () => void, onClickDelete?: () => void, isSelected?: boolean, onClickSelect?: (tierId: string) => void }) {
 
   return (
     <div
-      className={`flex flex-col space-y-4 my-4 rounded-lg border p-4 bg-gray-100 transition ease-in-out ${onClickSelect && isSelected ? 'border border-blue-500 bg-white' : 'border border-gray-500'} ${onClickSelect && 'cursor-pointer hover:bg-white'} `}
+      className={`flex flex-col space-y-4 my-4 rounded-lg border py-6 px-8 bg-gray-100 transition ease-in-out ${onClickSelect && isSelected ? 'border border-blue-500 bg-white' : 'border border-gray-500'} ${onClickSelect && 'cursor-pointer hover:bg-white'} `}
       onClick={() => {
         if (onClickSelect) {
           onClickSelect(tier.id);
@@ -19,9 +19,9 @@ export default function CampaignTierCard({ tier, currency, onClickEdit, isSelect
     >
       <div className='relative'>
         <div className="flex flex-row items-start justify-between gap-[20px] flex-wrap">
-          <div className="text-2xl">{tier.name}</div>
+          <div className="text-2xl font-semibold">{tier.name}</div>
           {tier.price &&
-            <div className="flex space-x-4 items-center text-2xl">
+            <div className="flex space-x-4 items-center text-2xl font-semibold">
               {getCurrencySymbol(currency)}{tier.price} {currency}
             </div>
           }
@@ -38,6 +38,16 @@ export default function CampaignTierCard({ tier, currency, onClickEdit, isSelect
               onClick={(e) => {
                 e.stopPropagation();
                 onClickEdit();
+              }} 
+              width={18} 
+            />
+          }
+          {onClickDelete && 
+            <Trash2 
+              className="cursor-pointer ml-2" 
+              onClick={(e) => {
+                e.stopPropagation();
+                onClickDelete();
               }} 
               width={18} 
             />

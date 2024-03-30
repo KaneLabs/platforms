@@ -1,14 +1,13 @@
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
-import notFound from "../../../not-found";
+import notFound from "../../../../../not-found";
 import CampaignEditor from "@/components/campaign-editor";
-
 
 export default async function CampaignPage({
   params,
 }: {
-  params: { path: string; subdomain: string; id: string };
+  params: { path: string; subdomain: string; id: string, segment: string, editType: string };
 }) {
   const session = await getSession();
   if (!session) {
@@ -33,5 +32,7 @@ export default async function CampaignPage({
     campaignId={params.id}
     subdomain={params.subdomain}
     isPublic={false}
+    segment={params.segment}
+    editType={params.editType}
   />
 }

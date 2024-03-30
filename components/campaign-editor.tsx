@@ -57,10 +57,14 @@ export default function CampaignEditor({
   campaignId,
   subdomain,
   isPublic,
+  segment,
+  editType,
 }: {
   campaignId: string;
   subdomain: string;
   isPublic: boolean;
+  segment: string;
+  editType: string;
 }) {
   const { getContributionTotal, getContractBalance } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(0);
@@ -96,6 +100,10 @@ export default function CampaignEditor({
           setCampaignTiers(result.campaignTiers);
           setCampaignMedias(result.medias || []);
           getOrganizationForms(result.organizationId).then(setForms);
+
+          if (segment === "tiers" && result.campaignTiers.length === 0) {
+            addNewTier();
+          }
         }
       })
       .then(() => setLoading(false));
@@ -135,11 +143,17 @@ export default function CampaignEditor({
     }
   }, [campaign]);
 
+  const deleteTier = (index: number) => {
+    const updatedTiers = [...campaignTiers];
+    updatedTiers.splice(index, 1);
+    setCampaignTiers(updatedTiers);
+  };
+
   const addNewTier = () => {
     const newNumTiers = campaignTiers.length + 1;
     setCampaignTiers([
       ...campaignTiers,
-      { name: "", description: "", quantity: null, price: 0, formId: null },
+      { name: "", description: "", price: null, formId: null },
     ]);
     startEditTier(newNumTiers - 1);
   };
@@ -152,7 +166,8 @@ export default function CampaignEditor({
       switch (key) {
         case "quantity":
         case "price":
-          newTier[key] = value === "" || value == undefined ? null : Number(value);
+          newTier[key] =
+            value === "" || value == undefined ? null : Number(value);
           break;
         default:
           newTier[key as keyof CampaignTier] = value || null;
@@ -221,26 +236,29 @@ export default function CampaignEditor({
           null,
         );
       }
-
-      toast.success(`Campaign updated`);
-
-      setCampaign({ ...campaign, ...payload });
-      router.refresh();
     }
   };
 
   const saveChanges = () => {
     setLoading(true);
     submitChanges()
-    .then(() => {
-      router.push(`/city/${subdomain}/campaigns/${campaignId}`)
-    })
-    .catch((error: any) => {
-      console.error("Error updating campaign or tiers", error);
-      toast.error(error.message);
-    }).finally(() => {
-      setLoading(false);
-    });
+      .then(() => {
+        if (segment === "basic") {
+          router.push(
+            `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
+          );
+        } else if (segment === "tiers") {
+          router.push(
+            `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
+          );
+        } else {
+          router.push(`/city/${subdomain}/campaigns/${campaignId}`);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error updating campaign", error);
+        toast.error(error.message);
+      });
   };
 
   if (loading) {
@@ -258,128 +276,169 @@ export default function CampaignEditor({
       ) : (
         <div>
           <div>
-            <h1 className="text-3xl">Campaign Settings</h1>
-            <div className="my-4 space-y-4">
-              <div>What is your Campaign named?</div>
-              <Input
-                type="text"
-                id="campaignName"
-                value={editedCampaign.name}
-                placeholder="Campaign name"
-                onChange={(e) => handleFieldChange("name", e.target.value)}
-                disabled={isPublic || campaign.deployed}
-              />
-              <div>How would you describe it?</div>
-              <Textarea
-                value={editedCampaign.content}
-                id="content"
-                onChange={(e) => handleFieldChange("content", e.target.value)}
-                disabled={isPublic}
-              />
-              <div>Please upload images for your Campaign</div>
-              <MultiUploader
-                values={campaignMedias.map((m) => m.uri as string)}
-                name={"image"}
-                aspectRatio={"aspect-square"}
-                onChange={(files) => handleFieldChange("images", files)}
-              />
-              <div>
-                <h2 className="text-xl">Campaign Tiers</h2>
-                {campaignTiers.map((tier, index) =>
-                  editingTierIndex === index ? (
-                    <CampaignTierEditor
-                      key={index}
-                      tier={tier as CampaignTier}
-                      forms={forms}
-                      onSave={(updatedTier) => {
-                        updateTier(index, updatedTier);
-                        stopEditTier();
+            <div className="mb-4 space-y-8 font-medium text-gray-800">
+              {segment === "basic" && (
+                <>
+                  <div className="flex flex-col space-y-4">
+                    <div>What is your Campaign named?</div>
+                    <Input
+                      type="text"
+                      id="campaignName"
+                      value={editedCampaign.name}
+                      placeholder="Campaign name"
+                      onChange={(e) =>
+                        handleFieldChange("name", e.target.value)
+                      }
+                      disabled={isPublic || campaign.deployed}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>How would you describe it?</div>
+                    <Textarea
+                      value={editedCampaign.content}
+                      id="content"
+                      onChange={(e) =>
+                        handleFieldChange("content", e.target.value)
+                      }
+                      disabled={isPublic}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>Please upload images for your Campaign</div>
+                    <MultiUploader
+                      values={campaignMedias.map((m) => m.uri as string)}
+                      name={"image"}
+                      aspectRatio={"aspect-square"}
+                      onChange={(files) => handleFieldChange("images", files)}
+                    />
+                    <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
+                      Your first image will be used as a campaign cover image.
+                    </div>
+                  </div>
+                </>
+              )}
+              {segment === "tiers" && (
+                <>
+                  {campaignTiers.map((tier, index) =>
+                    editingTierIndex === index ? (
+                      <CampaignTierEditor
+                        key={index}
+                        tier={tier as CampaignTier}
+                        forms={forms}
+                        onSave={(updatedTier) => {
+                          updateTier(index, updatedTier);
+                          stopEditTier();
+                        }}
+                      />
+                    ) : (
+                      <div key={index}>
+                        <CampaignTierCard
+                          tier={tier as CampaignTier}
+                          currency={editedCampaign.currency as CurrencyType}
+                          onClickEdit={() => startEditTier(index)}
+                          onClickDelete={() => deleteTier(index)}
+                        />
+                      </div>
+                    ),
+                  )}
+                  <Button className="mt-2" onClick={addNewTier}>
+                    Add New Tier
+                  </Button>
+                </>
+              )}
+              {segment === "details" && (
+                <>
+                  <div className="flex flex-col space-y-4">
+                    <div>
+                      Please set a deadline
+                      <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
+                        Contributions will be closed after this date
+                      </div>
+                    </div>
+                    <DatePicker
+                      id="deadline"
+                      date={editedCampaign.deadline}
+                      onSelect={(date) => {
+                        if (date) {
+                          handleFieldChange("deadline", date);
+                        }
                       }}
                     />
-                  ) : (
-                    <div key={index}>
-                      <CampaignTierCard
-                        tier={tier as CampaignTier}
-                        currency={editedCampaign.currency as CurrencyType}
-                        onClickEdit={() => startEditTier(index)}
-                      />
+                  </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>
+                      Please set your contribution threshold & token
+                      <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
+                        Once set, your contribution threshold is set, it cannot
+                        be decreased, only increased.
+                      </div>
                     </div>
-                  ),
-                )}
-                <Button className="mt-2" onClick={addNewTier}>
-                  Add New Tier
-                </Button>
-              </div>
-              <div className="flex space-x-4">
-                <div>Require approval for contributors?</div>
-                <Switch
-                  id="requireApproval"
-                  checked={editedCampaign.requireApproval}
-                  onCheckedChange={(val) =>
-                    handleFieldChange("requireApproval", val)
-                  }
-                />
-              </div>
-              <div className="flex flex-col space-y-4">
-                <div>Please set a deadline</div>
-                <DatePicker
-                  id="deadline"
-                  date={editedCampaign.deadline}
-                  onSelect={(date) => {
-                    if (date) {
-                      handleFieldChange("deadline", date);
-                    }
-                  }}
-                />
-              </div>
-              <div className="flex flex-col space-y-4">
-                <div>Please set your contribution threshold & token</div>
-                <div className="flex space-x-4">
-                  <Input
-                    className="w-1/5"
-                    type="number"
-                    value={editedCampaign.threshold}
-                    id="threshold"
-                    placeholder="Fundraising goal"
-                    onChange={(e) => {
-                      handleFieldChange("threshold", e.target.valueAsNumber)
-                    }}
-                    disabled={campaign.deployed}
-                  />
-                  <ToggleGroup.Root
-                    className="inline-flex rounded-full bg-gray-200 shadow-md"
-                    type="single"
-                    defaultValue={CurrencyType.ETH}
-                    value={editedCampaign.currency ?? CurrencyType.ETH}
-                    onValueChange={(value) =>
-                      handleFieldChange("currency", value)
-                    }
-                  >
-                    <ToggleGroup.Item
-                      className="w-20 rounded-l-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
-                      value={CurrencyType.ETH}
-                    >
-                      ETH
-                    </ToggleGroup.Item>
-                    <ToggleGroup.Item
-                      className="w-20 bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
-                      value={CurrencyType.USDC}
-                    >
-                      USDC
-                    </ToggleGroup.Item>
-                    <ToggleGroup.Item
-                      className="w-20 rounded-r-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
-                      value={CurrencyType.USDT}
-                    >
-                      USDT
-                    </ToggleGroup.Item>
-                  </ToggleGroup.Root>
-                </div>
-              </div>
+                    <div className="flex space-x-4">
+                      <Input
+                        className="w-1/5"
+                        type="number"
+                        value={editedCampaign.threshold}
+                        id="threshold"
+                        placeholder="Fundraising goal"
+                        onChange={(e) => {
+                          handleFieldChange(
+                            "threshold",
+                            e.target.valueAsNumber,
+                          );
+                        }}
+                        disabled={campaign.deployed}
+                      />
+                      <ToggleGroup.Root
+                        className="inline-flex rounded-full bg-gray-200 shadow-md"
+                        type="single"
+                        defaultValue={CurrencyType.ETH}
+                        value={editedCampaign.currency ?? CurrencyType.ETH}
+                        onValueChange={(value) =>
+                          handleFieldChange("currency", value)
+                        }
+                      >
+                        <ToggleGroup.Item
+                          className="w-20 rounded-l-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                          value={CurrencyType.ETH}
+                        >
+                          ETH
+                        </ToggleGroup.Item>
+                        <ToggleGroup.Item
+                          className="w-20 bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                          value={CurrencyType.USDC}
+                        >
+                          USDC
+                        </ToggleGroup.Item>
+                        <ToggleGroup.Item
+                          className="w-20 rounded-r-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                          value={CurrencyType.USDT}
+                        >
+                          USDT
+                        </ToggleGroup.Item>
+                      </ToggleGroup.Root>
+                    </div>
+                  </div>
+                  <div className="flex space-x-4">
+                    <div>Do contributors need to be approved?</div>
+                    <Switch
+                      className="mt-1"
+                      id="requireApproval"
+                      checked={editedCampaign.requireApproval}
+                      onCheckedChange={(val) =>
+                        handleFieldChange("requireApproval", val)
+                      }
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
-          <Button className="float-right" disabled={loading} onClick={saveChanges}>
-            {loading ? <LoadingDots color="#808080" /> : "Save Changes"}
+          <Button
+            className="float-right"
+            disabled={loading}
+            onClick={saveChanges}
+          >
+            Continue
           </Button>
         </div>
       )}

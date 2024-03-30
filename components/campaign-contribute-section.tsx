@@ -21,15 +21,15 @@ export default function CampaignContributeSection({
   return (
     <div className={`flex flex-col ${className}`}>
       <div>
-        <div className="text-2xl">
+        <div className="text-2xl font-semibold">
           {getCurrencySymbol(campaign.currency)}{campaign.threshold} {campaign.currency}
         </div>
-        <div>Goal</div>
+        <div className="text-sm">Minimum Target</div>
       </div>
       <div className="mt-4">
         <Button
           onClick={() => router.push(`${campaign.id}/checkout/tiers`)}
-          className="hover:bg-gray-700"
+          className="w-full rounded-full hover:bg-gray-700"
         >
           Fund
         </Button>

@@ -13,7 +13,7 @@ export default function Campaigns({
   return (
     <div>
       {campaigns.length > 0 ? (
-        <div className="grid  grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {campaigns.map((campaign) => (
             <CampaignCard
             {...campaign}
@@ -28,7 +28,7 @@ export default function Campaigns({
         <div className="mt-20 flex flex-col items-center space-x-4">
           <h1 className="font-cal text-4xl">No Campaigns Yet</h1>
           <Image
-            alt="missing Campaigns"
+            alt="Missing Campaigns"
             src="https://illustrations.popsy.co/gray/web-design.svg"
             width={400}
             height={400}

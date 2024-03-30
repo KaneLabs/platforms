@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
 import CampaignResponseDataTable from "@/components/form-response-table/campaign-response-data-table";
-import { ETH_PRICE_IN_DOLLARS } from "@/lib/utils";
+import { ETH_PRICE_IN_DOLLARS, getCurrencySymbol } from "@/lib/utils";
 
 export default function CampaignDashboard({
   campaignId,
@@ -112,15 +112,16 @@ export default function CampaignDashboard({
       ) : !campaign || !campaign.organizationId ? (
         <div>Campaign not found</div>
       ) : (
-        <div>
+        <div className="text-gray-800">
           <div className="my-4 space-y-4">
             <div className="flex flex-row my-6 items-start justify-between gap-[20px] flex-wrap">
-              <h1 className="text-3xl font-semibold">{campaign.name}</h1>
-              <div className="flex flex-row gap-2">
+              <h1 className="font-serif text-3xl dark:text-white">{campaign.name}</h1>
+              <div className="flex flex-row gap-2 items-end">
+                <div className="mr-4">{Intl.NumberFormat("en-US").format(campaign.threshold as number)} in <span className="font-medium">{campaign.currency}</span></div>
                 <Button
                   onClick={() =>
                     router.push(
-                      `/city/${subdomain}/campaigns/${campaignId}/settings`,
+                      `/city/${subdomain}/campaigns/${campaignId}/settings/basic/edit`,
                     )
                   }
                 >
@@ -134,13 +135,13 @@ export default function CampaignDashboard({
                 </div>
             </div>
             <div className="mb-6 flex flex-col space-y-1">
-              <div className="flex justify-between space-x-4">
+              {/* <div className="flex justify-between space-x-4">
                 <Progress
                   value={getProgress(totalContributions, campaign.thresholdWei)}
                   className="h-6 w-full"
                 />
-              </div>
-              <div className="flex space-x-8">
+              </div> */}
+              {/* <div className="flex space-x-8">
                 <p className="text-sm">
                   {`${Intl.NumberFormat("en-US", {
                     style: "currency",
@@ -166,12 +167,12 @@ export default function CampaignDashboard({
                       ETH_PRICE_IN_DOLLARS,
                   )} available`}
                 </p>
-              </div>
+              </div> */}
             </div>
             <div className="my-6">
               {campaign.content}
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="pt-6 flex flex-wrap gap-2">
               {campaign.medias 
                 ? campaign.medias.map(m => {
                   return (
@@ -190,7 +191,7 @@ export default function CampaignDashboard({
           </div>
           {campaign.campaignTiers && (
             <div className="mt-12">
-              <h2 className="text-xl">Campaign Tiers</h2>
+              <h2 className="text-xl font-medium">Campaign Tiers</h2>
               {campaign.campaignTiers.map(
                 (tier: CampaignTier, index: number) => (
                   <CampaignTierCard
@@ -204,7 +205,7 @@ export default function CampaignDashboard({
           )}
           {applications && applications.length > 0 && (
             <div className="mt-12">
-              <h2 className="text-xl">Applications</h2>
+              <h2 className="text-xl font-medium">Applications</h2>
               <CampaignResponseDataTable
                 campaign={campaign}
                 applications={applications}

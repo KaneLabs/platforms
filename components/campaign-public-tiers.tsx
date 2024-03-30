@@ -58,9 +58,6 @@ export default function CampaignPublicTiers({
       ) : (
         <div className="flex flex-col space-y-4">
           <div className="flex-grow">
-            <h1 className="mb-6 text-2xl font-bold">
-              Contribute to {campaign.name}
-            </h1>
             {campaign.campaignTiers && (
               <div>
                 <h2 className="text-xl">Please select a Tier to continue.</h2>
@@ -75,6 +72,7 @@ export default function CampaignPublicTiers({
           <div className="self-end">
             <Button
               onClick={() => {
+                setLoading(true);
                 if (selectedTier?.formId) {
                   router.push(`${selectedTier?.id}/form/`)
                 } else {

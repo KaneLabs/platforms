@@ -1,4 +1,4 @@
-import { Bed, CurrencyType, Organization } from "@prisma/client";
+import { ApplicationStatus, Bed, CurrencyType, Organization } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import _ from 'lodash';
@@ -115,6 +115,17 @@ export const getCurrencySymbol = (currency: CurrencyType | null | undefined) => 
     [CurrencyType.USDT]: "$",
   };
   return currency && symbols[currency] ? symbols[currency] : "";
+}
+
+export const getApplicationStatusText = (status: ApplicationStatus | null | undefined) => {
+  const displayTexts = {
+    [ApplicationStatus.ACCEPTED]: "Accepted",
+    [ApplicationStatus.REJECTED]: "Rejected",
+    [ApplicationStatus.PENDING]: "In review",
+    [ApplicationStatus.TIMED_OUT]: "Error",
+    [ApplicationStatus.NOT_SUBMITTED]: "No review required",
+  };
+  return status && displayTexts[status] ? displayTexts[status] : "";
 }
 
 export const getSubdomainFromDomain = (domain: string) => domain.replace('%3A', ':').endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)

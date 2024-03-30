@@ -2577,21 +2577,33 @@ export const upsertCampaignTiers = withOrganizationAuth(
       throw new Error(result.error.message);
     }
 
-    const txs = result.data.tiers.map((tier) => {
-      return prisma.campaignTier.upsert({
-        where: {
-          id: tier.id ?? "THIS_TEXT_JUST_TRIGGERS_A_NEW_ID_TO_BE_GENERATED",
+    const deleteTx = prisma.campaignTier.deleteMany({
+      where: {
+        campaignId: data.campaign.id,
+        id: {
+          notIn: result.data.tiers.map(({ id }) => id).filter(id => !!id) as string[],
         },
-        create: {
-          ...tier,
-          campaignId: data.campaign.id,
-        },
-        update: {
-          ...tier,
-          campaignId: data.campaign.id,
-        },
-      });
+      },
     });
+
+    const txs = [
+      deleteTx,
+      ...result.data.tiers.map((tier) => {
+        return prisma.campaignTier.upsert({
+          where: {
+            id: tier.id ?? "THIS_TEXT_JUST_TRIGGERS_A_NEW_ID_TO_BE_GENERATED",
+          },
+          create: {
+            ...tier,
+            campaignId: data.campaign.id,
+          },
+          update: {
+            ...tier,
+            campaignId: data.campaign.id,
+          },
+        });
+      })
+    ];
 
     const tiers = await prisma.$transaction(txs);
 
@@ -2691,26 +2703,36 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
     };
   }
 
+  const result = await prisma.$transaction(async (tx) => {
+    const campaign = await tx.campaign.findFirst({
+      where: {
+        id: campaignId
+      }
+    });
 
-  const campaignContribution = await prisma.campaignContribution.create({
-    data: {
-      campaignId: campaignId,
-      userId: session.user.id,
-      amount: contributionAmount
-    }
+    const campaignContribution = await tx.campaignContribution.create({
+      data: {
+        campaignId: campaignId,
+        userId: session.user.id,
+        amount: contributionAmount
+      }
+    });
+
+    const campaignApplication = await tx.campaignApplication.create({
+      data: {
+        campaignId,
+        formResponseId,
+        userId: session.user.id,
+        contributionId: campaignContribution.id,
+        campaignTierId: campaignTierId,
+        status: campaign?.requireApproval ? ApplicationStatus.PENDING : ApplicationStatus.NOT_SUBMITTED 
+      },
+    });
+
+    return campaignApplication;
   });
 
-  const campaignApplication = await prisma.campaignApplication.create({
-    data: {
-      campaignId,
-      formResponseId,
-      userId: session.user.id,
-      contributionId: campaignContribution.id,
-      campaignTierId: campaignTierId
-    },
-  });
-
-  return campaignApplication;
+  return result;
 };
 
 export const respondToCampaignApplication = async (
