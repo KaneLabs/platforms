@@ -114,7 +114,7 @@ export default function CampaignApplicationsDataTable({
   }];
 
   return (
-    <div className="mt-6">
+    <div className="mt-4">
       {Object.keys(ApplicationStatus).map(status => {
         const statusData = data.filter((d: any) => d.status === status);
 

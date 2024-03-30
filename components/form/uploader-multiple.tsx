@@ -59,7 +59,7 @@ export default function MultiUploader({
       <label
         htmlFor={`${name}-upload`}
         className={cn(
-          "group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-300 shadow-sm transition-all hover:bg-gray-50 h-28",
+          "group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-500 shadow-sm transition-all hover:bg-gray-50 h-28",
           ratio
         )}
       >
@@ -124,7 +124,7 @@ export default function MultiUploader({
             <img
               src={src}
               alt="Preview"
-              className="h-28 w-28 rounded-xl object-cover object-center"
+              className="h-28 w-[200px] rounded-xl object-cover object-center"
             />
         </div>
        ))}

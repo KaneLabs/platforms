@@ -41,7 +41,6 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
           type="text" 
           id="tierName"
           value={editedTier.name}
-          placeholder="Tier name"
           onChange={(e) => handleFieldChange('name', e.target.value)}
         />
         <div>How much is the contribution for this Tier?</div>
@@ -49,14 +48,13 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
           type="number"
           id="price"
           value={editedTier.price?.toString()}
-          placeholder="Price"
           onChange={(e) => handleFieldChange('price', e.target.valueAsNumber)}
         />
         <div>How would you describe it to your citizens?</div>
         <Textarea 
           id="description"
+          className="text"
           value={editedTier.description || ''}
-          placeholder="Tier description"
           onChange={(e) => handleFieldChange('description', e.target.value)}
         />
         <div>What form does it link to (if any)?</div>
@@ -85,7 +83,7 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
       </div>
       <div className="flex justify-end">
         <Button
-          className="mt-2"
+          className="mt-4"
           onClick={() => onSave(editedTier)}
         >
           Save

@@ -33,7 +33,7 @@ export default function CampaignSettingsNav() {
           href={item.href}
           // Change style depending on whether the link is active
           className={cn(
-            "rounded-md px-2 py-1 text-sm font-medium transition-colors active:bg-gray-200 dark:active:bg-gray-600",
+            "rounded-md px-2 py-1 text-lg font-medium transition-colors active:bg-gray-200 dark:active:bg-gray-600",
             segment === item.segment
               ? "text-gray-800 dark:bg-gray-800 dark:text-gray-400"
               : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800",

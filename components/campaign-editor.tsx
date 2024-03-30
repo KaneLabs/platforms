@@ -100,6 +100,10 @@ export default function CampaignEditor({
           setCampaignTiers(result.campaignTiers);
           setCampaignMedias(result.medias || []);
           getOrganizationForms(result.organizationId).then(setForms);
+
+          if (segment === "tiers" && result.campaignTiers.length === 0) {
+            addNewTier();
+          }
         }
       })
       .then(() => setLoading(false));
@@ -232,8 +236,6 @@ export default function CampaignEditor({
           null,
         );
       }
-
-      setCampaign({ ...campaign, ...payload });
     }
   };
 
@@ -250,12 +252,9 @@ export default function CampaignEditor({
         }
       })
       .catch((error: any) => {
-        console.error("Error updating campaign or tiers", error);
+        console.error("Error updating campaign", error);
         toast.error(error.message);
       })
-      .finally(() => {
-        setLoading(false);
-      });
   };
 
   if (loading) {
@@ -273,7 +272,7 @@ export default function CampaignEditor({
       ) : (
         <div>
           <div>
-            <div className="my-4 space-y-4">
+            <div className="mb-4 space-y-4 text-gray-800 font-medium">
               {segment === "basic" && (
                 <>
                   <div>What is your Campaign named?</div>
@@ -301,11 +300,11 @@ export default function CampaignEditor({
                     aspectRatio={"aspect-square"}
                     onChange={(files) => handleFieldChange("images", files)}
                   />
+                  <div className="text-sm truncate rounded-md font-medium text-gray-600 transition-colors">Your first image will be used as a campaign cover image.</div>
                 </>
               )}
               {segment === "tiers" && (
                   <>
-                    <h2 className="text-xl">Campaign Tiers</h2>
                     {campaignTiers.map((tier, index) =>
                       editingTierIndex === index ? (
                         <CampaignTierEditor
@@ -335,18 +334,11 @@ export default function CampaignEditor({
               )}
               {segment === "details" && (
                 <>
-                  <div className="flex space-x-4">
-                    <div>Require approval for contributors?</div>
-                    <Switch
-                      id="requireApproval"
-                      checked={editedCampaign.requireApproval}
-                      onCheckedChange={(val) =>
-                        handleFieldChange("requireApproval", val)
-                      }
-                    />
-                  </div>
                   <div className="flex flex-col space-y-4">
-                    <div>Please set a deadline</div>
+                    <div>
+                      Please set a deadline
+                      <div className="text-sm truncate rounded-md font-medium text-gray-600 transition-colors">Contributions will be closed after this date</div>
+                    </div>
                     <DatePicker
                       id="deadline"
                       date={editedCampaign.deadline}
@@ -358,7 +350,10 @@ export default function CampaignEditor({
                     />
                   </div>
                   <div className="flex flex-col space-y-4">
-                    <div>Please set your contribution threshold & token</div>
+                    <div>
+                      Please set your contribution threshold & token
+                      <div className="text-sm truncate rounded-md font-medium text-gray-600 transition-colors">Once set, your contribution threshold is set, it cannot be decreased, only increased.</div>
+                    </div>
                     <div className="flex space-x-4">
                       <Input
                         className="w-1/5"
@@ -384,25 +379,36 @@ export default function CampaignEditor({
                         }
                       >
                         <ToggleGroup.Item
-                          className="w-20 rounded-l-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                          className="w-20 rounded-l-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
                           value={CurrencyType.ETH}
                         >
                           ETH
                         </ToggleGroup.Item>
                         <ToggleGroup.Item
-                          className="w-20 bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                          className="w-20 bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
                           value={CurrencyType.USDC}
                         >
                           USDC
                         </ToggleGroup.Item>
                         <ToggleGroup.Item
-                          className="w-20 rounded-r-full bg-gray-800 p-2 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                          className="w-20 rounded-r-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
                           value={CurrencyType.USDT}
                         >
                           USDT
                         </ToggleGroup.Item>
                       </ToggleGroup.Root>
                     </div>
+                  </div>
+                  <div className="flex space-x-4">
+                    <div>Do contributors need to be approved?</div>
+                    <Switch
+                      className="mt-1"
+                      id="requireApproval"
+                      checked={editedCampaign.requireApproval}
+                      onCheckedChange={(val) =>
+                        handleFieldChange("requireApproval", val)
+                      }
+                    />
                   </div>
                 </>
               )}
