@@ -2696,7 +2696,6 @@ export const getUserCampaignApplication = async (
 };
 
 export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined) => {
-  console.log(typeof window === 'undefined');
   const session = await getSession();
   if (!session?.user.id) {
     return {
