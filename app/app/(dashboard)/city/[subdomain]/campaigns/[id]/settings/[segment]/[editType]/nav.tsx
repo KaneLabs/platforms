@@ -2,26 +2,25 @@
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useParams, useSelectedLayoutSegment } from "next/navigation";
+import { useParams } from "next/navigation";
 
 export default function CampaignSettingsNav() {
-  const { subdomain, id } = useParams() as { subdomain: string, id: string };
-  const segment = useSelectedLayoutSegment();
+  const { subdomain, id, editType, segment } = useParams() as { subdomain: string, id: string, segment: string, editType: string };
 
   const navItems = [
     {
       name: "Basic",
-      href: `/city/${subdomain}/campaigns/${id}/settings/basic`,
+      href: `/city/${subdomain}/campaigns/${id}/settings/basic/${editType}`,
       segment: "basic",
     },
     {
       name: "Tiers",
-      href: `/city/${subdomain}/campaigns/${id}/settings/tiers`,
+      href: `/city/${subdomain}/campaigns/${id}/settings/tiers/${editType}`,
       segment: "tiers",
     },
     {
       name: "Settings",
-      href: `/city/${subdomain}/campaigns/${id}/settings/details`,
+      href: `/city/${subdomain}/campaigns/${id}/settings/details/${editType}`,
       segment: "details",
     },
   ];

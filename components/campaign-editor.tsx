@@ -58,11 +58,13 @@ export default function CampaignEditor({
   subdomain,
   isPublic,
   segment,
+  editType
 }: {
   campaignId: string;
   subdomain: string;
   isPublic: boolean;
   segment: string;
+  editType: string;
 }) {
   const { getContributionTotal, getContractBalance } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(0);
@@ -240,9 +242,9 @@ export default function CampaignEditor({
     submitChanges()
       .then(() => {
         if (segment === "basic") {
-          router.push(`/city/${subdomain}/campaigns/${campaignId}/settings/tiers`);
+          router.push(`/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`);
         } else if (segment === "tiers") {
-          router.push(`/city/${subdomain}/campaigns/${campaignId}/settings/details`);
+          router.push(`/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`);
         } else {
           router.push(`/city/${subdomain}/campaigns/${campaignId}`);
         }
