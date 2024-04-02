@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
 import { useRouter } from "next/navigation";
 import { getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
+import { PictureInPicture2 } from "lucide-react";
 
 
 export default function CampaignApplicationsDataTable({
@@ -32,7 +33,6 @@ export default function CampaignApplicationsDataTable({
   const [data, setData] = useState<Row<any>[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Row<any> | null>(null);
-  const [questionsData, setQuestionsData] = useState<(Question & { form: Form })[]>([]);
 
   const router = useRouter();
 
@@ -47,7 +47,10 @@ export default function CampaignApplicationsDataTable({
           applicant: application.user?.email,
           tier: application.campaignTier?.name,
           contribution,
-          status: application.status
+          status: application.status,
+          currency: campaign.currency,
+          tierData: application.campaignTier,
+          formResponseData: application.formResponse
         };
 
         if (application.formResponse) {
@@ -68,7 +71,7 @@ export default function CampaignApplicationsDataTable({
 
   const handleRowClick = (row: Row<any>) => {
     setSelectedRow(row);
-    // setModalOpen(true);
+    setModalOpen(true);
   };
 
   const columns: ColumnDef<any, any>[] = [{
@@ -111,6 +114,21 @@ export default function CampaignApplicationsDataTable({
         </div>
       );
     },
+  }, {
+    header: "",
+    accessorKey: "expand",
+    cell: ({ row }: { row: Row<any> }) => {
+      return (
+        <PictureInPicture2 
+          className="cursor-pointer" 
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRowClick(row);
+          }} 
+          width={18} 
+        />
+      );
+    },
   }];
 
   return (
@@ -133,7 +151,7 @@ export default function CampaignApplicationsDataTable({
         isOpen={isModalOpen}
         onClose={() => {setModalOpen(false); router.refresh()}}
         rowData={selectedRow ? selectedRow.original : null}
-        questionsData={questionsData}
+        formResponse={selectedRow ? selectedRow.original.formResponseData : null}
       />
     </div>
   );
