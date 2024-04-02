@@ -21,11 +21,11 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   }
 
   const approveApplication = async () => {
-    respondToCampaignApplication(rowData.applicationId, true);
+    respondToCampaignApplication(rowData.id, true);
   }
 
   const declineApplication = async () => {
-    respondToCampaignApplication(rowData.applicationId, false);
+    respondToCampaignApplication(rowData.id, false);
   }
 
   const formattedUserData = (
@@ -34,20 +34,24 @@ const ResponseModal: React.FC<ResponseModalProps> = (
     </div>
   )
 
-  const formattedFormAnswers = formResponse && formResponse.answers.map(
-    (value) => {
-      const question = value.question;
+  const formattedFormAnswers = formResponse && (
+    <div className="mt-2 flex flex-col space-y-6 rounded-lg border border-gray-500 bg-gray-100 py-6 px-8">
+      {formResponse.answers.map(
+        (value) => {
+          const question = value.question;
 
-      return (
-        <div key={value.id}>
-          <h2 className="text-xl">{question.text}</h2>
-          <h2 className="text-xl">{question.description}</h2>
-          <p className="text-sm">
-            {formatAnswer(question!, value)}
-          </p>
-        </div>
-      );
-    },
+          return (
+            <div key={value.id}>
+              <h2 className="text-xl">{question.text}</h2>
+              <h2 className="text-xl">{question.description}</h2>
+              <p className="text-sm">
+                {formatAnswer(question!, value)}
+              </p>
+            </div>
+          );
+        },
+      )}
+    </div>
   );
 
   return (
@@ -60,11 +64,9 @@ const ResponseModal: React.FC<ResponseModalProps> = (
               tier={rowData.tierData}
               currency={rowData.currency}
             />
-            <div className="mt-2 flex flex-col space-y-6 rounded-lg border border-gray-500 bg-gray-100 py-6 px-8">
-              {formattedFormAnswers}
-            </div>
+            {formattedFormAnswers}
           </div>
-          <div className="mt-4 flex justify-between">
+          <div className="mt-6 flex justify-between">
             <Button
               onClick={() => {
                 declineApplication();
