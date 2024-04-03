@@ -33,6 +33,8 @@ export default function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel()
   });
 
+  const tableBodyRows = table.getRowModel().rows;
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -55,15 +57,18 @@ export default function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
+          {tableBodyRows?.length ? (
+            tableBodyRows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {flexRender(cell.column.columnDef.cell, { 
+                      ...cell.getContext(), 
+                      rows: tableBodyRows 
+                    })}
                   </TableCell>
                 ))}
               </TableRow>

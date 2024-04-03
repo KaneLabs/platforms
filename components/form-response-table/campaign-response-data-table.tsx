@@ -15,13 +15,11 @@ import {
 } from "@prisma/client";
 import DataTable from "./data-table";
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { formatAnswer } from "./utils";
 import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
 import { useRouter } from "next/navigation";
 import { getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
 import { PictureInPicture2 } from "lucide-react";
-
 
 export default function CampaignApplicationsDataTable({
   campaign,
@@ -32,7 +30,8 @@ export default function CampaignApplicationsDataTable({
 }) {
   const [data, setData] = useState<Row<any>[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<Row<any> | null>(null);
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number>(0);
+  const [selectedTableRows, setSelectedTableRows] = useState<Array<Row<any>>>([]);
 
   const router = useRouter();
 
@@ -69,8 +68,9 @@ export default function CampaignApplicationsDataTable({
     formatCampaignApplicationRows();
   }, [applications, campaign]);
 
-  const handleRowClick = (row: Row<any>) => {
-    setSelectedRow(row);
+  const handleRowClick = (row: Row<any>, rows: Array<Row<any>>) => {
+    setSelectedRowIndex(row.index);
+    setSelectedTableRows(rows);
     setModalOpen(true);
   };
 
@@ -117,15 +117,15 @@ export default function CampaignApplicationsDataTable({
   }, {
     header: "",
     accessorKey: "expand",
-    cell: ({ row }: { row: Row<any> }) => {
+    cell: ({ row, rows }: { row: Row<any>, rows?: Array<Row<any>> }) => {
       return (
         <PictureInPicture2 
           className="cursor-pointer" 
           onClick={(e) => {
             e.stopPropagation();
-            handleRowClick(row);
+            handleRowClick(row, rows || []);
           }} 
-          width={18} 
+          width={18}
         />
       );
     },
@@ -150,8 +150,8 @@ export default function CampaignApplicationsDataTable({
       <ResponseModal
         isOpen={isModalOpen}
         onClose={() => {setModalOpen(false); router.refresh()}}
-        rowData={selectedRow ? selectedRow.original : null}
-        formResponse={selectedRow ? selectedRow.original.formResponseData : null}
+        rowsData={selectedTableRows}
+        selectedRowIndex={selectedRowIndex}
       />
     </div>
   );

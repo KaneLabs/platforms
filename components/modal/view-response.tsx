@@ -4,21 +4,25 @@ import { respondToCampaignApplication } from "@/lib/actions";
 import { Answer, FormResponse, Question } from "@prisma/client";
 import { formatAnswer } from "@/components/form-response-table/utils";
 import CampaignTierCard from '../campaign-tier-card';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 
 interface ResponseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  rowData: { [key: string]: any };
-  formResponse: FormResponse & { answers: Array<Answer & { question: Question }> };
+  rowsData: Array<{[key: string]: any}>;
+  selectedRowIndex: number;
 }
 
 const ResponseModal: React.FC<ResponseModalProps> = (
-  { isOpen, onClose, rowData, formResponse }
+  { isOpen, onClose, rowsData, selectedRowIndex }
 ) => {
   if (!isOpen) {
     return null;
   }
+
+  const rowData = rowsData[selectedRowIndex].original;
+  const formResponse: FormResponse & { answers: Array<Answer & { question: Question }> } = rowData.formResponseData ? rowData.formResponseData : null;
 
   const approveApplication = async () => {
     respondToCampaignApplication(rowData.id, true);
@@ -68,6 +72,16 @@ const ResponseModal: React.FC<ResponseModalProps> = (
           </div>
           <div className="mt-6 flex justify-between">
             <Button
+              onClick={(e) => {
+                onClose();
+              }} 
+            >
+              <ChevronLeft
+                className="cursor-pointer" 
+                width={18} 
+              />
+            </Button>
+            <Button
               onClick={() => {
                 declineApplication();
                 onClose();
@@ -76,17 +90,22 @@ const ResponseModal: React.FC<ResponseModalProps> = (
               DECLINE
             </Button>
             <Button
-              onClick={onClose}
-            >
-              SKIP
-            </Button>
-            <Button
               onClick={() => {
                 approveApplication();
                 onClose();
               }}
             >
               APPROVE
+            </Button>
+            <Button
+              onClick={(e) => {
+                onClose();
+              }} 
+            >
+              <ChevronRight
+                className="cursor-pointer" 
+                width={18} 
+              />
             </Button>
           </div>
         </div>
