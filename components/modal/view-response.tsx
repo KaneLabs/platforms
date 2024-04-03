@@ -4,7 +4,7 @@ import { respondToCampaignApplication } from "@/lib/actions";
 import { Answer, ApplicationStatus, FormResponse, Question } from "@prisma/client";
 import { formatAnswer } from "@/components/form-response-table/utils";
 import CampaignTierCard from '../campaign-tier-card';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import LoadingDots from '../icons/loading-dots';
 
 
@@ -66,18 +66,36 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   );
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-200/50 backdrop-blur-xl">
-      <div className="flex min-h-full items-center justify-center p-4 text-center ">
-        <div className="w-full max-w-md transform overflow-hidden bg-gray-100 rounded-xl px-8 py-6 text-left align-middle shadow-xl transition-all md:border md:border-gray-200 dark:bg-gray-900 dark:md:border-gray-700">
-          <div className="flex flex-col space-y-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-200/50 backdrop-blur-xl flex items-center justify-center">
+      <div className="absolute top-0 left-0 p-8 w-full flex justify-between items-start">
+        <div>
+          <h1 className="font-serif text-3xl text-gray-800 dark:text-white">
+            Application Details
+          </h1>
+          <h4 className="truncate rounded-md py-1 font-medium text-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-400">
+            View each application and approve/decline.
+          </h4>
+        </div>
+        <button
+          onClick={onClose}
+          className="rounded-md p-1 transition-opacity hover:opacity-70 focus:outline-none"
+        >
+          <X className="h-6 w-6" />
+        </button>
+      </div>
+      <div className="relative w-full max-w-lg p-4">
+        <div className="bg-gray-100 rounded-xl pl-8 pr-6 py-6 text-left align-middle shadow-xl transition-all md:border md:border-gray-200 dark:bg-gray-900 dark:md:border-gray-700">
+          <div className="flex flex-col pb-2">
             {formattedUserData}
+          </div>
+          <div className="flex flex-col space-y-2 max-h-96 pr-2 overflow-y-auto">
             <CampaignTierCard
               tier={rowData.tierData}
               currency={rowData.currency}
             />
             {formattedFormAnswers}
           </div>
-          <div className="mt-6 flex justify-between">
+          <div className="mt-6 flex justify-between pr-2">
             <Button
               key="prev"
               disabled={selectedRowIndex <= 0}
