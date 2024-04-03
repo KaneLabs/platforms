@@ -46,6 +46,7 @@ export default function CampaignApplicationsDataTable({
           applicant: application.user?.email,
           tier: application.campaignTier?.name,
           contribution,
+          contributionAmount: application.contribution?.amount,
           status: application.status,
           currency: campaign.currency,
           tierData: application.campaignTier,
@@ -140,9 +141,26 @@ export default function CampaignApplicationsDataTable({
           return null; 
         }
 
+        const contributionSum = statusData.reduce((sum, cur: any) => {
+          return sum + cur.contributionAmount;
+        }, 0);
+
         return (
-          <div className="mt-4" key={status}>
-            <div className="mb-2">{getApplicationStatusText(status as ApplicationStatus)} - {statusData.length}</div>
+            <div className="mt-4" key={status}>
+                <div className="flex items-center space-x-4">
+                    <div>
+                        <span className="text-sm font-medium text-gray-800">Status - </span>
+                        <span className="text-sm font-semibold">{getApplicationStatusText(status as ApplicationStatus)}</span>
+                    </div>
+                    <div>
+                        <span className="text-sm font-medium text-gray-800">Applications - </span>
+                        <span className="text-sm font-semibold">{statusData.length}</span>
+                    </div>
+                    <div>
+                        <span className="text-sm font-medium text-gray-800">Amount - </span>
+                        <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(2)} {campaign.currency}</span>
+                    </div>
+            </div>
             <DataTable columns={columns} data={statusData} />
           </div>
         );
