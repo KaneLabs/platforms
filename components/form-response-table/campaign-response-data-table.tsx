@@ -149,9 +149,14 @@ export default function CampaignApplicationsDataTable({
       })}
       <ResponseModal
         isOpen={isModalOpen}
-        onClose={() => {setModalOpen(false); router.refresh()}}
+        onClose={() => {
+          setModalOpen(false); 
+          router.refresh();
+        }}
         rowsData={selectedTableRows}
         selectedRowIndex={selectedRowIndex}
+        onPrev={() => setSelectedRowIndex(selectedRowIndex - 1)}
+        onNext={() => setSelectedRowIndex(selectedRowIndex + 1)}
       />
     </div>
   );

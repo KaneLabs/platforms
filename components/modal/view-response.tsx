@@ -1,22 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { respondToCampaignApplication } from "@/lib/actions";
-import { Answer, FormResponse, Question } from "@prisma/client";
+import { Answer, ApplicationStatus, FormResponse, Question } from "@prisma/client";
 import { formatAnswer } from "@/components/form-response-table/utils";
 import CampaignTierCard from '../campaign-tier-card';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import LoadingDots from '../icons/loading-dots';
 
 
 interface ResponseModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
   rowsData: Array<{[key: string]: any}>;
   selectedRowIndex: number;
 }
 
 const ResponseModal: React.FC<ResponseModalProps> = (
-  { isOpen, onClose, rowsData, selectedRowIndex }
+  { isOpen, onClose, onPrev, onNext, rowsData, selectedRowIndex }
 ) => {
+  const [loading, setLoading] = useState(false);
+  
   if (!isOpen) {
     return null;
   }
@@ -25,11 +30,13 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   const formResponse: FormResponse & { answers: Array<Answer & { question: Question }> } = rowData.formResponseData ? rowData.formResponseData : null;
 
   const approveApplication = async () => {
-    respondToCampaignApplication(rowData.id, true);
+    rowData.status = ApplicationStatus.ACCEPTED;
+    return respondToCampaignApplication(rowData.id, true);
   }
 
   const declineApplication = async () => {
-    respondToCampaignApplication(rowData.id, false);
+    rowData.status = ApplicationStatus.REJECTED;
+    return respondToCampaignApplication(rowData.id, false);
   }
 
   const formattedUserData = (
@@ -72,8 +79,10 @@ const ResponseModal: React.FC<ResponseModalProps> = (
           </div>
           <div className="mt-6 flex justify-between">
             <Button
+              key="prev"
+              disabled={selectedRowIndex <= 0}
               onClick={(e) => {
-                onClose();
+                onPrev();
               }} 
             >
               <ChevronLeft
@@ -82,24 +91,28 @@ const ResponseModal: React.FC<ResponseModalProps> = (
               />
             </Button>
             <Button
-              onClick={() => {
-                declineApplication();
-                onClose();
+              key="decline"
+              disabled={rowData.status === ApplicationStatus.REJECTED}
+              onClick={async () => {
+                await declineApplication();
               }}
             >
-              DECLINE
+              {loading ? <LoadingDots color="#808080" />: "DECLINE"}
             </Button>
             <Button
-              onClick={() => {
-                approveApplication();
-                onClose();
+              key="approve"
+              disabled={rowData.status === ApplicationStatus.ACCEPTED}
+              onClick={async () => {
+                await approveApplication();
               }}
             >
-              APPROVE
+              {loading ? <LoadingDots color="#808080" />: "APPROVE"}
             </Button>
             <Button
+              key="next"
+              disabled={selectedRowIndex >= rowsData.length - 1}
               onClick={(e) => {
-                onClose();
+                onNext();
               }} 
             >
               <ChevronRight
