@@ -40,6 +40,7 @@ import {
   calcRoomCapacity,
   getBlurDataURL,
   getCityUrl,
+  getCurrencySymbol,
 } from "@/lib/utils";
 import supabase from "./supabase";
 import {
@@ -68,6 +69,7 @@ import {
   tryGetSession,
 } from "./assertions";
 import { createInviteParams } from "./auth/create-invite-params";
+import { sendPaymentConfirmationEmail } from "./email/templates/payment-confirmation";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
@@ -2707,6 +2709,9 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
     const campaign = await tx.campaign.findFirst({
       where: {
         id: campaignId
+      },
+      include: {
+        organization: true
       }
     });
 
@@ -2727,6 +2732,15 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
         campaignTierId: campaignTierId,
         status: campaign?.requireApproval ? ApplicationStatus.PENDING : ApplicationStatus.NOT_SUBMITTED 
       },
+    });
+
+    sendPaymentConfirmationEmail({
+      id: campaignApplication.id,
+      campaign: campaign ? campaign?.name : "The Campaign",
+      date: campaignApplication.createdAt.toLocaleDateString(),
+      amount: `${getCurrencySymbol(campaign?.currency)}${contributionAmount} ${campaign?.currency}`,
+      contributionLink: campaign?.organization ? getCityUrl(campaign?.organization) : "",
+      email: session.user.email
     });
 
     return campaignApplication;
