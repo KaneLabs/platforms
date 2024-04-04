@@ -15,12 +15,11 @@ import {
 } from "@prisma/client";
 import DataTable from "./data-table";
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { formatAnswer } from "./utils";
 import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
 import { useRouter } from "next/navigation";
 import { getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
-
+import { PictureInPicture2 } from "lucide-react";
 
 export default function CampaignApplicationsDataTable({
   campaign,
@@ -31,8 +30,8 @@ export default function CampaignApplicationsDataTable({
 }) {
   const [data, setData] = useState<Row<any>[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<Row<any> | null>(null);
-  const [questionsData, setQuestionsData] = useState<(Question & { form: Form })[]>([]);
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number>(0);
+  const [selectedTableRows, setSelectedTableRows] = useState<Array<Row<any>>>([]);
 
   const router = useRouter();
 
@@ -47,7 +46,11 @@ export default function CampaignApplicationsDataTable({
           applicant: application.user?.email,
           tier: application.campaignTier?.name,
           contribution,
-          status: application.status
+          contributionAmount: application.contribution?.amount,
+          status: application.status,
+          currency: campaign.currency,
+          tierData: application.campaignTier,
+          formResponseData: application.formResponse
         };
 
         if (application.formResponse) {
@@ -66,9 +69,10 @@ export default function CampaignApplicationsDataTable({
     formatCampaignApplicationRows();
   }, [applications, campaign]);
 
-  const handleRowClick = (row: Row<any>) => {
-    setSelectedRow(row);
-    // setModalOpen(true);
+  const handleRowClick = (row: Row<any>, rows: Array<Row<any>>) => {
+    setSelectedRowIndex(row.index);
+    setSelectedTableRows(rows);
+    setModalOpen(true);
   };
 
   const columns: ColumnDef<any, any>[] = [{
@@ -111,6 +115,21 @@ export default function CampaignApplicationsDataTable({
         </div>
       );
     },
+  }, {
+    header: "",
+    accessorKey: "expand",
+    cell: ({ row, rows }: { row: Row<any>, rows?: Array<Row<any>> }) => {
+      return (
+        <PictureInPicture2 
+          className="cursor-pointer" 
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRowClick(row, rows || []);
+          }} 
+          width={18}
+        />
+      );
+    },
   }];
 
   return (
@@ -122,18 +141,40 @@ export default function CampaignApplicationsDataTable({
           return null; 
         }
 
+        const contributionSum = statusData.reduce((sum, cur: any) => {
+          return sum + cur.contributionAmount;
+        }, 0);
+
         return (
-          <div className="mt-4" key={status}>
-            <div className="mb-2">{getApplicationStatusText(status as ApplicationStatus)} - {statusData.length}</div>
+            <div className="mt-4" key={status}>
+                <div className="flex items-center space-x-4">
+                    <div>
+                        <span className="text-sm font-medium text-gray-800">Status - </span>
+                        <span className="text-sm font-semibold">{getApplicationStatusText(status as ApplicationStatus)}</span>
+                    </div>
+                    <div>
+                        <span className="text-sm font-medium text-gray-800">Applications - </span>
+                        <span className="text-sm font-semibold">{statusData.length}</span>
+                    </div>
+                    <div>
+                        <span className="text-sm font-medium text-gray-800">Amount - </span>
+                        <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(2)} {campaign.currency}</span>
+                    </div>
+            </div>
             <DataTable columns={columns} data={statusData} />
           </div>
         );
       })}
       <ResponseModal
         isOpen={isModalOpen}
-        onClose={() => {setModalOpen(false); router.refresh()}}
-        rowData={selectedRow ? selectedRow.original : null}
-        questionsData={questionsData}
+        onClose={() => {
+          setModalOpen(false); 
+          router.refresh();
+        }}
+        rowsData={selectedTableRows}
+        selectedRowIndex={selectedRowIndex}
+        onPrev={() => setSelectedRowIndex(selectedRowIndex - 1)}
+        onNext={() => setSelectedRowIndex(selectedRowIndex + 1)}
       />
     </div>
   );

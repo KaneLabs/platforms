@@ -61,7 +61,7 @@ export default function CampaignDashboard({
         }
       })
       .then(() => setLoading(false));
-  }, [refreshFlag, campaignId]);
+  }, [refreshFlag, campaign]);
 
   useEffect(() => {
     async function fetchTotalContributions() {
@@ -89,7 +89,7 @@ export default function CampaignDashboard({
     fetchCampaignApplications();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [campaign]);
+  }, [refreshFlag, campaign]);
 
   if (loading) {
     return <LoadingDots color="#808080" />;
