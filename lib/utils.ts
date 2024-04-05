@@ -123,7 +123,9 @@ export const getApplicationStatusText = (status: ApplicationStatus | null | unde
     [ApplicationStatus.REJECTED]: "Rejected",
     [ApplicationStatus.PENDING]: "In review",
     [ApplicationStatus.TIMED_OUT]: "Error",
-    [ApplicationStatus.NOT_SUBMITTED]: "No review required",
+    [ApplicationStatus.NOT_SUBMITTED]: "Withdrew",
+    [ApplicationStatus.NOT_REQUIRED]: "No review required",
+
   };
   return status && displayTexts[status] ? displayTexts[status] : "";
 }
