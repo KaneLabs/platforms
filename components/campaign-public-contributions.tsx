@@ -47,9 +47,14 @@ export default function CampaignPublicView({
       {
         <div className="flex flex-col">
           <div className="flex space-x-16">
-            <div className="flex grow flex-col space-y-4">
-              <div className="mb-4 text-lg">
-                You backed <span className="font-medium">{campaign.name}</span>
+            <div className="flex grow flex-col space-y-8">
+              <div className="flex flex-col items-start space-y-2">
+                <h1 className="font-serif text-4xl font-semibold dark:text-white">
+                  {campaign.name}
+                </h1>
+                <h4 className="truncate rounded-md bg-gray-100 py-1 font-medium text-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-400">
+                  Explore the campaign you backed
+                </h4>
               </div>
               <div>
                 <h2 className="text-xl font-semibold">Your Contributor Tier</h2>
@@ -61,10 +66,10 @@ export default function CampaignPublicView({
               <div className="flex grow flex-col space-y-4">
                 <h2 className="text-xl font-semibold">Status</h2>
                 <div>
-                  Submitted: {campaignApplication.createdAt.toLocaleString()}
+                  Submitted: <span className="font-medium">{campaignApplication.createdAt.toLocaleString()}</span>
                 </div>
                 <div>
-                  Status: {getApplicationStatusText(campaignApplication.status)}
+                  Status: <span className="font-medium">{getApplicationStatusText(campaignApplication.status)}</span>
                 </div>
                 <div>
                   {campaignApplication.status !==
