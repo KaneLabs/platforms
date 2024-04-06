@@ -146,20 +146,20 @@ export default function CampaignApplicationsDataTable({
         }, 0);
 
         return (
-            <div className="mt-4" key={status}>
-                <div className="flex items-center space-x-4">
-                    <div>
-                        <span className="text-sm font-medium text-gray-800">Status - </span>
-                        <span className="text-sm font-semibold">{getApplicationStatusText(status as ApplicationStatus)}</span>
-                    </div>
-                    <div>
-                        <span className="text-sm font-medium text-gray-800">Applications - </span>
-                        <span className="text-sm font-semibold">{statusData.length}</span>
-                    </div>
-                    <div>
-                        <span className="text-sm font-medium text-gray-800">Amount - </span>
-                        <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(2)} {campaign.currency}</span>
-                    </div>
+          <div className="mt-4" key={status}>
+            <div className="flex items-center space-x-4 pb-2 border-b">
+                <div>
+                    <span className="text-sm font-medium text-gray-800">Status - </span>
+                    <span className="text-sm font-semibold">{getApplicationStatusText(status as ApplicationStatus)}</span>
+                </div>
+                <div>
+                    <span className="text-sm font-medium text-gray-800">Applications - </span>
+                    <span className="text-sm font-semibold">{statusData.length}</span>
+                </div>
+                <div>
+                    <span className="text-sm font-medium text-gray-800">Amount - </span>
+                    <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(2)} {campaign.currency}</span>
+                </div>
             </div>
             <DataTable columns={columns} data={statusData} />
           </div>
