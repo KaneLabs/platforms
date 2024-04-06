@@ -563,6 +563,7 @@ model CampaignApplication {
 }
 
 enum ApplicationStatus {
+  NOT_REQUIRED
   NOT_SUBMITTED
   PENDING
   ACCEPTED

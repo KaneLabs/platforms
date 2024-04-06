@@ -18,7 +18,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
 import { useRouter } from "next/navigation";
-import { getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
+import { getApplicationStatusColor, getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
 import { PictureInPicture2 } from "lucide-react";
 
 export default function CampaignApplicationsDataTable({
@@ -80,7 +80,7 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "applicant",
     cell: ({ row }: { row: Row<any> }) => {
       return (
-        <div className="flex flex-wrap space-x-1">
+        <div className="flex flex-wrap space-x-1 font-medium">
           {row.original.applicant}
         </div>
       );
@@ -90,7 +90,7 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "tier",
     cell: ({ row }: { row: Row<any> }) => {
       return (
-        <div className="flex flex-wrap space-x-1">
+        <div className="flex flex-wrap space-x-1 font-medium">
           {row.original.tier}
         </div>
       );
@@ -100,7 +100,7 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "contribution",
     cell: ({ row }: { row: Row<any> }) => {
       return (
-        <div className="flex flex-wrap space-x-1">
+        <div className="flex flex-wrap space-x-1 font-medium">
           {row.original.contribution}
         </div>
       );
@@ -110,7 +110,7 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "status",
     cell: ({ row }: { row: Row<any> }) => {
       return (
-        <div className="flex flex-wrap space-x-1">
+        <div className={`flex flex-wrap space-x-1 font-medium ${getApplicationStatusColor(row.original.status)}`}>
           {getApplicationStatusText(row.original.status)}
         </div>
       );
@@ -146,20 +146,20 @@ export default function CampaignApplicationsDataTable({
         }, 0);
 
         return (
-            <div className="mt-4" key={status}>
-                <div className="flex items-center space-x-4">
-                    <div>
-                        <span className="text-sm font-medium text-gray-800">Status - </span>
-                        <span className="text-sm font-semibold">{getApplicationStatusText(status as ApplicationStatus)}</span>
-                    </div>
-                    <div>
-                        <span className="text-sm font-medium text-gray-800">Applications - </span>
-                        <span className="text-sm font-semibold">{statusData.length}</span>
-                    </div>
-                    <div>
-                        <span className="text-sm font-medium text-gray-800">Amount - </span>
-                        <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(2)} {campaign.currency}</span>
-                    </div>
+          <div className="mt-4" key={status}>
+            <div className="flex items-center space-x-4 pb-2 border-b">
+                <div>
+                    <span className="text-sm font-medium text-gray-800">Status - </span>
+                    <span className="text-sm font-semibold">{getApplicationStatusText(status as ApplicationStatus)}</span>
+                </div>
+                <div>
+                    <span className="text-sm font-medium text-gray-800">Applications - </span>
+                    <span className="text-sm font-semibold">{statusData.length}</span>
+                </div>
+                <div>
+                    <span className="text-sm font-medium text-gray-800">Amount - </span>
+                    <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(2)} {campaign.currency}</span>
+                </div>
             </div>
             <DataTable columns={columns} data={statusData} />
           </div>

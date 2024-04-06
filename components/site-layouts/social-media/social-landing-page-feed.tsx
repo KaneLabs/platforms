@@ -1,11 +1,12 @@
-import { Event, Organization, Post } from "@prisma/client";
+import { Campaign, Event, Organization, Post } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import PostCard from "../../post-card";
 import EventCard from "../../event-card";
+import CampaignCard from "../../campaign-card";
 
-function mergeAndSortByDate(events: Event[], docs: Post[]) {
+function mergeAndSortByDate(events: Event[], docs: Post[], campaigns: Campaign[]) {
   // Merge the two arrays
-  const merged = [...events, ...docs];
+  const merged = [...events, ...docs, ...campaigns];
 
   // Sort the merged array by the createdAt property
   const sorted = merged.sort((a, b) => {
@@ -23,7 +24,7 @@ export default async function SocialLandingPageFeed({
   sitedata: Organization;
   params: { domain: string };
 }) {
-  const [events, docs] = await Promise.all([
+  const [events, docs, campaigns] = await Promise.all([
     prisma.event.findMany({
       where: {
         organizationId: sitedata.id,
@@ -42,10 +43,20 @@ export default async function SocialLandingPageFeed({
       },
       take: 3,
     }),
+    prisma.campaign.findMany({
+      where: {
+        organizationId: sitedata.id,
+        deployed: true
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+      take: 3
+    }),
   ]);
 
   // Usage
-  const feed = mergeAndSortByDate(events, docs);
+  const feed = mergeAndSortByDate(events, docs, campaigns);
 
   if (feed.length === 0) {
     return null;
@@ -56,23 +67,34 @@ export default async function SocialLandingPageFeed({
       <h4 className="mx-5 mb-3 mt-3 font-bold tracking-tight text-gray-750 dark:text-gray-400 md:my-5 md:text-lg">
         {"Latest"}
       </h4>
-      <div className="grid grid-cols-1 space-y-3 gap-2 px-5 md:grid-cols-2 xl:grid-cols-3">
-        {feed.map((eventOrDoc) => {
-          if ("content" in eventOrDoc) {
+      <div className="grid grid-cols-1 gap-2 px-5 md:grid-cols-2 xl:grid-cols-3">
+        {feed.map((feedData) => {
+          if ("deployed" in feedData) {
+            // Handle Campaign
+            return (
+              <CampaignCard
+                key={feedData.id}
+                campaign={feedData}
+                name={feedData.name}
+                organization={sitedata}
+                isPublic={true}
+              />
+            );
+          } else if ("content" in feedData) {
             // Handle Post
             return (
               <PostCard
-                key={eventOrDoc.id}
-                data={Object.assign(eventOrDoc, { organization: sitedata })}
+                key={feedData.id}
+                data={Object.assign(feedData, { organization: sitedata })}
               />
             );
-          } else if ("startingAt" in eventOrDoc) {
+          } else if ("startingAt" in feedData) {
             // Handle Event
             return (
               <EventCard
-                key={eventOrDoc.id}
-                href={"/" + eventOrDoc.path}
-                event={Object.assign(eventOrDoc, { organization: sitedata })}
+                key={feedData.id}
+                href={"/" + feedData.path}
+                event={Object.assign(feedData, { organization: sitedata })}
               />
             );
           }

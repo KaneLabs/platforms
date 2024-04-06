@@ -30,13 +30,13 @@ export default function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel()
+    getSortedRowModel: getSortedRowModel(),
   });
 
   const tableBodyRows = table.getRowModel().rows;
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-lg overflow-hidden">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -58,21 +58,32 @@ export default function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {tableBodyRows?.length ? (
-            tableBodyRows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, { 
-                      ...cell.getContext(), 
-                      rows: tableBodyRows 
-                    })}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            tableBodyRows.map((row) => {
+              const visibleCells = row.getVisibleCells();
+              return (
+                <TableRow
+                  key={row.id}
+                  className={row.index % 2 === 0 ? "bg-gray-200 hover:bg-gray-200 border-0" : "bg-gray-100 hover:bg-gray-100 border-0"}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {visibleCells.map((cell, cellIndex) => (
+                    <TableCell 
+                      key={cell.id}
+                      className={`${
+                        cellIndex === 0 ? "rounded-l-lg" : ""
+                      } ${
+                        cellIndex === visibleCells.length - 1 ? "rounded-r-lg" : ""
+                      }`}
+                    >
+                      {flexRender(cell.column.columnDef.cell, { 
+                        ...cell.getContext(), 
+                        rows: tableBodyRows 
+                      })}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">

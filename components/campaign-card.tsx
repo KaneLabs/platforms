@@ -22,16 +22,18 @@ export default function CampaignCard({
   campaign,
   name,
   organization,
+  isPublic
 }: {
   campaign: Campaign;
   name: string;
   organization: Organization;
+  isPublic?: boolean;
 }) {
   const campaignImage = getPlaceholderImage(campaign);
   return (
     <Card className="overflow-hidden">
-      <Link href={`/city/${organization.subdomain}/campaigns/${campaign.id}`}>
-        <div className="h-40  p-6">
+      <Link href={isPublic ? `/campaigns/${campaign.id}` : `/city/${organization.subdomain}/campaigns/${campaign.id}`}>
+        <div className="relative h-40 p-6">
           <CardTitle>{campaign.name}</CardTitle>
 
           {campaignImage ? (
@@ -46,7 +48,7 @@ export default function CampaignCard({
             </div>
           ) : null}
           {!campaign.deployed && (
-            <span className="absolute bottom-2 right-2 rounded-md border border-gray-350 bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-600 shadow-md">
+            <span className="absolute bottom-6 right-6 rounded-md border border-gray-350 bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-600 shadow-md">
               Draft
             </span>
           )}

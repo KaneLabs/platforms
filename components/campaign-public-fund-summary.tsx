@@ -54,7 +54,7 @@ export default function CampaignPublicCheckoutSummary({
           amount={amount}
           onComplete={async () => {
             await createCampaignApplication(campaignTier.campaign.id, campaignTier.id, amount, formResponse?.id);
-            router.push(`/campaigns/${campaignTier.campaign.id}`);
+            router.push(`/campaigns/${campaignTier.campaign.id}/contributions`);
           }}
         />
       </div>
