@@ -18,7 +18,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
 import { useRouter } from "next/navigation";
-import { getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
+import { getApplicationStatusColor, getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
 import { PictureInPicture2 } from "lucide-react";
 
 export default function CampaignApplicationsDataTable({
@@ -80,7 +80,7 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "applicant",
     cell: ({ row }: { row: Row<any> }) => {
       return (
-        <div className="flex flex-wrap space-x-1">
+        <div className="flex flex-wrap space-x-1 font-medium">
           {row.original.applicant}
         </div>
       );
@@ -90,7 +90,7 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "tier",
     cell: ({ row }: { row: Row<any> }) => {
       return (
-        <div className="flex flex-wrap space-x-1">
+        <div className="flex flex-wrap space-x-1 font-medium">
           {row.original.tier}
         </div>
       );
@@ -100,7 +100,7 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "contribution",
     cell: ({ row }: { row: Row<any> }) => {
       return (
-        <div className="flex flex-wrap space-x-1">
+        <div className="flex flex-wrap space-x-1 font-medium">
           {row.original.contribution}
         </div>
       );
@@ -110,7 +110,7 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "status",
     cell: ({ row }: { row: Row<any> }) => {
       return (
-        <div className="flex flex-wrap space-x-1">
+        <div className={`flex flex-wrap space-x-1 font-medium ${getApplicationStatusColor(row.original.status)}`}>
           {getApplicationStatusText(row.original.status)}
         </div>
       );

@@ -125,9 +125,20 @@ export const getApplicationStatusText = (status: ApplicationStatus | null | unde
     [ApplicationStatus.TIMED_OUT]: "Error",
     [ApplicationStatus.NOT_SUBMITTED]: "Withdrew",
     [ApplicationStatus.NOT_REQUIRED]: "No review required",
-
   };
   return status && displayTexts[status] ? displayTexts[status] : "";
+}
+
+export const getApplicationStatusColor = (status: ApplicationStatus | null | undefined) => {
+  const colors = {
+    [ApplicationStatus.ACCEPTED]: "text-green-600", 
+    [ApplicationStatus.REJECTED]: "text-red-600", 
+    [ApplicationStatus.PENDING]: "text-orange-600", 
+    [ApplicationStatus.TIMED_OUT]: "text-yellow-600", 
+    [ApplicationStatus.NOT_SUBMITTED]: "text-gray-600", 
+    [ApplicationStatus.NOT_REQUIRED]: "text-blue-600",
+  };
+  return status && colors[status] ? colors[status] : "";
 }
 
 export const getSubdomainFromDomain = (domain: string) => domain.replace('%3A', ':').endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
