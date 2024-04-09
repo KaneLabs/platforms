@@ -39,7 +39,7 @@ export const getCityPageViewsOriginCountry = async (
     `https://api.us-east.tinybird.co/v0/pipes/city_page_views_origin_country_pipe.json`,
   );
 
-  url.searchParams.append("hostname", subdomainOrDomain + ".fora.co");
+  url.searchParams.append("hostname", subdomainOrDomain + ".fora.city");
   url.searchParams.append("custom_domain", subdomainOrDomain);
 
   const result = await fetch(url, {

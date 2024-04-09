@@ -351,13 +351,13 @@ export default function FormBuilder({
             <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
               {form.published && (
                 <a
-                  href={`https://${subdomain}.fora.co/forms/${form.id}`}
+                  href={`https://${subdomain}.fora.city/forms/${form.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-500"
                 >
                   <span className="flex items-center">
-                    <span className="hidden md:block">{`${subdomain}.fora.co/forms/`}</span>
+                    <span className="hidden md:block">{`${subdomain}.fora.city/forms/`}</span>
                     <span>{`${form.id}`}</span>
                   </span>
                   <ExternalLink className="h-4 w-4" />

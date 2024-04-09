@@ -38,7 +38,7 @@ import { Button } from "./ui/button";
 const externalLinks = [
   {
     name: "Powered by Fora",
-    href: "https://fora.co",
+    href: "https://fora.city",
     icon: (
       <Image
         alt={"Fora logo"}
