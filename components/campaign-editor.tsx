@@ -138,7 +138,7 @@ export default function CampaignEditor({
         deadline: campaign.deadline ?? undefined,
         requireApproval: campaign.requireApproval,
         formId: campaign.formId,
-        currency: campaign.currency,
+        currency: campaign.currency || CurrencyType.ETH,
       });
     }
   }, [campaign]);
