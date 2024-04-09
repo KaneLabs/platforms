@@ -110,21 +110,21 @@ export default function CampaignEditor({
   }, [refreshFlag, campaignId]);
 
   useEffect(() => {
-    async function fetchTotalContributions() {
-      if (campaign?.deployed) {
-        const total = await getContributionTotal(campaign.deployedAddress!);
-        setTotalContributions(total);
-      }
-    }
-    fetchTotalContributions();
+    // async function fetchTotalContributions() {
+    //   if (campaign?.deployed) {
+    //     const total = await getContributionTotal(campaign.deployedAddress!);
+    //     setTotalContributions(total);
+    //   }
+    // }
+    // fetchTotalContributions();
 
-    async function fetchContractBalance() {
-      if (campaign?.deployed) {
-        const balance = await getContractBalance(campaign.deployedAddress!);
-        setContractBalance(balance);
-      }
-    }
-    fetchContractBalance();
+    // async function fetchContractBalance() {
+    //   if (campaign?.deployed) {
+    //     const balance = await getContractBalance(campaign.deployedAddress!);
+    //     setContractBalance(balance);
+    //   }
+    // }
+    // fetchContractBalance();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaign]);
@@ -289,7 +289,6 @@ export default function CampaignEditor({
                       onChange={(e) =>
                         handleFieldChange("name", e.target.value)
                       }
-                      disabled={isPublic || campaign.deployed}
                     />
                   </div>
                   <div className="flex flex-col space-y-4">
@@ -363,6 +362,7 @@ export default function CampaignEditor({
                           handleFieldChange("deadline", date);
                         }
                       }}
+                      disabled={campaign.deployed}
                     />
                   </div>
                   <div className="flex flex-col space-y-4">
@@ -389,13 +389,14 @@ export default function CampaignEditor({
                         disabled={campaign.deployed}
                       />
                       <ToggleGroup.Root
-                        className="inline-flex rounded-full bg-gray-200 shadow-md"
+                        className={`inline-flex rounded-full bg-gray-200 shadow-md ${campaign.deployed && "opacity-50 cursor-not-allowed"}`}
                         type="single"
                         defaultValue={CurrencyType.ETH}
                         value={editedCampaign.currency ?? CurrencyType.ETH}
                         onValueChange={(value) =>
                           handleFieldChange("currency", value)
                         }
+                        disabled={campaign.deployed}
                       >
                         <ToggleGroup.Item
                           className="w-20 rounded-l-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"

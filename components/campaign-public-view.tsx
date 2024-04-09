@@ -35,21 +35,21 @@ export default function CampaignPublicView(
   }, [refreshFlag, campaignId]);
 
   useEffect(() => {
-    async function fetchTotalContributions() {
-      if (campaign?.deployed) {
-        const total = await getContributionTotal(campaign.deployedAddress!);
-        setTotalContributions(total);
-      }
-    }
-    fetchTotalContributions();
+    // async function fetchTotalContributions() {
+    //   if (campaign?.deployed) {
+    //     const total = await getContributionTotal(campaign.deployedAddress!);
+    //     setTotalContributions(total);
+    //   }
+    // }
+    // fetchTotalContributions();
 
-    async function fetchContractBalance() {
-      if (campaign?.deployed) {
-        const balance = await getContractBalance(campaign.deployedAddress!);
-        setContractBalance(balance);
-      }
-    }
-    fetchContractBalance();
+    // async function fetchContractBalance() {
+    //   if (campaign?.deployed) {
+    //     const balance = await getContractBalance(campaign.deployedAddress!);
+    //     setContractBalance(balance);
+    //   }
+    // }
+    // fetchContractBalance();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaign]);
