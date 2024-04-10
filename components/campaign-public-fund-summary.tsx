@@ -3,9 +3,9 @@
 import CampaignTierCard from "@/components/campaign-tier-card";
 import { formatAnswer } from "@/components/form-response-table/utils";
 import CampaignFundButton from "@/components/campaign-fund-button";
-import { createCampaignApplication } from "@/lib/actions";
 import { Answer, Campaign, CampaignTier, Form, FormResponse, Question } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import useEthereum from "@/hooks/useEthereum";
 
 export type CampaignTierWithData = CampaignTier & { campaign: Campaign } & { Form: Form & { formResponse?: Array<FormResponse & { answers: Array<Answer & { question: Question }> }> }};
 
@@ -15,6 +15,8 @@ export default function CampaignPublicCheckoutSummary({
   campaignTier: CampaignTierWithData
 }) {
   const router = useRouter();
+  const { contribute } = useEthereum();
+
   const formResponse = campaignTier.Form?.formResponse?.[0];
   const amount = Number(campaignTier.price);
 
@@ -52,9 +54,13 @@ export default function CampaignPublicCheckoutSummary({
       <div className="self-end ">
         <CampaignFundButton 
           amount={amount}
-          onComplete={async () => {
-            await createCampaignApplication(campaignTier.campaign.id, campaignTier.id, amount, formResponse?.id);
-            router.push(`/campaigns/${campaignTier.campaign.id}/contributions`);
+          onComplete={async (amount: number) => {
+            try {
+              await contribute(amount, campaignTier.campaign, campaignTier, formResponse);
+              router.push(`/campaigns/${campaignTier.campaign.id}/contributions`);
+            } catch (e) {
+              console.error(e);
+            }
           }}
         />
       </div>

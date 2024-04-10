@@ -2,18 +2,16 @@
 
 import { Button } from "./ui/button";
 import React, { useState } from "react";
-import useEthereum from "@/hooks/useEthereum";
 
 interface CampaignFundButtonProps {
   amount: number;
-  onComplete: () => void;
+  onComplete: (amount: number) => void;
 }
 
 export default function CampaignFundButton({
   amount,
   onComplete,
 }: CampaignFundButtonProps) {
-  const { contribute } = useEthereum();
 
   const isValidAmount = () => {
     return !isNaN(amount) && amount > 0;
@@ -21,8 +19,7 @@ export default function CampaignFundButton({
 
   const handleContribution = async () => {
     if (isValidAmount()) {
-      // await contribute(amount.toString(), campaign).then(onComplete);
-      onComplete();
+      onComplete(amount);
     }
   };
 
