@@ -10,8 +10,8 @@ function mergeAndSortByDate(events: Event[], docs: Post[], campaigns: Campaign[]
 
   // Sort the merged array by the createdAt property
   const sorted = merged.sort((a, b) => {
-    // Ascending order
-    return a.createdAt.getTime() - b.createdAt.getTime();
+    // Desc order
+    return b.createdAt.getTime() - a.createdAt.getTime();
   });
 
   return sorted;
@@ -30,7 +30,7 @@ export default async function SocialLandingPageFeed({
         organizationId: sitedata.id,
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
       take: 3,
     }),
@@ -39,7 +39,7 @@ export default async function SocialLandingPageFeed({
         organizationId: sitedata.id,
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
       take: 3,
     }),
@@ -49,7 +49,7 @@ export default async function SocialLandingPageFeed({
         deployed: true
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
       take: 3
     }),
