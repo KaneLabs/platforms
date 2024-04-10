@@ -5,7 +5,7 @@ import CampaignERC20V1ContractABI from '@/protocol/campaigns/abi/CampaignERC20V1
 import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.json';
 import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFactoryV1.json';
 import { toast } from "sonner";
-import { Campaign, CampaignTier, FormResponse } from "@prisma/client";
+import { Campaign, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
 import { createCampaignApplication, launchCampaign } from "@/lib/actions";
 import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
@@ -85,17 +85,31 @@ export default function useEthereum() {
       const loadingToastId = toast('Launching campaign...', { duration: 60000 });
 
       const campaignFactory = new ethers.Contract(CampaignFactoryV1ContractAddress, campaignABI, currentSigner);
-      const transaction = await campaignFactory.createCampaignERC20(
-        creatorAddress,
-        tokenAddress,
-        threshold,
-        deadline
-      );
-      const receipt = await transaction.wait();
+      
+      let campaignAddress = "";
 
-      const events = receipt.logs.map((log: Log) => campaignFactory.interface.parseLog(log));
-      const campaignCreatedEvent = events.find((log: LogDescription) => log && log.name === "CampaignERC20Created");
-      const { campaignAddress } = campaignCreatedEvent.args;
+      if (campaign.currency === CurrencyType.ETH) {
+        const transaction = await campaignFactory.createCampaignETH(
+          creatorAddress,
+          threshold,
+          deadline
+        );
+        const receipt = await transaction.wait();
+        const events = receipt.logs.map((log: Log) => campaignFactory.interface.parseLog(log));
+        const campaignCreatedEvent = events.find((log: LogDescription) => log && log.name === "CampaignETHCreated");
+        campaignAddress = campaignCreatedEvent.args.campaignAddress;
+      } else {
+        const transaction = await campaignFactory.createCampaignERC20(
+          creatorAddress,
+          tokenAddress,
+          threshold,
+          deadline
+        );
+        const receipt = await transaction.wait();
+        const events = receipt.logs.map((log: Log) => campaignFactory.interface.parseLog(log));
+        const campaignCreatedEvent = events.find((log: LogDescription) => log && log.name === "CampaignERC20Created");
+        campaignAddress = campaignCreatedEvent.args.campaignAddress;
+      }
 
       const data: LaunchCampaignData = {
         id: campaign.id,

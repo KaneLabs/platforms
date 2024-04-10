@@ -123,7 +123,7 @@ export const getCurrencySymbol = (currency: CurrencyType | null | undefined) => 
 
 export const getCurrencyTokenAddress = (currency: CurrencyType | null | undefined) => {
   const addresses = {
-    [CurrencyType.ETH]: "0x7b79995e5f793a07bc00c21412e50ecae098e7f9",
+    [CurrencyType.ETH]: "",
     [CurrencyType.USDC]: "0x94a9d9ac8a22534e3faca9f4e7f2e2cf85d5e4c8",
     [CurrencyType.USDT]: "0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0",
   };
