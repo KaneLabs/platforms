@@ -106,6 +106,10 @@ export const getCityUrl = (org: Organization) => {
   return process.env.NEXT_PUBLIC_ROOT_DOMAIN === 'localhost:3000' ? `http://${org.subdomain}.localhost:3000` : `https://${org.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 }
 
+export const getSubdomainUrl = (subdomain: string) => {
+  return process.env.NEXT_PUBLIC_ROOT_DOMAIN === 'localhost:3000' ? `http://${subdomain}.localhost:3000` : `https://${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+}
+
 export const ETH_PRICE_IN_DOLLARS = 2347;  // this is just for testing/demo, TODO query Alchemy or something
 
 export const getCurrencySymbol = (currency: CurrencyType | null | undefined) => {
@@ -115,6 +119,24 @@ export const getCurrencySymbol = (currency: CurrencyType | null | undefined) => 
     [CurrencyType.USDT]: "$",
   };
   return currency && symbols[currency] ? symbols[currency] : "";
+}
+
+export const getCurrencyTokenAddress = (currency: CurrencyType | null | undefined) => {
+  const addresses = {
+    [CurrencyType.ETH]: "",
+    [CurrencyType.USDC]: "0x94a9d9ac8a22534e3faca9f4e7f2e2cf85d5e4c8",
+    [CurrencyType.USDT]: "0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0",
+  };
+  return currency && addresses[currency] ? addresses[currency] : "";
+}
+
+export const getCurrencyTokenDecimals = (currency: CurrencyType | null | undefined) => {
+  const decimals = {
+    [CurrencyType.ETH]: 18,
+    [CurrencyType.USDC]: 6,
+    [CurrencyType.USDT]: 6,
+  };
+  return currency && decimals[currency] ? decimals[currency] : 0;
 }
 
 export const getApplicationStatusText = (status: ApplicationStatus | null | undefined) => {

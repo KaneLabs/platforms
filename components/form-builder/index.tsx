@@ -66,7 +66,7 @@ import { useDebouncedCallback } from "use-debounce";
 import DrawerLink from "@/components/drawer-link";
 import FormTitle from "@/components/form-title";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn, getSubdomainUrl } from "@/lib/utils";
 import LoadingDots from "@/components/icons/loading-dots";
 import { QuestionSettingsForm } from "./question-settings-form";
 import { DateRangePicker } from "./date-range-picker";
@@ -351,13 +351,13 @@ export default function FormBuilder({
             <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
               {form.published && (
                 <a
-                  href={`https://${subdomain}.fora.city/forms/${form.id}`}
+                  href={`${getSubdomainUrl(subdomain)}/forms/${form.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-500"
                 >
                   <span className="flex items-center">
-                    <span className="hidden md:block">{`${subdomain}.fora.city/forms/`}</span>
+                    <span className="hidden md:block">{`${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/forms/`}</span>
                     <span>{`${form.id}`}</span>
                   </span>
                   <ExternalLink className="h-4 w-4" />

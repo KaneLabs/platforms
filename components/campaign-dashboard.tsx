@@ -25,7 +25,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
 import CampaignResponseDataTable from "@/components/form-response-table/campaign-response-data-table";
-import { ETH_PRICE_IN_DOLLARS, getCurrencySymbol } from "@/lib/utils";
+import { ETH_PRICE_IN_DOLLARS, getCurrencySymbol, getSubdomainUrl } from "@/lib/utils";
+import { ExternalLink } from "lucide-react";
 
 export default function CampaignDashboard({
   campaignId,
@@ -64,21 +65,21 @@ export default function CampaignDashboard({
   }, [refreshFlag, campaign]);
 
   useEffect(() => {
-    async function fetchTotalContributions() {
-      if (campaign?.deployed) {
-        const total = await getContributionTotal(campaign.deployedAddress!);
-        setTotalContributions(total);
-      }
-    }
-    fetchTotalContributions();
+    // async function fetchTotalContributions() {
+    //   if (campaign?.deployed) {
+    //     const total = await getContributionTotal(campaign.deployedAddress!);
+    //     setTotalContributions(total);
+    //   }
+    // }
+    // fetchTotalContributions();
 
-    async function fetchContractBalance() {
-      if (campaign?.deployed) {
-        const balance = await getContractBalance(campaign.deployedAddress!);
-        setContractBalance(balance);
-      }
-    }
-    fetchContractBalance();
+    // async function fetchContractBalance() {
+    //   if (campaign?.deployed) {
+    //     const balance = await getContractBalance(campaign.deployedAddress!);
+    //     setContractBalance(balance);
+    //   }
+    // }
+    // fetchContractBalance();
 
     async function fetchCampaignApplications() {
       if (campaign) {
@@ -115,7 +116,18 @@ export default function CampaignDashboard({
         <div className="text-gray-800">
           <div className="my-4 space-y-4">
             <div className="flex flex-row my-6 items-start justify-between gap-[20px] flex-wrap">
-              <h1 className="font-serif text-3xl dark:text-white">{campaign.name}</h1>
+              <h1 className="font-serif text-3xl dark:text-white flex gap-2 items-center">
+                {campaign.name}
+                {campaign.deployed && (
+                    <a
+                      href={`${getSubdomainUrl(subdomain)}/campaigns/${campaign.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                )}
+              </h1>
               <div className="flex flex-row gap-2 items-end">
                 <div className="mr-4">{Intl.NumberFormat("en-US").format(campaign.threshold as number)} in <span className="font-medium">{campaign.currency}</span></div>
                 <Button

@@ -47,7 +47,7 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
         <Input
           type="number"
           id="price"
-          value={editedTier.price?.toString()}
+          value={editedTier.price as number}
           onChange={(e) => handleFieldChange('price', e.target.valueAsNumber)}
         />
         <div>How would you describe it to your citizens?</div>

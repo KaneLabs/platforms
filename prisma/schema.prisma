@@ -521,6 +521,7 @@ model CampaignContribution {
   campaign    Campaign             @relation(fields: [campaignId], references: [id])
   campaignId  String
   application CampaignApplication?
+  transaction String?
 }
 
 model Invite {

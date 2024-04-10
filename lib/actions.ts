@@ -2697,7 +2697,7 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
-export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined) => {
+export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined, transactionHash: string) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {
@@ -2719,7 +2719,8 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
       data: {
         campaignId: campaignId,
         userId: session.user.id,
-        amount: contributionAmount
+        amount: contributionAmount,
+        transaction: transactionHash
       }
     });
 

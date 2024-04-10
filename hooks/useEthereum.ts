@@ -1,10 +1,17 @@
-import { ethers } from "ethers";
+import { LogDescription, ethers } from "ethers";
 import CampaignContract from '@/protocol/campaigns/out/Campaign.sol/Campaign.json';
+import ERC20ABI from '@/protocol/campaigns/abi/ERC20.json';
+import CampaignERC20V1ContractABI from '@/protocol/campaigns/abi/CampaignERC20V1.json';
+import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.json';
+import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFactoryV1.json';
 import { toast } from "sonner";
-import { Campaign } from "@prisma/client";
-import { launchCampaign } from "@/lib/actions";
+import { Campaign, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
+import { createCampaignApplication, launchCampaign } from "@/lib/actions";
 import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
+import { getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
+
+const CampaignFactoryV1ContractAddress = "0x2488b39a46e1ef74093b0b9b7a561a432ed97e29";
 
 interface LaunchCampaignData {
   id: string;
@@ -13,8 +20,13 @@ interface LaunchCampaignData {
   deployed: boolean;
 }
 
-interface Params {
+interface LaunchParams {
   subdomain: string;
+}
+
+interface Log {
+  topics: string[];
+  data: string;
 }
 
 export default function useEthereum() {
@@ -52,59 +64,153 @@ export default function useEthereum() {
     return newSigner;
   };
 
-  const launch = async (campaign: Campaign, params: Params): Promise<void> => {
+  const launch = async (campaign: Campaign, params: LaunchParams): Promise<void> => {
     try {
       const currentSigner = signer || await connectToWallet();
 
-      const campaignABI = CampaignContract.abi;
-      const campaignBytecode = CampaignContract.bytecode;
+      const campaignABI = JSON.stringify(CampaignFactoryV1ContractABI);
 
       const creatorAddress = await currentSigner.getAddress();
-      const thresholdWei = campaign.thresholdWei;
-      const name = campaign.name;
 
-      const campaignFactory = new ethers.ContractFactory(campaignABI, campaignBytecode, currentSigner);
-      const campaignInstance = await campaignFactory.deploy(creatorAddress, thresholdWei, name);
-      await campaignInstance.waitForDeployment();
+      if (!campaign.currency || !campaign.threshold || !campaign.deadline) {
+        console.log(campaign.currency, campaign.threshold, campaign.deadline);
+        throw new Error("Campaign is missing required settings");
+      }
 
-      const deployedAddress = await campaignInstance.getAddress();
+      const tokenAddress = getCurrencyTokenAddress(campaign.currency);
+      const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
+      const threshold = ethers.parseUnits(campaign.threshold.toString(), tokenDecimals);
+      const deadline = Math.floor(new Date(campaign.deadline).getTime() / 1000)
+
+      toast('Launching campaign...', { duration: 60000 });
+
+      const campaignFactory = new ethers.Contract(CampaignFactoryV1ContractAddress, campaignABI, currentSigner);
+      
+      let campaignAddress = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        const transaction = await campaignFactory.createCampaignETH(
+          creatorAddress,
+          threshold,
+          deadline
+        );
+
+        toast.dismiss();
+        toast('Confirming transaction...', { duration: 60000 });
+
+        const receipt = await transaction.wait();
+        const events = receipt.logs.map((log: Log) => campaignFactory.interface.parseLog(log));
+        const campaignCreatedEvent = events.find((log: LogDescription) => log && log.name === "CampaignETHCreated");
+        campaignAddress = campaignCreatedEvent.args.campaignAddress;
+      } else {
+        const transaction = await campaignFactory.createCampaignERC20(
+          creatorAddress,
+          tokenAddress,
+          threshold,
+          deadline
+        );
+
+        toast.dismiss();
+        toast('Confirming transaction...', { duration: 60000 });
+
+        const receipt = await transaction.wait();
+        const events = receipt.logs.map((log: Log) => campaignFactory.interface.parseLog(log));
+        const campaignCreatedEvent = events.find((log: LogDescription) => log && log.name === "CampaignERC20Created");
+        campaignAddress = campaignCreatedEvent.args.campaignAddress;
+      }
 
       const data: LaunchCampaignData = {
         id: campaign.id,
         sponsorEthAddress: creatorAddress,
-        deployedAddress: deployedAddress,
+        deployedAddress: campaignAddress,
         deployed: true,
       };
-
-      toast.success(`Campaign launched!`);
-
+      
       await launchCampaign(data, { params: { subdomain: params.subdomain } }, null);
+
+      toast.dismiss();
+      toast.success(`Campaign launched!`);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message);
     }
   };
 
-  const contribute = async (amount: string, campaign: Campaign): Promise<void> => {
+  const contribute = async (amount: number, campaign: Campaign, campaignTier: CampaignTier, formResponse?: FormResponse): Promise<void> => {
     try {
-      // await connectToWallet();
       const currentSigner = signer || await connectToWallet();
+      const currentSignerAddress = await currentSigner.getAddress();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
       }
 
-      const campaignABI = CampaignContract.abi;
-      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
-      const transactionResponse = await campaignInstance.contribute({ value: ethers.parseEther(amount) });
-      toast('Sending contribution...')
-      // Wait for the transaction to be mined
-      await transactionResponse.wait();
+      const tokenAddress = getCurrencyTokenAddress(campaign.currency);
+      const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
+      const contributeAmount = ethers.parseUnits(amount.toString(), tokenDecimals);
 
-      toast.success(`Contribution successful. Thanks!`);
+      let events = [];
+      let transactionHash = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        toast('Sending contribution...', { duration: 60000 });
+
+        const campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+        const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+        const transaction = await campaignInstance.submitContribution({
+            value: contributeAmount
+        });
+
+        toast.dismiss();
+        toast('Confirming transaction...', { duration: 60000 });
+        
+        const receipt = await transaction.wait();
+
+        events = receipt.logs.map((log: Log) => campaignInstance.interface.parseLog(log));
+        transactionHash = transaction.hash;
+      } else {
+        const tokenInstance = new ethers.Contract(tokenAddress, ERC20ABI, currentSigner);
+        const allowance = await tokenInstance.allowance(currentSignerAddress, campaign.deployedAddress);
+
+        if (allowance < contributeAmount) {
+          toast('Approving token for contribution...', { duration: 60000 });
+          
+          const approveTx = await tokenInstance.approve(campaign.deployedAddress, contributeAmount);
+          
+          toast.dismiss();
+          toast('Confirming transaction...', { duration: 60000 });
+
+          await approveTx.wait();
+        }
+
+        toast.dismiss();
+        toast('Sending contribution...', { duration: 60000 });
+
+        const campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+        const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+        const transaction = await campaignInstance.submitContribution(contributeAmount);
+        
+        toast.dismiss()
+        toast('Confirming transaction...', { duration: 60000 });
+
+        const receipt = await transaction.wait();
+
+        events = receipt.logs.map((log: Log) => campaignInstance.interface.parseLog(log));
+        transactionHash = transaction.hash;
+      }
+      
+      const contributionSubmittedEvent = events.find((log: LogDescription) => log && log.name === "ContributionSubmitted");
+      const { actualSubmittedContribution } = contributionSubmittedEvent.args;
+      const actualSubmittedContributionAmount = parseFloat(ethers.formatUnits(actualSubmittedContribution, tokenDecimals));
+
+      await createCampaignApplication(campaign.id, campaignTier.id, actualSubmittedContributionAmount, formResponse?.id, transactionHash);
+      
+      toast.dismiss();
+      toast.success(`Contribution sent!`);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message);
+      throw error;
     }
   };
 
