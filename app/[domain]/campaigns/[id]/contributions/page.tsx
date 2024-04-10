@@ -16,6 +16,9 @@ export default async function PublicCampaignPage({
       campaignId: params.id,
       userId: session?.user.id,
     },
+    orderBy: {
+      createdAt: "desc"
+    },
     include: {
       campaign: true,
       user: true,

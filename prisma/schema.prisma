@@ -561,6 +561,7 @@ model CampaignApplication {
   contribution   CampaignContribution? @relation(fields: [contributionId], references: [id])
   campaignTier   CampaignTier?         @relation(fields: [campaignTierId], references: [id])
   campaignTierId String?
+  refundTransaction String?
 }
 
 enum ApplicationStatus {

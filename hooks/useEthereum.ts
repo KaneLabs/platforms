@@ -5,8 +5,8 @@ import CampaignERC20V1ContractABI from '@/protocol/campaigns/abi/CampaignERC20V1
 import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.json';
 import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFactoryV1.json';
 import { toast } from "sonner";
-import { Campaign, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
-import { createCampaignApplication, launchCampaign } from "@/lib/actions";
+import { Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
+import { createCampaignApplication, launchCampaign, withdrawCampaignApplication } from "@/lib/actions";
 import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import { getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
@@ -214,6 +214,45 @@ export default function useEthereum() {
     }
   };
 
+  const withdrawContribution = async (campaign: Campaign, application: CampaignApplication, contribution: CampaignContribution): Promise<void> => {
+    try {
+      const currentSigner = signer || await connectToWallet();
+
+      if (!campaign.deployed) {
+        throw new Error("Campaign isn't deployed yet");
+      }
+
+      const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
+      const contributeAmount = ethers.parseUnits(contribution.amount.toString(), tokenDecimals);
+
+      toast('Withdrawing contribution...', { duration: 60000 });
+
+      let campaignABI = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+      } else {
+        campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+      }
+
+      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+      const transaction = await campaignInstance.withdrawContribution(contributeAmount);
+
+      toast.dismiss();
+      toast('Confirming transaction...', { duration: 60000 });
+        
+      const receipt = await transaction.wait();
+      
+      await withdrawCampaignApplication(application.id, transaction.hash);
+      
+      toast.dismiss();
+      toast.success(`Contribution withdrawn!`);
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message);
+    }
+  };
+
   const withdraw = async (amount: string, campaign: Campaign): Promise<void> => {
     try {
       await connectToWallet();
@@ -262,6 +301,7 @@ export default function useEthereum() {
     connectToWallet,
     launch,
     contribute,
+    withdrawContribution,
     withdraw,
     getContributionTotal,
     getContractBalance,

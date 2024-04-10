@@ -2752,13 +2752,15 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
 
 export const withdrawCampaignApplication = async (
   applicationId: string,
+  transactionHash: string
 ) => {
   await prisma.campaignApplication.update({
     where: {
       id: applicationId,
     },
     data: {
-      status: ApplicationStatus.NOT_SUBMITTED
+      status: ApplicationStatus.NOT_SUBMITTED,
+      refundTransaction: transactionHash
     },
   });
 };
