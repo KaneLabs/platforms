@@ -82,7 +82,7 @@ export default function useEthereum() {
       const threshold = ethers.parseUnits(campaign.threshold.toString(), tokenDecimals);
       const deadline = Math.floor(new Date(campaign.deadline).getTime() / 1000)
 
-      const loadingToastId = toast('Launching campaign...', { duration: 60000 });
+      toast('Launching campaign...', { duration: 60000 });
 
       const campaignFactory = new ethers.Contract(CampaignFactoryV1ContractAddress, campaignABI, currentSigner);
       
@@ -94,6 +94,10 @@ export default function useEthereum() {
           threshold,
           deadline
         );
+
+        toast.dismiss();
+        toast('Confirming transaction...', { duration: 60000 });
+
         const receipt = await transaction.wait();
         const events = receipt.logs.map((log: Log) => campaignFactory.interface.parseLog(log));
         const campaignCreatedEvent = events.find((log: LogDescription) => log && log.name === "CampaignETHCreated");
@@ -105,6 +109,10 @@ export default function useEthereum() {
           threshold,
           deadline
         );
+
+        toast.dismiss();
+        toast('Confirming transaction...', { duration: 60000 });
+
         const receipt = await transaction.wait();
         const events = receipt.logs.map((log: Log) => campaignFactory.interface.parseLog(log));
         const campaignCreatedEvent = events.find((log: LogDescription) => log && log.name === "CampaignERC20Created");
@@ -120,7 +128,7 @@ export default function useEthereum() {
       
       await launchCampaign(data, { params: { subdomain: params.subdomain } }, null);
 
-      toast.dismiss(loadingToastId);
+      toast.dismiss();
       toast.success(`Campaign launched!`);
     } catch (error: any) {
       console.error(error);
@@ -152,6 +160,10 @@ export default function useEthereum() {
         const transaction = await campaignInstance.submitContribution({
             value: contributeAmount
         });
+
+        toast.dismiss();
+        toast('Confirming transaction...', { duration: 60000 });
+        
         const receipt = await transaction.wait();
 
         events = receipt.logs.map((log: Log) => campaignInstance.interface.parseLog(log));
@@ -161,19 +173,26 @@ export default function useEthereum() {
         const allowance = await tokenInstance.allowance(currentSignerAddress, campaign.deployedAddress);
 
         if (allowance < contributeAmount) {
-          const loadingToastId = toast('Approving token for contribution...', { duration: 60000 });
+          toast('Approving token for contribution...', { duration: 60000 });
           
           const approveTx = await tokenInstance.approve(campaign.deployedAddress, contributeAmount);
-          await approveTx.wait();
           
-          toast.dismiss(loadingToastId);
+          toast.dismiss();
+          toast('Confirming transaction...', { duration: 60000 });
+
+          await approveTx.wait();
         }
 
+        toast.dismiss();
         toast('Sending contribution...', { duration: 60000 });
 
         const campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
         const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
         const transaction = await campaignInstance.submitContribution(contributeAmount);
+        
+        toast.dismiss()
+        toast('Confirming transaction...', { duration: 60000 });
+
         const receipt = await transaction.wait();
 
         events = receipt.logs.map((log: Log) => campaignInstance.interface.parseLog(log));
