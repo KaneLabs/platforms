@@ -1,7 +1,8 @@
 import { LogDescription, ethers } from "ethers";
 import CampaignContract from '@/protocol/campaigns/out/Campaign.sol/Campaign.json';
 import ERC20ABI from '@/protocol/campaigns/abi/ERC20.json';
-import CampaignV1ContractABI from '@/protocol/campaigns/abi/CampaignV1.json';
+import CampaignERC20V1ContractABI from '@/protocol/campaigns/abi/CampaignERC20V1.json';
+import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.json';
 import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFactoryV1.json';
 import { toast } from "sonner";
 import { Campaign, CampaignTier, FormResponse } from "@prisma/client";
@@ -10,7 +11,7 @@ import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import { getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
 
-const CampaignFactoryV1ContractAddress = "0x042edeb5302527a8726d04ce50b9d741b8ef27d4";
+const CampaignFactoryV1ContractAddress = "0x2488b39a46e1ef74093b0b9b7a561a432ed97e29";
 
 interface LaunchCampaignData {
   id: string;
@@ -84,7 +85,7 @@ export default function useEthereum() {
       const loadingToastId = toast('Launching campaign...', { duration: 60000 });
 
       const campaignFactory = new ethers.Contract(CampaignFactoryV1ContractAddress, campaignABI, currentSigner);
-      const transaction = await campaignFactory.createCampaign(
+      const transaction = await campaignFactory.createCampaignERC20(
         creatorAddress,
         tokenAddress,
         threshold,
@@ -93,7 +94,7 @@ export default function useEthereum() {
       const receipt = await transaction.wait();
 
       const events = receipt.logs.map((log: Log) => campaignFactory.interface.parseLog(log));
-      const campaignCreatedEvent = events.find((log: LogDescription) => log && log.name === "CampaignCreated");
+      const campaignCreatedEvent = events.find((log: LogDescription) => log && log.name === "CampaignERC20Created");
       const { campaignAddress } = campaignCreatedEvent.args;
 
       const data: LaunchCampaignData = {
@@ -139,7 +140,7 @@ export default function useEthereum() {
         toast('Token approved');
       }
 
-      const campaignABI = JSON.stringify(CampaignV1ContractABI);
+      const campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
       const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
 
       const loadingToastId = toast('Sending contribution...', { duration: 60000 });

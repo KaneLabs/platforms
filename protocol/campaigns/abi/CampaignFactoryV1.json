@@ -35,8 +35,53 @@
         "type": "uint256"
       }
     ],
-    "name": "CampaignCreated",
+    "name": "CampaignERC20Created",
     "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "initialAdmin",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "contributionThreshold",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "contributionDeadline",
+        "type": "uint256"
+      }
+    ],
+    "name": "CampaignETHCreated",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "campaignERC20V1Implementation",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "campaignETHV1Implementation",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -57,16 +102,28 @@
         "type": "uint256"
       }
     ],
-    "name": "createCampaign",
+    "name": "createCampaignERC20",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "implementation",
+    "inputs": [
+      { "internalType": "address", "name": "initialAdmin_", "type": "address" },
+      {
+        "internalType": "uint256",
+        "name": "contributionThreshold_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "contributionDeadline_",
+        "type": "uint256"
+      }
+    ],
+    "name": "createCampaignETH",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
