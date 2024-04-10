@@ -131,6 +131,7 @@ export default function useEthereum() {
   const contribute = async (amount: number, campaign: Campaign, campaignTier: CampaignTier, formResponse?: FormResponse): Promise<void> => {
     try {
       const currentSigner = signer || await connectToWallet();
+      const currentSignerAddress = await currentSigner.getAddress();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
@@ -140,36 +141,52 @@ export default function useEthereum() {
       const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
       const contributeAmount = ethers.parseUnits(amount.toString(), tokenDecimals);
 
-      const tokenInstance = new ethers.Contract(tokenAddress, ERC20ABI, currentSigner);
-      const currentSignerAddress = await currentSigner.getAddress();
-      const allowance = await tokenInstance.allowance(currentSignerAddress, campaign.deployedAddress);
-      
-      if (allowance < contributeAmount) {
-        const loadingToastId = toast('Approving token for contribution...', { duration: 60000 });
-        
-        const approveTx = await tokenInstance.approve(campaign.deployedAddress, contributeAmount);
-        await approveTx.wait();
-        
-        toast.dismiss(loadingToastId);
-        toast('Token approved');
+      let events = [];
+      let transactionHash = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        toast('Sending contribution...', { duration: 60000 });
+
+        const campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+        const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+        const transaction = await campaignInstance.submitContribution({
+            value: contributeAmount
+        });
+        const receipt = await transaction.wait();
+
+        events = receipt.logs.map((log: Log) => campaignInstance.interface.parseLog(log));
+        transactionHash = transaction.hash;
+      } else {
+        const tokenInstance = new ethers.Contract(tokenAddress, ERC20ABI, currentSigner);
+        const allowance = await tokenInstance.allowance(currentSignerAddress, campaign.deployedAddress);
+
+        if (allowance < contributeAmount) {
+          const loadingToastId = toast('Approving token for contribution...', { duration: 60000 });
+          
+          const approveTx = await tokenInstance.approve(campaign.deployedAddress, contributeAmount);
+          await approveTx.wait();
+          
+          toast.dismiss(loadingToastId);
+        }
+
+        toast('Sending contribution...', { duration: 60000 });
+
+        const campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+        const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+        const transaction = await campaignInstance.submitContribution(contributeAmount);
+        const receipt = await transaction.wait();
+
+        events = receipt.logs.map((log: Log) => campaignInstance.interface.parseLog(log));
+        transactionHash = transaction.hash;
       }
-
-      const campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
-      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
-
-      const loadingToastId = toast('Sending contribution...', { duration: 60000 });
-
-      const transaction = await campaignInstance.submitContribution(contributeAmount);
-      const receipt = await transaction.wait();
-
-      const events = receipt.logs.map((log: Log) => campaignInstance.interface.parseLog(log));
+      
       const contributionSubmittedEvent = events.find((log: LogDescription) => log && log.name === "ContributionSubmitted");
       const { actualSubmittedContribution } = contributionSubmittedEvent.args;
       const actualSubmittedContributionAmount = parseFloat(ethers.formatUnits(actualSubmittedContribution, tokenDecimals));
 
-      await createCampaignApplication(campaign.id, campaignTier.id, actualSubmittedContributionAmount, formResponse?.id, transaction.hash);
+      await createCampaignApplication(campaign.id, campaignTier.id, actualSubmittedContributionAmount, formResponse?.id, transactionHash);
       
-      toast.dismiss(loadingToastId);
+      toast.dismiss();
       toast.success(`Contribution sent!`);
     } catch (error: any) {
       console.error(error);
