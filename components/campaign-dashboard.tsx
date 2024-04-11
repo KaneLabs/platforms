@@ -140,10 +140,10 @@ export default function CampaignDashboard({
                   Edit
                 </Button>
                 {!campaign.deployed && <LaunchCampaignButton
-                    campaign={campaign}
-                    subdomain={subdomain}
-                    onComplete={triggerRefresh}
-                  />}
+                  campaign={campaign}
+                  subdomain={subdomain}
+                  onComplete={triggerRefresh}
+                />}
                 </div>
             </div>
             <div className="mb-6 flex flex-col space-y-1">
@@ -224,6 +224,16 @@ export default function CampaignDashboard({
               />
             </div>
           )}
+          {/* {campaign.deployed && (
+            <div className="mt-12">
+              <h2 className="text-xl font-medium">Withdrawal</h2>
+              <CampaignWithdrawButton 
+                campaign={campaign}
+                subdomain={subdomain}
+                onComplete={triggerRefresh}
+              />
+            </div>
+          )} */}
         </div>
       )}
     </div>

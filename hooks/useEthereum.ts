@@ -9,7 +9,7 @@ import { Campaign, CampaignApplication, CampaignContribution, CampaignTier, Curr
 import { createCampaignApplication, launchCampaign, withdrawCampaignApplication } from "@/lib/actions";
 import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
-import { getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
+import { getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
 
 const CampaignFactoryV1ContractAddress = "0x2488b39a46e1ef74093b0b9b7a561a432ed97e29";
 
@@ -132,6 +132,7 @@ export default function useEthereum() {
       toast.success(`Campaign launched!`);
     } catch (error: any) {
       console.error(error);
+      toast.dismiss();
       toast.error(error.message);
     }
   };
@@ -209,6 +210,7 @@ export default function useEthereum() {
       toast.success(`Contribution sent!`);
     } catch (error: any) {
       console.error(error);
+      toast.dismiss();
       toast.error(error.message);
       throw error;
     }
@@ -249,25 +251,45 @@ export default function useEthereum() {
       toast.success(`Contribution withdrawn!`);
     } catch (error: any) {
       console.error(error);
+      toast.dismiss();
       toast.error(error.message);
     }
   };
 
-  const withdraw = async (amount: string, campaign: Campaign): Promise<void> => {
+  const withdrawFromCampaign = async (amount: string, recipientAddress: string, campaign: Campaign): Promise<void> => {
     try {
-      await connectToWallet();
+      const currentSigner = signer || await connectToWallet();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
       }
 
-      const campaignABI = CampaignContract.abi;
-      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, signer);
-      await campaignInstance.withdraw(ethers.parseEther(amount));
+      const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
+      const withdrawAmount = ethers.parseUnits(amount, tokenDecimals);
 
-      toast.success(`Withdrew ${amount} ETH`);
+      toast('Withdrawing...', { duration: 60000 });
+
+      let campaignABI = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+      } else {
+        campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+      }
+
+      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+      const transaction = await campaignInstance.transferContributions(recipientAddress, withdrawAmount);
+
+      toast.dismiss();
+      toast('Confirming transaction...', { duration: 60000 });
+        
+      const receipt = await transaction.wait();
+      
+      toast.dismiss();
+      toast.success(`Withdrew ${getCurrencySymbol(campaign.currency)}${amount} ${campaign.currency}`);
     } catch (error: any) {
       console.error(error);
+      toast.dismiss();
       toast.error(error.message);
     }
   };
@@ -292,6 +314,7 @@ export default function useEthereum() {
       return balance;
     } catch (error: any) {
       console.error(error);
+      toast.dismiss();
       toast.error(error.message);
       throw error;
     }
@@ -302,7 +325,7 @@ export default function useEthereum() {
     launch,
     contribute,
     withdrawContribution,
-    withdraw,
+    withdrawFromCampaign,
     getContributionTotal,
     getContractBalance,
   };
