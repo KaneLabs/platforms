@@ -67,7 +67,7 @@ export default function CampaignDashboard({
   useEffect(() => {
     // async function fetchTotalContributions() {
     //   if (campaign?.deployed) {
-    //     const total = await getContributionTotal(campaign.deployedAddress!);
+    //     const total = await getContributionTotal(campaign);
     //     setTotalContributions(total);
     //   }
     // }

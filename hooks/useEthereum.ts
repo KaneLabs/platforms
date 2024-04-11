@@ -294,12 +294,23 @@ export default function useEthereum() {
     }
   };
 
-  const getContributionTotal = async (contractAddr: string) => {
+  const getContributionTotal = async (campaign: Campaign) => {
     const currentSigner = signer || await connectToWallet();
 
-    const campaignABI = CampaignContract.abi;
-    const campaignInstance = new ethers.Contract(contractAddr, campaignABI, currentSigner);
-    const total = await campaignInstance.totalContributions();
+    let campaignABI = "";
+
+    if (campaign.currency === CurrencyType.ETH) {
+      campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+    } else {
+      campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+    }
+
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const totalContributions = await campaignInstance.totalContributions();
+
+    const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
+    const total = parseFloat(ethers.formatUnits(totalContributions, tokenDecimals));
+
     return total;
   }
 
