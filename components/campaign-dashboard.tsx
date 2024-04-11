@@ -36,9 +36,11 @@ export default function CampaignDashboard({
   subdomain: string;
   isPublic: boolean;
 }) {
-  const { getContributionTotal, getContractBalance } = useEthereum();
+  const { getContributionTotal, getContractBalance, isCampaignCompleted } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(BigInt(0));
   const [contractBalance, setContractBalance] = useState(BigInt(0));
+  const [isCompleted, setIsCompleted] = useState(false);
+
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(
     undefined,
   );
@@ -80,6 +82,14 @@ export default function CampaignDashboard({
     //   }
     // }
     // fetchContractBalance();
+
+    async function fetchIsCampaignCompleted() {
+      if (campaign?.deployed) {
+        const isCompleted = await isCampaignCompleted(campaign);
+        setIsCompleted(isCompleted);
+      }
+    }
+    fetchIsCampaignCompleted();
 
     async function fetchCampaignApplications() {
       if (campaign) {
@@ -224,7 +234,7 @@ export default function CampaignDashboard({
               />
             </div>
           )}
-          {/* {campaign.deployed && (
+          {isCompleted && (
             <div className="mt-12">
               <h2 className="text-xl font-medium">Withdrawal</h2>
               <CampaignWithdrawButton 
@@ -233,7 +243,7 @@ export default function CampaignDashboard({
                 onComplete={triggerRefresh}
               />
             </div>
-          )} */}
+          )}
         </div>
       )}
     </div>

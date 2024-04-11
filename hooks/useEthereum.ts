@@ -294,6 +294,23 @@ export default function useEthereum() {
     }
   };
 
+  const isCampaignCompleted = async (campaign: Campaign) => {
+    const currentSigner = signer || await connectToWallet();
+
+    let campaignABI = "";
+
+    if (campaign.currency === CurrencyType.ETH) {
+      campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+    } else {
+      campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+    }
+
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const isCampaignCompleted = await campaignInstance.isCampaignCompleted();
+
+    return isCampaignCompleted;
+  }
+
   const getContributionTotal = async (campaign: Campaign) => {
     const currentSigner = signer || await connectToWallet();
 
@@ -339,5 +356,6 @@ export default function useEthereum() {
     withdrawFromCampaign,
     getContributionTotal,
     getContractBalance,
+    isCampaignCompleted
   };
 };
