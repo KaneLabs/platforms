@@ -32,7 +32,7 @@ import MultiUploader from "./form/uploader-multiple";
 
 interface EditedFields {
   name?: string;
-  threshold?: number;
+  threshold?: string;
   content?: string;
   requireApproval?: boolean;
   deadline?: Date;
@@ -133,7 +133,7 @@ export default function CampaignEditor({
     if (campaign) {
       setEditedCampaign({
         name: campaign.name,
-        threshold: campaign.threshold ?? undefined,
+        threshold: campaign.threshold?.toString() ?? undefined,
         content: campaign.content ?? undefined,
         deadline: campaign.deadline ?? undefined,
         requireApproval: campaign.requireApproval,
@@ -206,7 +206,7 @@ export default function CampaignEditor({
       let payload: Payload = { id: campaignId };
       if (editedCampaign.name) payload.name = editedCampaign.name;
       if (editedCampaign.threshold !== undefined)
-        payload.threshold = editedCampaign.threshold;
+        payload.threshold = parseFloat(editedCampaign.threshold);
       if (editedCampaign.content)
         payload.content = editedCampaign.content ?? null;
       if (editedCampaign.requireApproval !== undefined)
@@ -375,20 +375,33 @@ export default function CampaignEditor({
                       </div>
                     </div>
                     <div className="flex space-x-4">
-                      <Input
-                        className="w-1/5"
-                        type="number"
-                        value={editedCampaign.threshold}
-                        id="threshold"
-                        placeholder="Fundraising goal"
-                        onChange={(e) => {
-                          handleFieldChange(
-                            "threshold",
-                            e.target.valueAsNumber,
-                          );
-                        }}
-                        disabled={campaign.deployed}
-                      />
+                    <Input
+                      className="w-1/5"
+                      type="text"
+                      value={editedCampaign.threshold}
+                      id="threshold"
+                      placeholder="Fundraising goal"
+                      pattern="^\d*\.?\d*$"
+                      inputMode="decimal"
+                      onKeyDown={(e) => {
+                        if (!/[\d.]/.test(e.key) && 
+                            e.key !== "Backspace" && 
+                            e.key !== "Tab" && 
+                            e.key !== "ArrowLeft" && 
+                            e.key !== "ArrowRight"
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/[^\d.]/g, '');
+
+                        if (parseFloat(value) < 0) value = '0';
+
+                        handleFieldChange("threshold", value);
+                      }}
+                      disabled={campaign.deployed}
+                    />    
                       <ToggleGroup.Root
                         className={`inline-flex rounded-full bg-gray-200 shadow-md ${campaign.deployed && "opacity-50 cursor-not-allowed"}`}
                         type="single"

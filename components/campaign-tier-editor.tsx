@@ -5,17 +5,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CampaignTier, Form } from "@prisma/client";
 import { useState, useEffect } from 'react';
 
+type EditedCampaignTier = Partial<Omit<CampaignTier, "price">> & { price: string | undefined }
 
 interface CampaignTierEditorProps {
   tier: CampaignTier;
   forms: Form[];
-  onSave: (tier: Partial<CampaignTier>) => void;
+  onSave: (tier: EditedCampaignTier) => void;
 }
 
 export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTierEditorProps) {
-  const [editedTier, setEditedTier] = useState<Partial<CampaignTier>>(
+  const [editedTier, setEditedTier] = useState<EditedCampaignTier>(
     { name: tier.name, description: tier.description, quantity: tier.quantity,
-      price: tier.price, formId: tier.formId });
+      price: tier.price?.toString(), formId: tier.formId });
 
   useEffect(() => {
     if (tier) {
@@ -23,7 +24,7 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
         name: tier.name,
         description: tier.description ?? undefined,
         quantity: tier.quantity ?? undefined,
-        price: tier.price ?? null,
+        price: tier.price?.toString() ?? undefined,
         formId: tier.formId
       });
     }
@@ -45,10 +46,28 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
         />
         <div>How much is the contribution for this Tier?</div>
         <Input
-          type="number"
           id="price"
-          value={editedTier.price as number}
-          onChange={(e) => handleFieldChange('price', e.target.valueAsNumber)}
+          type="text"
+          value={editedTier.price}
+          pattern="^\d*\.?\d*$"
+          inputMode="decimal"
+          onKeyDown={(e) => {
+            if (!/[\d.]/.test(e.key) && 
+                e.key !== "Backspace" && 
+                e.key !== "Tab" && 
+                e.key !== "ArrowLeft" && 
+                e.key !== "ArrowRight"
+            ) {
+              e.preventDefault();
+            }
+          }}
+          onChange={(e) => {
+            let value = e.target.value.replace(/[^\d.]/g, '');
+
+            if (parseFloat(value) < 0) value = '0';
+
+            handleFieldChange("price", value);
+          }}
         />
         <div>How would you describe it to your citizens?</div>
         <Textarea 
@@ -84,7 +103,9 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
       <div className="flex justify-end">
         <Button
           className="mt-4"
-          onClick={() => onSave(editedTier)}
+          onClick={() => {
+            onSave(editedTier)
+          }}
         >
           Apply
         </Button>
