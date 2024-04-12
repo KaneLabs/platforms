@@ -36,9 +36,11 @@ export default function CampaignDashboard({
   subdomain: string;
   isPublic: boolean;
 }) {
-  const { getContributionTotal, getContractBalance } = useEthereum();
+  const { getContributionTotal, getContractBalance, isCampaignCompleted } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(BigInt(0));
   const [contractBalance, setContractBalance] = useState(BigInt(0));
+  const [isCompleted, setIsCompleted] = useState(false);
+
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(
     undefined,
   );
@@ -67,7 +69,7 @@ export default function CampaignDashboard({
   useEffect(() => {
     // async function fetchTotalContributions() {
     //   if (campaign?.deployed) {
-    //     const total = await getContributionTotal(campaign.deployedAddress!);
+    //     const total = await getContributionTotal(campaign);
     //     setTotalContributions(total);
     //   }
     // }
@@ -80,6 +82,14 @@ export default function CampaignDashboard({
     //   }
     // }
     // fetchContractBalance();
+
+    async function fetchIsCampaignCompleted() {
+      if (campaign?.deployed) {
+        const isCompleted = await isCampaignCompleted(campaign);
+        setIsCompleted(isCompleted);
+      }
+    }
+    fetchIsCampaignCompleted();
 
     async function fetchCampaignApplications() {
       if (campaign) {
@@ -140,10 +150,10 @@ export default function CampaignDashboard({
                   Edit
                 </Button>
                 {!campaign.deployed && <LaunchCampaignButton
-                    campaign={campaign}
-                    subdomain={subdomain}
-                    onComplete={triggerRefresh}
-                  />}
+                  campaign={campaign}
+                  subdomain={subdomain}
+                  onComplete={triggerRefresh}
+                />}
                 </div>
             </div>
             <div className="mb-6 flex flex-col space-y-1">
@@ -221,6 +231,16 @@ export default function CampaignDashboard({
               <CampaignResponseDataTable
                 campaign={campaign}
                 applications={applications}
+              />
+            </div>
+          )}
+          {isCompleted && (
+            <div className="mt-12">
+              <h2 className="text-xl font-medium">Withdrawal</h2>
+              <CampaignWithdrawButton 
+                campaign={campaign}
+                subdomain={subdomain}
+                onComplete={triggerRefresh}
               />
             </div>
           )}

@@ -14,7 +14,6 @@ import LoadingDots from "@/components/icons/loading-dots";
 import CampaignTierCard from "@/components/campaign-tier-card";
 import { Button } from "./ui/button";
 import { getApplicationStatusText } from "@/lib/utils";
-import { withdrawCampaignApplication } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 
 export default function CampaignPublicView({
@@ -28,11 +27,12 @@ export default function CampaignPublicView({
 }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { withdrawContribution } = useEthereum(); 
 
   const campaign = campaignApplication.campaign;
 
   const handleWithdraw = async () => {
-    await withdrawCampaignApplication(campaignApplication.id);
+    await withdrawContribution(campaign, campaignApplication, campaignApplication.contribution as CampaignContribution);
     router.refresh();
   };
 

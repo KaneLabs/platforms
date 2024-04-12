@@ -2697,7 +2697,7 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
-export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined, transactionHash: string) => {
+export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined, transactionHash: string, walletAddress: string) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {
@@ -2720,7 +2720,8 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
         campaignId: campaignId,
         userId: session.user.id,
         amount: contributionAmount,
-        transaction: transactionHash
+        transaction: transactionHash,
+        walletEthAddress: walletAddress
       }
     });
 
@@ -2752,13 +2753,15 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
 
 export const withdrawCampaignApplication = async (
   applicationId: string,
+  transactionHash: string
 ) => {
   await prisma.campaignApplication.update({
     where: {
       id: applicationId,
     },
     data: {
-      status: ApplicationStatus.NOT_SUBMITTED
+      status: ApplicationStatus.NOT_SUBMITTED,
+      refundTransaction: transactionHash
     },
   });
 };
@@ -2766,12 +2769,14 @@ export const withdrawCampaignApplication = async (
 export const respondToCampaignApplication = async (
   applicationId: string,
   isApprove: boolean,
+  transactionHash?: string
 ) => {
   await prisma.campaignApplication.update({
     where: {
       id: applicationId,
     },
     data: {
+      refundTransaction: transactionHash,
       status: isApprove
         ? ApplicationStatus.ACCEPTED
         : ApplicationStatus.REJECTED,
