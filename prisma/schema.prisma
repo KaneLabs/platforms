@@ -522,6 +522,7 @@ model CampaignContribution {
   campaignId  String
   application CampaignApplication?
   transaction String?
+  walletEthAddress String?
 }
 
 model Invite {

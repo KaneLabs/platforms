@@ -49,6 +49,9 @@ export default function CampaignApplicationsDataTable({
           contributionAmount: application.contribution?.amount,
           status: application.status,
           currency: campaign.currency,
+          campaignData: campaign,
+          applicationData: application,
+          contributionData: application.contribution,
           tierData: application.campaignTier,
           formResponseData: application.formResponse
         };

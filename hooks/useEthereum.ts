@@ -6,7 +6,7 @@ import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.jso
 import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFactoryV1.json';
 import { toast } from "sonner";
 import { Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
-import { createCampaignApplication, launchCampaign, withdrawCampaignApplication } from "@/lib/actions";
+import { createCampaignApplication, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
 import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import { getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
@@ -204,7 +204,7 @@ export default function useEthereum() {
       const { actualSubmittedContribution } = contributionSubmittedEvent.args;
       const actualSubmittedContributionAmount = parseFloat(ethers.formatUnits(actualSubmittedContribution, tokenDecimals));
 
-      await createCampaignApplication(campaign.id, campaignTier.id, actualSubmittedContributionAmount, formResponse?.id, transactionHash);
+      await createCampaignApplication(campaign.id, campaignTier.id, actualSubmittedContributionAmount, formResponse?.id, transactionHash, currentSignerAddress);
       
       toast.dismiss();
       toast.success(`Contribution sent!`);
@@ -249,6 +249,47 @@ export default function useEthereum() {
       
       toast.dismiss();
       toast.success(`Contribution withdrawn!`);
+    } catch (error: any) {
+      console.error(error);
+      toast.dismiss();
+      toast.error(error.message);
+    }
+  };
+
+  const rejectContribution = async (campaign: Campaign, application: CampaignApplication, contributor: string): Promise<void> => {
+    try {
+      const currentSigner = signer || await connectToWallet();
+
+      if (!campaign.deployed) {
+        throw new Error("Campaign isn't deployed yet");
+      }
+
+      if (!contributor) {
+        throw new Error("No contributor address available");
+      }
+
+      toast('Rejecting contribution...', { duration: 60000 });
+
+      let campaignABI = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+      } else {
+        campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+      }
+
+      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+      const transaction = await campaignInstance.rejectContributions([contributor]);
+
+      toast.dismiss();
+      toast('Confirming transaction...', { duration: 60000 });
+        
+      const receipt = await transaction.wait();
+      
+      await respondToCampaignApplication(application.id, false);
+      
+      toast.dismiss();
+      toast.success(`Contributor refunded and banned from further participation`);
     } catch (error: any) {
       console.error(error);
       toast.dismiss();
@@ -352,6 +393,7 @@ export default function useEthereum() {
     connectToWallet,
     launch,
     contribute,
+    rejectContribution,
     withdrawContribution,
     withdrawFromCampaign,
     getContributionTotal,
