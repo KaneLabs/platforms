@@ -1,3 +1,9 @@
 [submodule "protocol/campaigns/lib/forge-std"]
 	path = protocol/campaigns/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "protocol/campaign-v1/lib/forge-std"]
+	path = protocol/campaign-v1/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "protocol/campaign-v1/lib/openzeppelin-contracts"]
+	path = protocol/campaign-v1/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
