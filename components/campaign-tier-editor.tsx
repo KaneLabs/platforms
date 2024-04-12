@@ -30,25 +30,27 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
     }
   }, [tier]);
 
-  const handleFieldChange = (field: string, value: string | number) => {
+  const handleFieldChange = (field: string, value: string | number | null) => {
     setEditedTier(prev => ({ ...prev, [field]: value }));
   };
 
   return (
     <div className="mb-4 px-8 py-6 border rounded-lg">
       <div className="space-y-4">
-        <div>Please name your Contributor Tier</div>
+        <div>Please name your Tier</div>
         <Input
           type="text" 
           id="tierName"
           value={editedTier.name}
           onChange={(e) => handleFieldChange('name', e.target.value)}
+          placeholder="E.g. Residents Pass, Standard ticket, VIP ticket, Donor"
         />
         <div>How much is the contribution for this Tier?</div>
         <Input
           id="price"
           type="text"
           value={editedTier.price}
+          placeholder="E.g. 100, 8.99, 0.001"
           pattern="^\d*\.?\d*$"
           inputMode="decimal"
           onKeyDown={(e) => {
@@ -69,24 +71,28 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
             handleFieldChange("price", value);
           }}
         />
-        <div>How would you describe it to your citizens?</div>
+        <div>Describe the Tier</div>
         <Textarea 
           id="description"
-          className="text"
+          className="placeholder:text-gray-700"
           value={editedTier.description || ''}
           onChange={(e) => handleFieldChange('description', e.target.value)}
+          placeholder="Consider describing who the tier is for and what you get by contributing"
         />
-        <div>What form does it link to (if any)?</div>
+        <div>Would you like contributors to this tier to answer a questions form?</div>
         <Select
           value={editedTier.formId || ""}
           onValueChange={(value) => {
-            handleFieldChange("formId", value)
+            handleFieldChange("formId", value === "none" ? null : value)
           }}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a Form" />
           </SelectTrigger>
           <SelectContent>
+            {editedTier.formId && <SelectItem value="none">
+              Select a Form
+            </SelectItem>}
             {forms.map((form) => {
               return (
                 <SelectItem 
