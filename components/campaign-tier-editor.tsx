@@ -86,7 +86,7 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
           className="mt-4"
           onClick={() => onSave(editedTier)}
         >
-          Save
+          Apply
         </Button>
     </div>
     </div>
