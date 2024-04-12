@@ -370,8 +370,7 @@ export default function CampaignEditor({
                     <div>
                       Please set your contribution threshold & token
                       <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
-                        Once set, your contribution threshold is set, it cannot
-                        be decreased, only increased.
+                        Once the campaign is launched, these settings will not be able to be changed
                       </div>
                     </div>
                     <div className="flex space-x-4">
@@ -433,16 +432,21 @@ export default function CampaignEditor({
                       </ToggleGroup.Root>
                     </div>
                   </div>
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-6">
                     <div>Do contributors need to be approved?</div>
-                    <Switch
-                      className="mt-1"
-                      id="requireApproval"
-                      checked={editedCampaign.requireApproval}
-                      onCheckedChange={(val) =>
-                        handleFieldChange("requireApproval", val)
-                      }
-                    />
+                    <div className="flex space-x-2">
+                      <Switch
+                        className={`h-6`}
+                        id="requireApproval"
+                        checked={editedCampaign.requireApproval}
+                        onCheckedChange={(val) =>
+                          handleFieldChange("requireApproval", val)
+                        }
+                      />
+                      <span>
+                        {editedCampaign.requireApproval ? 'Yes' : 'No'}
+                      </span>
+                    </div>
                   </div>
                 </>
               )}
