@@ -286,7 +286,7 @@ export default function useEthereum() {
         
       const receipt = await transaction.wait();
       
-      await respondToCampaignApplication(application.id, false);
+      await respondToCampaignApplication(application.id, false, transaction.hash);
       
       toast.dismiss();
       toast.success(`Contributor refunded and banned from further participation`);
