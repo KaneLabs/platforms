@@ -245,11 +245,11 @@ export default function CampaignEditor({
       .then(() => {
         if (segment === "basic") {
           router.push(
-            `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
-          );
-        } else if (segment === "tiers") {
-          router.push(
             `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
+          );
+        } else if (segment === "details") {
+          router.push(
+            `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
           );
         } else {
           router.push(`/city/${subdomain}/campaigns/${campaignId}`);
@@ -258,6 +258,7 @@ export default function CampaignEditor({
       .catch((error: any) => {
         console.error("Error updating campaign", error);
         toast.error(error.message);
+        setLoading(false);
       });
   };
 

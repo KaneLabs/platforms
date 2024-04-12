@@ -14,14 +14,14 @@ export default function CampaignSettingsNav() {
       segment: "basic",
     },
     {
-      name: "Tiers",
-      href: `/city/${subdomain}/campaigns/${id}/settings/tiers/${editType}`,
-      segment: "tiers",
-    },
-    {
       name: "Settings",
       href: `/city/${subdomain}/campaigns/${id}/settings/details/${editType}`,
       segment: "details",
+    },
+    {
+      name: "Tiers",
+      href: `/city/${subdomain}/campaigns/${id}/settings/tiers/${editType}`,
+      segment: "tiers",
     },
   ];
 
