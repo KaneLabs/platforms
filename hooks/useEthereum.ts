@@ -72,9 +72,16 @@ export default function useEthereum() {
 
       const creatorAddress = await currentSigner.getAddress();
 
-      if (!campaign.currency || !campaign.threshold || !campaign.deadline) {
-        console.log(campaign.currency, campaign.threshold, campaign.deadline);
-        throw new Error("Campaign is missing required settings");
+      if (!campaign.currency) {
+        throw new Error("Campaign is missing currency setting");
+      }
+
+      if (!campaign.threshold) {
+        throw new Error("Campaign is missing threshold setting");
+      }
+
+      if (!campaign.deadline) {
+        throw new Error("Campaign is missing deadline setting");
       }
 
       const tokenAddress = getCurrencyTokenAddress(campaign.currency);
