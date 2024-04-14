@@ -114,7 +114,7 @@ export const ETH_PRICE_IN_DOLLARS = 2347;  // this is just for testing/demo, TOD
 
 export const getCurrencySymbol = (currency: CurrencyType | null | undefined) => {
   const symbols = {
-    [CurrencyType.ETH]: "Ξ",
+    [CurrencyType.ETH]: "⟠",
     [CurrencyType.USDC]: "$",
     [CurrencyType.USDT]: "$",
   };
