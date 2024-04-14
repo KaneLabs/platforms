@@ -35,8 +35,6 @@ export default function CampaignSettingsNav() {
         <Link
           key={item.name}
           href={item.href}
-          
-          // Change style depending on whether the link is active
           className={cn(
             "rounded-md px-2 py-1 text-lg font-medium transition-colors active:bg-gray-200 dark:active:bg-gray-600",
             item.disabled 
