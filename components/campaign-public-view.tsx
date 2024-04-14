@@ -70,7 +70,7 @@ export default function CampaignPublicView(
       ) : (
         <div className="flex flex-col">
           <div className="flex flex-col">
-            <h1 className="font-serif text-4xl mb-4 font-semibold">{campaign.name}</h1>
+            <h1 className="font-serif text-4xl mb-8 font-semibold">{campaign.name}</h1>
             <div className="mb-6 flex flex-col space-y-4">
               <div className="flex space-x-8">
                 <BannerImage src={campaign.medias[0]?.uri} />
@@ -79,7 +79,7 @@ export default function CampaignPublicView(
           </div>
           <div className="flex space-x-16">
             <div className="flex flex-col grow space-y-6">
-              <div className="flex items-center mb-4">
+              <div className="flex items-center">
                 {campaign.organization.image && campaign.organization.name && <img
                   className="w-12 h-12 rounded-full mr-4"
                   src={campaign.organization.image}
