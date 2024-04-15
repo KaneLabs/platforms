@@ -49,7 +49,7 @@ export default function CampaignPublicCheckoutSummary({
         />
       </div>
       <div className="text-sm">
-        * You will be able to get a refund if your application isn't accepted or the campaign doesn't reach its target.
+        * You will be able to get a refund if your application isn&#39;t accepted or the campaign doesn&#39;t reach its target.
       </div>
       <div className="self-end ">
         <CampaignFundButton 
