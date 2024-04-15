@@ -25,10 +25,10 @@ export default async function CampaignCheckoutLayout({
       <div className="flex flex-col space-y-6">
         <div className="flex flex-col items-start space-y-2">
           <h1 className="font-serif text-4xl font-semibold dark:text-white">
-            Contribute to {campaign.name}
+            {campaign.name}
           </h1>
           <h4 className="truncate rounded-md bg-gray-100 py-1 font-medium text-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-400">
-            Customize your {campaign.name} experience
+            Make a contribution to {campaign.name}
           </h4>
         </div>
         <CampaignCheckoutNav />

@@ -191,10 +191,10 @@ export default function CampaignDashboard({
                 </p>
               </div> */}
             </div>
-            <div className="my-6">
+            {campaign.content && campaign.content.length > 0 && <div className="my-6">
               {campaign.content}
-            </div>
-            <div className="pt-6 flex flex-wrap gap-2">
+            </div>}
+            {campaign.medias && campaign.medias.length > 0 && <div className="pt-6 flex flex-wrap gap-2">
               {campaign.medias 
                 ? campaign.medias.map(m => {
                   return (
@@ -209,7 +209,7 @@ export default function CampaignDashboard({
                   })
                 : null
               }
-            </div>
+            </div>}
           </div>
           {campaign.campaignTiers && (
             <div className="mt-12">

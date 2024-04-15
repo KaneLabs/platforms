@@ -72,9 +72,16 @@ export default function useEthereum() {
 
       const creatorAddress = await currentSigner.getAddress();
 
-      if (!campaign.currency || !campaign.threshold || !campaign.deadline) {
-        console.log(campaign.currency, campaign.threshold, campaign.deadline);
-        throw new Error("Campaign is missing required settings");
+      if (!campaign.currency) {
+        throw new Error("Campaign is missing currency setting");
+      }
+
+      if (!campaign.threshold) {
+        throw new Error("Campaign is missing threshold setting");
+      }
+
+      if (!campaign.deadline) {
+        throw new Error("Campaign is missing deadline setting");
       }
 
       const tokenAddress = getCurrencyTokenAddress(campaign.currency);
@@ -132,8 +139,9 @@ export default function useEthereum() {
       toast.success(`Campaign launched!`);
     } catch (error: any) {
       console.error(error);
+      const friendlyError = parseEthersError(error);
       toast.dismiss();
-      toast.error(error.message);
+      toast.error(friendlyError);
     }
   };
 
@@ -210,8 +218,9 @@ export default function useEthereum() {
       toast.success(`Contribution sent!`);
     } catch (error: any) {
       console.error(error);
+      const friendlyError = parseEthersError(error);
       toast.dismiss();
-      toast.error(error.message);
+      toast.error(friendlyError);
       throw error;
     }
   };
@@ -251,8 +260,9 @@ export default function useEthereum() {
       toast.success(`Contribution withdrawn!`);
     } catch (error: any) {
       console.error(error);
+      const friendlyError = parseEthersError(error);
       toast.dismiss();
-      toast.error(error.message);
+      toast.error(friendlyError);
     }
   };
 
@@ -292,8 +302,9 @@ export default function useEthereum() {
       toast.success(`Contributor refunded and banned from further participation`);
     } catch (error: any) {
       console.error(error);
+      const friendlyError = parseEthersError(error);
       toast.dismiss();
-      toast.error(error.message);
+      toast.error(friendlyError);
     }
   };
 
@@ -330,8 +341,9 @@ export default function useEthereum() {
       toast.success(`Withdrew ${getCurrencySymbol(campaign.currency)}${amount} ${campaign.currency}`);
     } catch (error: any) {
       console.error(error);
+      const friendlyError = parseEthersError(error);
       toast.dismiss();
-      toast.error(error.message);
+      toast.error(friendlyError);
     }
   };
 
@@ -383,8 +395,9 @@ export default function useEthereum() {
       return balance;
     } catch (error: any) {
       console.error(error);
+      const friendlyError = parseEthersError(error);
       toast.dismiss();
-      toast.error(error.message);
+      toast.error(friendlyError);
       throw error;
     }
   }
@@ -401,3 +414,39 @@ export default function useEthereum() {
     isCampaignCompleted
   };
 };
+
+function parseEthersError(inputError: any) {
+  let error;
+
+  if (inputError && inputError.code && inputError.message) {
+    error = inputError;
+  }
+
+  if (inputError.error && inputError.error.code && inputError.error.message) {
+    error = inputError.error;
+  }
+
+  if (inputError.info && inputError.info.error && inputError.info.error.code && inputError.info.error.message) {
+    error = inputError.info.error;
+  }
+
+  let userFriendlyMessage = error.message;
+
+  // Handle user rejection
+  if (error.code === 4001) {
+      userFriendlyMessage = 'You have rejected the transaction request.';
+  }
+  // Handle insufficient funds for gas *Not always accurate due to gas fluctuations
+  else if (error.message && error.message.includes('insufficient funds')) {
+      userFriendlyMessage = 'Insufficient funds.';
+  }
+  // Handle failed transaction due to revert or other conditions
+  else if (error.message && error.message.includes('execution reverted')) {
+      userFriendlyMessage = 'Transaction failed: the transaction was reverted by the EVM.';
+  }
+  else if (error.code === -32002) {
+      userFriendlyMessage = 'Request already pending. Please check your wallet and approve or reject the previous request.';
+  }
+
+  return userFriendlyMessage;
+}

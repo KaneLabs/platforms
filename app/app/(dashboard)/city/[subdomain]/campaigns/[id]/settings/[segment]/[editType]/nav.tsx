@@ -12,16 +12,19 @@ export default function CampaignSettingsNav() {
       name: "Basic",
       href: `/city/${subdomain}/campaigns/${id}/settings/basic/${editType}`,
       segment: "basic",
-    },
-    {
-      name: "Tiers",
-      href: `/city/${subdomain}/campaigns/${id}/settings/tiers/${editType}`,
-      segment: "tiers",
+      disabled: true
     },
     {
       name: "Settings",
       href: `/city/${subdomain}/campaigns/${id}/settings/details/${editType}`,
       segment: "details",
+      disabled: true
+    },
+    {
+      name: "Tiers",
+      href: `/city/${subdomain}/campaigns/${id}/settings/tiers/${editType}`,
+      segment: "tiers",
+      disabled: true
     },
   ];
 
@@ -31,9 +34,11 @@ export default function CampaignSettingsNav() {
         <Link
           key={item.name}
           href={item.href}
-          // Change style depending on whether the link is active
           className={cn(
             "rounded-md px-2 py-1 text-lg font-medium transition-colors active:bg-gray-200 dark:active:bg-gray-600",
+            item.disabled 
+              ? "pointer-events-none cursor-not-allowed"
+              : "",
             segment === item.segment
               ? "text-gray-800 dark:bg-gray-800 dark:text-gray-400"
               : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800",
