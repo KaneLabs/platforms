@@ -10,7 +10,7 @@
 
 # Deployment Instructions
 
-1. Create .env file and enter required parameters 'PRIV_KEY' and 'ETH_RPC_URL' as shown in .env.example
+1. Create .env file and enter required parameters `PRIV_KEY`, `ETH_RPC_URL` and `ETHERSCAN_API_KEY` as shown in .env.example
 
 2. Compile the contracts - `forge build`
 
