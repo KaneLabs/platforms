@@ -2737,7 +2737,7 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
     });
 
     sendPaymentConfirmationEmail({
-      id: campaignApplication.id,
+      id: transactionHash,
       campaign: campaign ? campaign?.name : "The Campaign",
       date: campaignApplication.createdAt.toLocaleDateString(),
       amount: `${getCurrencySymbol(campaign?.currency)}${contributionAmount} ${campaign?.currency}`,

@@ -76,13 +76,25 @@ export const PaymentConfirmationEmail = ({
             </Text>
 
             <Section>
-              <Text className="text-md text-gray-800">
+              <Text className="text-md font-light text-gray-800">
                 Thank you for your contribution to {campaign}. Here are your payment details:
-                <ul className="text-sm font-light mt-2">
+              </Text>
+              <Text className="text-sm font-light text-gray-800">
+                <ul className="text-sm font-light mt-2 mb-4">
                     <li>Amount: <span className="font-medium">{amount}</span></li>
                     <li>Date: <span className="font-medium">{date}</span></li>
-                    <li>Transaction ID: <span className="font-medium">{id}</span></li>
+                    <li>Transaction:&nbsp; 
+                      <Link
+                        className="font-medium"
+                        href={`https://sepolia.etherscan.io/tx/${id}`}
+                      >
+                        Link
+                      </Link>
+                    </li>
                 </ul>
+              </Text>
+              <Text className="text-md font-light text-gray-800">
+                As a reminder, you can withdraw your contribution at any time before the Campaign meets its target. Check the status of your contribution by clicking below.
               </Text>
             </Section>
             <Section className="py-5">
