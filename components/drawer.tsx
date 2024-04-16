@@ -124,12 +124,12 @@ export default function Drawer({ children }: { children: ReactNode }) {
     // City Drawer
     if (segments[0] === "city" && subdomain) {
       return [
-        {
-          name: "Overview",
-          href: "/city/" + subdomain,
-          isActive: segments.length === 2,
-          icon: <LayoutDashboard width={18} />,
-        },
+        // {
+        //   name: "Overview",
+        //   href: "/city/" + subdomain,
+        //   isActive: segments.length === 2,
+        //   icon: <LayoutDashboard width={18} />,
+        // },
         {
           name: "Campaigns",
           href: `/city/${subdomain}/campaigns`,
@@ -147,30 +147,30 @@ export default function Drawer({ children }: { children: ReactNode }) {
           href: `/city/${subdomain}/roles`,
           icon: <Drama className="w-[18px]" />,
         },
-        {
-          name: "Events",
-          href: `/city/${subdomain}/events`,
-          isActive: segments.includes("events"),
-          icon: <Ticket width={18} />,
-        },
-        {
-          name: "Places",
-          href: `/city/${subdomain}/places`,
-          isActive: segments.includes("places"),
-          icon: <Building2 width={18} />,
-        },
+        // {
+        //   name: "Events",
+        //   href: `/city/${subdomain}/events`,
+        //   isActive: segments.includes("events"),
+        //   icon: <Ticket width={18} />,
+        // },
+        // {
+        //   name: "Places",
+        //   href: `/city/${subdomain}/places`,
+        //   isActive: segments.includes("places"),
+        //   icon: <Building2 width={18} />,
+        // },
         {
           name: "Forms",
           href: `/city/${subdomain}/forms`,
           isActive: segments.includes("forms"),
           icon: <ClipboardSignature width={18} />,
         },
-        {
-          name: "Docs",
-          href: `/city/${subdomain}/docs`,
-          isActive: segments.includes("docs"),
-          icon: <Newspaper width={18} />,
-        },
+        // {
+        //   name: "Docs",
+        //   href: `/city/${subdomain}/docs`,
+        //   isActive: segments.includes("docs"),
+        //   icon: <Newspaper width={18} />,
+        // },
         {
           name: "Settings",
           href: `/city/${subdomain}/settings`,

@@ -9,28 +9,29 @@ export default async function SitePosts({
 }: {
   params: { subdomain: string };
 }) {
-  const session = await getSession();
-  if (!session) {
-    redirect("/login");
-  }
-  const data = await prisma.organization.findUnique({
-    where: {
-      subdomain: params.subdomain,
-    },
-  });
+  redirect(`/city/${params.subdomain}/campaigns`);
+  // const session = await getSession();
+  // if (!session) {
+  //   redirect("/login");
+  // }
+  // const data = await prisma.organization.findUnique({
+  //   where: {
+  //     subdomain: params.subdomain,
+  //   },
+  // });
 
-  if (!data) {
-    notFound();
-  }
+  // if (!data) {
+  //   notFound();
+  // }
 
-  const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  // const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
-  return (
-    <div className="flex flex-col space-y-6">
-      <div className="flex flex-col">
-        <PageHeader title="Overview" ActionButton={null} />
-        <CityDashboardKPIs org={data} />
-      </div>
-    </div>
-  );
+  // return (
+  //   <div className="flex flex-col space-y-6">
+  //     <div className="flex flex-col">
+  //       <PageHeader title="Overview" ActionButton={null} />
+  //       <CityDashboardKPIs org={data} />
+  //     </div>
+  //   </div>
+  // );
 }

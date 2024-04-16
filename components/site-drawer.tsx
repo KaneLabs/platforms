@@ -35,19 +35,19 @@ import CitySwitcher from "./city-switcher";
 import { SessionData } from "@/lib/auth";
 import { Button } from "./ui/button";
 
-const externalLinks = [
-  {
-    name: "Powered by Fora",
-    href: "https://fora.city",
-    icon: (
-      <Image
-        alt={"Fora logo"}
-        src={"https://fora.co/fora-logo.png"}
-        height={20}
-        width={20}
-      />
-    ),
-  },
+const externalLinks: any[] = [
+  // {
+  //   name: "Powered by Fora",
+  //   href: "https://fora.city",
+  //   icon: (
+  //     <Image
+  //       alt={"Fora logo"}
+  //       src={"https://fora.co/fora-logo.png"}
+  //       height={20}
+  //       width={20}
+  //     />
+  //   ),
+  // },
 ];
 
 export type UsersUniqueOrgsWithRolesRecord = Record<
@@ -199,12 +199,12 @@ export default function Drawer({ children }: { children: ReactNode }) {
         isActive: segments.length === 2,
         icon: <Home width={18} />,
       },
-      {
-        name: "Events",
-        href: `/events`,
-        isActive: segments.includes("events"),
-        icon: <CalendarDays width={18} />,
-      },
+      // {
+      //   name: "Events",
+      //   href: `/events`,
+      //   isActive: segments.includes("events"),
+      //   icon: <CalendarDays width={18} />,
+      // },
     ];
   }, [segments, subdomain, path, organizationSubdomain]);
 
