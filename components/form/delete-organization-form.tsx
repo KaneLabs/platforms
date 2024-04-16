@@ -18,7 +18,7 @@ export default function DeleteOrganizationForm({
   return (
     <form
       action={async (data: FormData) =>
-        window.confirm("Are you sure you want to delete your city?") &&
+        window.confirm("Are you sure you want to delete your organization?") &&
         deleteOrganization(data, { params: { subdomain } }, "delete")
           .then(async (res) => {
             if (res.error) {
@@ -34,10 +34,10 @@ export default function DeleteOrganizationForm({
       className="rounded-lg border border-red-600 bg-gray-50 dark:bg-gray-900"
     >
       <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
-        <h2 className="font-cal text-xl dark:text-gray-50">Delete City</h2>
+        <h2 className="font-cal text-xl dark:text-gray-50">Delete Organization</h2>
         <p className="text-gray-500 text-sm dark:text-gray-400">
-          Deletes your city and everything associated with it. Type in the name
-          of your city <b>{organizationName}</b> to confirm.
+          Deletes your organization and everything associated with it. Type in the name
+          of your organization <b>{organizationName}</b> to confirm.
         </p>
 
         <input

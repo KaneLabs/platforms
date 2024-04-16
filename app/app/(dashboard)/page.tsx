@@ -13,7 +13,7 @@ export default function Overview() {
         <div className="flex flex-col space-y-6 p-8">
           <div className="flex items-center justify-between">
             <h1 className="font-cal text-3xl font-bold dark:text-white">
-              My Cities
+              My Organizations
             </h1>
             <CreateOrganizationButton>
               <CreateOrganizationModal />

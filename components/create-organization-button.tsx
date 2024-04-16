@@ -14,7 +14,7 @@ export default function CreateOrganizationButton({
     <Button
       onClick={() => modal?.show(children)}
     >
-      Create New City
+      Create A New Organization
     </Button>
   );
 }

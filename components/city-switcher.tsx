@@ -221,7 +221,7 @@ export default function CitySwitcher({
                     }}
                   >
                     <PlusCircledIcon className="mr-2 h-5 w-5" />
-                    Create City
+                    Create Organization
                   </CommandItem>
                 </DialogTrigger>
               </CommandGroup>
