@@ -6,6 +6,7 @@ import { formatAnswer } from "@/components/form-response-table/utils";
 import CampaignTierCard from '../campaign-tier-card';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import LoadingDots from '../icons/loading-dots';
+import useEthereum from '@/hooks/useEthereum';
 
 
 interface ResponseModalProps {
@@ -21,6 +22,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   { isOpen, onClose, onPrev, onNext, rowsData, selectedRowIndex }
 ) => {
   const [loading, setLoading] = useState(false);
+  const { rejectContribution } = useEthereum();
   
   if (!isOpen) {
     return null;
@@ -36,7 +38,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
 
   const declineApplication = async () => {
     rowData.status = ApplicationStatus.REJECTED;
-    return respondToCampaignApplication(rowData.id, false);
+    await rejectContribution(rowData.campaignData, rowData.applicationData, rowData.contributionData.walletEthAddress);
   }
 
   const formattedUserData = (

@@ -5,11 +5,11 @@ import CampaignERC20V1ContractABI from '@/protocol/campaigns/abi/CampaignERC20V1
 import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.json';
 import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFactoryV1.json';
 import { toast } from "sonner";
-import { Campaign, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
-import { createCampaignApplication, launchCampaign } from "@/lib/actions";
+import { Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
+import { createCampaignApplication, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
 import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
-import { getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
+import { getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
 
 const CampaignFactoryV1ContractAddress = "0x2488b39a46e1ef74093b0b9b7a561a432ed97e29";
 
@@ -72,9 +72,16 @@ export default function useEthereum() {
 
       const creatorAddress = await currentSigner.getAddress();
 
-      if (!campaign.currency || !campaign.threshold || !campaign.deadline) {
-        console.log(campaign.currency, campaign.threshold, campaign.deadline);
-        throw new Error("Campaign is missing required settings");
+      if (!campaign.currency) {
+        throw new Error("Campaign is missing currency setting");
+      }
+
+      if (!campaign.threshold) {
+        throw new Error("Campaign is missing threshold setting");
+      }
+
+      if (!campaign.deadline) {
+        throw new Error("Campaign is missing deadline setting");
       }
 
       const tokenAddress = getCurrencyTokenAddress(campaign.currency);
@@ -132,7 +139,9 @@ export default function useEthereum() {
       toast.success(`Campaign launched!`);
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message);
+      const friendlyError = parseEthersError(error);
+      toast.dismiss();
+      toast.error(friendlyError);
     }
   };
 
@@ -203,42 +212,175 @@ export default function useEthereum() {
       const { actualSubmittedContribution } = contributionSubmittedEvent.args;
       const actualSubmittedContributionAmount = parseFloat(ethers.formatUnits(actualSubmittedContribution, tokenDecimals));
 
-      await createCampaignApplication(campaign.id, campaignTier.id, actualSubmittedContributionAmount, formResponse?.id, transactionHash);
+      await createCampaignApplication(campaign.id, campaignTier.id, actualSubmittedContributionAmount, formResponse?.id, transactionHash, currentSignerAddress);
       
       toast.dismiss();
       toast.success(`Contribution sent!`);
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message);
+      const friendlyError = parseEthersError(error);
+      toast.dismiss();
+      toast.error(friendlyError);
       throw error;
     }
   };
 
-  const withdraw = async (amount: string, campaign: Campaign): Promise<void> => {
+  const withdrawContribution = async (campaign: Campaign, application: CampaignApplication, contribution: CampaignContribution): Promise<void> => {
     try {
-      await connectToWallet();
+      const currentSigner = signer || await connectToWallet();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
       }
 
-      const campaignABI = CampaignContract.abi;
-      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, signer);
-      await campaignInstance.withdraw(ethers.parseEther(amount));
+      const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
+      const contributeAmount = ethers.parseUnits(contribution.amount.toString(), tokenDecimals);
 
-      toast.success(`Withdrew ${amount} ETH`);
+      toast('Withdrawing contribution...', { duration: 60000 });
+
+      let campaignABI = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+      } else {
+        campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+      }
+
+      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+      const transaction = await campaignInstance.withdrawContribution(contributeAmount);
+
+      toast.dismiss();
+      toast('Confirming transaction...', { duration: 60000 });
+        
+      const receipt = await transaction.wait();
+      
+      await withdrawCampaignApplication(application.id, transaction.hash);
+      
+      toast.dismiss();
+      toast.success(`Contribution withdrawn!`);
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message);
+      const friendlyError = parseEthersError(error);
+      toast.dismiss();
+      toast.error(friendlyError);
     }
   };
 
-  const getContributionTotal = async (contractAddr: string) => {
+  const rejectContribution = async (campaign: Campaign, application: CampaignApplication, contributor: string): Promise<void> => {
+    try {
+      const currentSigner = signer || await connectToWallet();
+
+      if (!campaign.deployed) {
+        throw new Error("Campaign isn't deployed yet");
+      }
+
+      if (!contributor) {
+        throw new Error("No contributor address available");
+      }
+
+      toast('Rejecting contribution...', { duration: 60000 });
+
+      let campaignABI = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+      } else {
+        campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+      }
+
+      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+      const transaction = await campaignInstance.rejectContributions([contributor]);
+
+      toast.dismiss();
+      toast('Confirming transaction...', { duration: 60000 });
+        
+      const receipt = await transaction.wait();
+      
+      await respondToCampaignApplication(application.id, false, transaction.hash);
+      
+      toast.dismiss();
+      toast.success(`Contributor refunded and banned from further participation`);
+    } catch (error: any) {
+      console.error(error);
+      const friendlyError = parseEthersError(error);
+      toast.dismiss();
+      toast.error(friendlyError);
+    }
+  };
+
+  const withdrawFromCampaign = async (amount: string, recipientAddress: string, campaign: Campaign): Promise<void> => {
+    try {
+      const currentSigner = signer || await connectToWallet();
+
+      if (!campaign.deployed) {
+        throw new Error("Campaign isn't deployed yet");
+      }
+
+      const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
+      const withdrawAmount = ethers.parseUnits(amount, tokenDecimals);
+
+      toast('Withdrawing...', { duration: 60000 });
+
+      let campaignABI = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+      } else {
+        campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+      }
+
+      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+      const transaction = await campaignInstance.transferContributions(recipientAddress, withdrawAmount);
+
+      toast.dismiss();
+      toast('Confirming transaction...', { duration: 60000 });
+        
+      const receipt = await transaction.wait();
+      
+      toast.dismiss();
+      toast.success(`Withdrew ${getCurrencySymbol(campaign.currency)}${amount} ${campaign.currency}`);
+    } catch (error: any) {
+      console.error(error);
+      const friendlyError = parseEthersError(error);
+      toast.dismiss();
+      toast.error(friendlyError);
+    }
+  };
+
+  const isCampaignCompleted = async (campaign: Campaign) => {
     const currentSigner = signer || await connectToWallet();
 
-    const campaignABI = CampaignContract.abi;
-    const campaignInstance = new ethers.Contract(contractAddr, campaignABI, currentSigner);
-    const total = await campaignInstance.totalContributions();
+    let campaignABI = "";
+
+    if (campaign.currency === CurrencyType.ETH) {
+      campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+    } else {
+      campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+    }
+
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const isCampaignCompleted = await campaignInstance.isCampaignCompleted();
+
+    return isCampaignCompleted;
+  }
+
+  const getContributionTotal = async (campaign: Campaign) => {
+    const currentSigner = signer || await connectToWallet();
+
+    let campaignABI = "";
+
+    if (campaign.currency === CurrencyType.ETH) {
+      campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+    } else {
+      campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+    }
+
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const totalContributions = await campaignInstance.totalContributions();
+
+    const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
+    const total = parseFloat(ethers.formatUnits(totalContributions, tokenDecimals));
+
     return total;
   }
 
@@ -253,7 +395,9 @@ export default function useEthereum() {
       return balance;
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message);
+      const friendlyError = parseEthersError(error);
+      toast.dismiss();
+      toast.error(friendlyError);
       throw error;
     }
   }
@@ -262,8 +406,47 @@ export default function useEthereum() {
     connectToWallet,
     launch,
     contribute,
-    withdraw,
+    rejectContribution,
+    withdrawContribution,
+    withdrawFromCampaign,
     getContributionTotal,
     getContractBalance,
+    isCampaignCompleted
   };
 };
+
+function parseEthersError(inputError: any) {
+  let error;
+
+  if (inputError && inputError.code && inputError.message) {
+    error = inputError;
+  }
+
+  if (inputError.error && inputError.error.code && inputError.error.message) {
+    error = inputError.error;
+  }
+
+  if (inputError.info && inputError.info.error && inputError.info.error.code && inputError.info.error.message) {
+    error = inputError.info.error;
+  }
+
+  let userFriendlyMessage = error.message;
+
+  // Handle user rejection
+  if (error.code === 4001) {
+      userFriendlyMessage = 'You have rejected the transaction request.';
+  }
+  // Handle insufficient funds for gas *Not always accurate due to gas fluctuations
+  else if (error.message && error.message.includes('insufficient funds')) {
+      userFriendlyMessage = 'Insufficient funds.';
+  }
+  // Handle failed transaction due to revert or other conditions
+  else if (error.message && error.message.includes('execution reverted')) {
+      userFriendlyMessage = 'Transaction failed: the transaction was reverted by the EVM.';
+  }
+  else if (error.code === -32002) {
+      userFriendlyMessage = 'Request already pending. Please check your wallet and approve or reject the previous request.';
+  }
+
+  return userFriendlyMessage;
+}

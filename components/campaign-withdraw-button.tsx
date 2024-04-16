@@ -1,7 +1,5 @@
 "use client";
 
-import CampaignContract from '@/protocol/campaigns/out/Campaign.sol/Campaign.json';
-import { ethers } from "ethers";
 import { Campaign } from "@prisma/client";
 import { Button } from "./ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,36 +19,54 @@ export default function CampaignWithdrawButton({
   subdomain,
   onComplete
 }: CampaignWithdrawButtonProps) {
-  const { withdraw } = useEthereum();
+  const { withdrawFromCampaign } = useEthereum();
   const [amount, setAmount] = useState('');
+  const [recipient, setRecipient] = useState('');
 
   const isValidAmount = () => {
     const num = parseFloat(amount);
     return !isNaN(num) && num > 0;
   };
 
+  const isValidRecipient = () => {
+    return recipient && recipient.length > 0 && /^0x[a-fA-F0-9]{40}$/.test(recipient);
+  }
+
   const handleWithdraw = () => {
-    if (isValidAmount()) {
-      withdraw(amount, campaign).then(onComplete);
+    if (isValidAmount() && isValidRecipient()) {
+      withdrawFromCampaign(amount, recipient, campaign).then(onComplete);
     }
   };
 
   return (
     <div className="flex items-center space-x-4 my-4">
-      <Input
-        type="text"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        placeholder="Amount (ETH)"
-        className="w-36"
-      />
-      <Button
-        onClick={handleWithdraw}
-        disabled={!isValidAmount()}
-        className={`${isValidAmount() ? 'hover:bg-gray-700' : 'bg-gray-500'}`}
-      >
-        Withdraw
-      </Button>
+      <div className="mb-4 space-y-8 font-medium text-gray-800">
+        <div className="flex flex-col space-y-4">
+          <div>How much {campaign.currency} do you want to withdraw?</div>
+          <Input
+            type="text"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder={`0`}
+          />
+        </div>
+        <div className="flex flex-col space-y-4">
+          <div>What is the recipient wallet address?</div>
+          <Input
+            type="text"
+            value={recipient}
+            onChange={(e) => setRecipient(e.target.value)}
+            placeholder="0x123"
+          />
+        </div>
+        <Button
+          onClick={handleWithdraw}
+          disabled={!isValidAmount() || !isValidRecipient()}
+          className={`${isValidAmount() && isValidRecipient() ? 'hover:bg-gray-700' : 'bg-gray-500'}`}
+        >
+          Withdraw
+        </Button>
+      </div>
     </div>
   );
 }

@@ -70,20 +70,7 @@ export default function CampaignPublicView(
       ) : (
         <div className="flex flex-col">
           <div className="flex flex-col">
-            <h1 className="font-serif text-4xl mb-4 font-semibold">{campaign.name}</h1>
-            <div className="flex items-center mb-4">
-              {campaign.organization.image && campaign.organization.name && <img
-                className="w-12 h-12 rounded-full mr-4"
-                src={campaign.organization.image}
-                alt={campaign.organization.name}
-              />}
-              <p className="text-lg italic">
-                Hosted by
-                <Link href={`/`} className="font-medium">
-                  {` ${campaign.organization.name}`}
-                </Link>
-              </p>
-            </div>
+            <h1 className="font-serif text-4xl mb-8 font-semibold">{campaign.name}</h1>
             <div className="mb-6 flex flex-col space-y-4">
               <div className="flex space-x-8">
                 <BannerImage src={campaign.medias[0]?.uri} />
@@ -92,8 +79,21 @@ export default function CampaignPublicView(
           </div>
           <div className="flex space-x-16">
             <div className="flex flex-col grow space-y-6">
-              <p className="italic">{campaign.content}</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex items-center">
+                {campaign.organization.image && campaign.organization.name && <img
+                  className="w-12 h-12 rounded-full mr-4"
+                  src={campaign.organization.image}
+                  alt={campaign.organization.name}
+                />}
+                <p className="text-lg italic">
+                  Hosted by
+                  <Link href={`/`} className="font-medium">
+                    {` ${campaign.organization.name}`}
+                  </Link>
+                </p>
+              </div>
+              {campaign.content && campaign.content.length > 0 && <p className="italic">{campaign.content}</p>}
+              {campaign.medias && campaign.medias[1] && <div className="flex flex-wrap gap-2">
                 {campaign.medias 
                   ? campaign.medias.map((m, i) => {
                       if (i > 0) {
@@ -110,7 +110,7 @@ export default function CampaignPublicView(
                     })
                   : null
                 }
-              </div>
+              </div>}
               {campaign.campaignTiers &&
                 <div>
                   <h2 className="text-xl mt-6 font-semibold">Contributor Tiers</h2>

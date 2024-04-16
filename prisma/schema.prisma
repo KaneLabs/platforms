@@ -522,6 +522,7 @@ model CampaignContribution {
   campaignId  String
   application CampaignApplication?
   transaction String?
+  walletEthAddress String?
 }
 
 model Invite {
@@ -561,6 +562,7 @@ model CampaignApplication {
   contribution   CampaignContribution? @relation(fields: [contributionId], references: [id])
   campaignTier   CampaignTier?         @relation(fields: [campaignTierId], references: [id])
   campaignTierId String?
+  refundTransaction String?
 }
 
 enum ApplicationStatus {
