@@ -11,6 +11,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'button-gradient': 'linear-gradient(90deg, #5832d5, #1300e0)',
+        'button-gradient-lighten': 'linear-gradient(90deg, #6140e0, #1b0de8)',
+        'button-gradient-darken': 'linear-gradient(90deg, #5030ca, #1200d6)'
+      },
       colors: {
         warm: {
           50: "#fbfaf8",
@@ -33,9 +38,12 @@ module.exports = {
           900: "#2c2a26",
           950: "#161513",
         },
+        red: {
+          600: "#FF3700",
+        },
         gray: {
-          50: "#fbfaf8",
-          100: "#f8f6f2",
+          50: "#FFFFFF",
+          100: "#F8F8F8",
           150: "#f5f2eb",
           200: "#f2ede5",
           250: "#efe9de",
@@ -49,7 +57,7 @@ module.exports = {
           650: "#9c9485",
           700: "#867f72",
           750: "#706a5f",
-          800: "#59544c",
+          800: "#333333",
           850: "#433f39",
           900: "#2c2a26",
           950: "#161513",
