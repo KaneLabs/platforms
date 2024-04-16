@@ -30,7 +30,7 @@ export default function OrganizationCard({ data }: { data: Organization }) {
           </p>
         </div>
       </Link>
-      <div className="absolute bottom-4 flex w-full justify-between space-x-4 px-4">
+      {/* <div className="absolute bottom-4 flex w-full justify-between space-x-4 px-4">
         <a
           href={
             process.env.NEXT_PUBLIC_VERCEL_ENV
@@ -50,7 +50,7 @@ export default function OrganizationCard({ data }: { data: Organization }) {
           <BarChart height={16} />
           <p>{random(10, 40)}%</p>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }

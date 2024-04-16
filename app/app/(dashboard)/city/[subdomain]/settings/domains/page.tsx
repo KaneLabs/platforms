@@ -17,7 +17,7 @@ export default async function SiteSettingsDomains({
     <div className="flex flex-col space-y-6">
       <Form
         title="Subdomain"
-        description="The subdomain for your site."
+        description=""
         helpText="Please use 32 characters maximum."
         inputAttrs={{
           name: "subdomain",
@@ -28,7 +28,7 @@ export default async function SiteSettingsDomains({
         }}
         handleSubmit={updateOrganization}
       />
-      <Form
+      {/* <Form
         title="Custom Domain"
         description="The custom domain for your site."
         helpText="Please enter a valid domain."
@@ -41,7 +41,7 @@ export default async function SiteSettingsDomains({
           pattern: "^[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}$",
         }}
         handleSubmit={updateOrganization}
-      />
+      /> */}
     </div>
   );
 }

@@ -18,8 +18,8 @@ export default async function CitySettingsIndex({
   return (
     <div className="flex flex-col space-y-6">
       <Form
-        title="Name"
-        description="The name of your site. This will be used as the meta title on Google as well."
+        title="Organization Name"
+        description=""
         helpText="Please use 32 characters maximum."
         inputAttrs={{
           name: "name",
@@ -33,18 +33,18 @@ export default async function CitySettingsIndex({
 
       <Form
         title="Description"
-        description="The description of your site. This will be used as the subheader on your landing page and the meta description on Google as well."
+        description=""
         helpText="Include SEO-optimized keywords that you want to rank for."
         inputAttrs={{
           name: "description",
           type: "text",
           defaultValue: data?.description!,
-          placeholder: "A blog about really interesting things.",
+          placeholder: "An organization about really interesting things.",
         }}
         handleSubmit={updateOrganization}
       />
 
-      <Form
+      {/* <Form
         title="Site Title"
         description="The title of your site. This will be used as the meta title on Google as well."
         helpText="Please use 32 characters maximum."
@@ -70,7 +70,7 @@ export default async function CitySettingsIndex({
           maxLength: 32,
         }}
         handleSubmit={updateOrganization}
-      />
+      /> */}
 
       <DeleteOrganizationForm organizationName={data?.name!} />
     </div>

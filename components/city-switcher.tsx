@@ -191,7 +191,6 @@ export default function CitySwitcher({
                           <AvatarImage
                             src={`${orgAndRoles.organization.logo}`}
                             alt={`${orgAndRoles.organization.name} logo`}
-                            className="grayscale"
                           />
                           {selectedOrganization?.name?.charAt(0)}
                         </Avatar>
@@ -221,7 +220,7 @@ export default function CitySwitcher({
                     }}
                   >
                     <PlusCircledIcon className="mr-2 h-5 w-5" />
-                    Create City
+                    Create Organization
                   </CommandItem>
                 </DialogTrigger>
               </CommandGroup>

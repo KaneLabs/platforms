@@ -27,7 +27,7 @@ export default async function CampaignCheckoutLayout({
           <h1 className="font-serif text-4xl font-semibold dark:text-white">
             {campaign.name}
           </h1>
-          <h4 className="truncate rounded-md bg-gray-100 py-1 font-medium text-gray-600 transition-colors dark:bg-gray-800 dark:text-gray-400">
+          <h4 className="truncate rounded-md py-1 font-medium text-gray-600 transition-colors dark:text-gray-400">
             Make a contribution to {campaign.name}
           </h4>
         </div>
