@@ -1,6 +1,8 @@
 # CampaignFactoryV1
 
-A user can deploy a pool via `createCampaign`
+A user can deploy an ERC20 pool via `createCampaignERC20`
+
+A user can deploy an ETH (or native gas token) pool via `createCampaignETH`
 
 # CampaignERC20V1 / CampaignETHV1
 
