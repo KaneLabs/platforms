@@ -191,7 +191,6 @@ export default function CitySwitcher({
                           <AvatarImage
                             src={`${orgAndRoles.organization.logo}`}
                             alt={`${orgAndRoles.organization.name} logo`}
-                            className="grayscale"
                           />
                           {selectedOrganization?.name?.charAt(0)}
                         </Avatar>
