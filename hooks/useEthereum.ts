@@ -416,11 +416,7 @@ export default function useEthereum() {
 };
 
 function parseEthersError(inputError: any) {
-  let error;
-
-  if (inputError && inputError.code && inputError.message) {
-    error = inputError;
-  }
+  let error = inputError;
 
   if (inputError.error && inputError.error.code && inputError.error.message) {
     error = inputError.error;
