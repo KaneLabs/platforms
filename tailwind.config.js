@@ -2,6 +2,7 @@ const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "false",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,9 +13,9 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'button-gradient': 'linear-gradient(90deg, #5832d5, #1300e0)',
-        'button-gradient-lighten': 'linear-gradient(90deg, #6140e0, #1b0de8)',
-        'button-gradient-darken': 'linear-gradient(90deg, #5030ca, #1200d6)'
+        "button-gradient": "linear-gradient(90deg, #5832d5, #1300e0)",
+        "button-gradient-lighten": "linear-gradient(90deg, #6140e0, #1b0de8)",
+        "button-gradient-darken": "linear-gradient(90deg, #5030ca, #1200d6)"
       },
       colors: {
         warm: {
