@@ -68,7 +68,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   );
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-200/50 backdrop-blur-xl flex items-center justify-center">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-100/50 backdrop-blur-xl flex items-center justify-center">
       <div className="absolute top-0 left-0 p-8 w-full flex justify-between items-start">
         <div>
           <h1 className="font-serif text-3xl text-gray-800 dark:text-white">

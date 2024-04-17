@@ -150,7 +150,7 @@ export default function CampaignApplicationsDataTable({
 
         return (
           <div className="mt-4" key={status}>
-            <div className="flex items-center space-x-4 pb-2 border-b">
+            <div className="flex items-center space-x-4 pb-2 border-b border-gray-300">
                 <div>
                     <span className="text-sm font-medium text-gray-800">Status: </span>
                     <span className="text-sm font-semibold">{getApplicationStatusText(status as ApplicationStatus)}</span>
