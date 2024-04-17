@@ -55,7 +55,7 @@ export default function CreateRoleModal() {
           );
         }
       }}
-      className="w-full rounded-md bg-gray-200/50 backdrop-blur-xl  dark:bg-gray-900/50 md:max-w-md md:border md:border-gray-200 md:shadow dark:md:border-gray-700"
+      className="w-full rounded-md bg-gray-50/50 backdrop-blur-xl  dark:bg-gray-900/50 md:max-w-md md:border md:border-gray-200 md:shadow dark:md:border-gray-700"
     >
       <div className="relative flex flex-col space-y-4 p-5 md:p-10">
         <div>
@@ -82,7 +82,7 @@ export default function CreateRoleModal() {
             onChange={(e) => setData({ ...data, name: e.target.value })}
             maxLength={32}
             required
-            className="w-full rounded-md border border-gray-700 bg-gray-200 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-700 focus:border-gray-900 focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-700 dark:focus:ring-gray-100"
+            className="w-full rounded-md border border-gray-700 bg-gray-50 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-700 focus:border-gray-900 focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-700 dark:focus:ring-gray-100"
           />
         </div>
 
@@ -99,11 +99,11 @@ export default function CreateRoleModal() {
             onChange={(e) => setData({ ...data, description: e.target.value })}
             maxLength={140}
             rows={3}
-            className="w-full rounded-md border border-gray-700 bg-gray-200 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-700 focus:border-gray-900  focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-700 dark:focus:ring-gray-100"
+            className="w-full rounded-md border border-gray-700 bg-gray-50 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-700 focus:border-gray-900  focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-700 dark:focus:ring-gray-100"
           />
         </div>
       </div>
-      <div className="flex items-center justify-end rounded-b-lg border-t border-gray-700 bg-gray-200 p-3 dark:border-gray-700 dark:bg-gray-800 md:px-10">
+      <div className="flex items-center justify-end rounded-b-lg border-t border-gray-700 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800 md:px-10">
         <FormButton text={"Create Role"} />
       </div>
     </form>

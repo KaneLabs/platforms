@@ -17,7 +17,7 @@ export default function EventCard({
 }) {
   const url = `${event.organization.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/events/${event.path}`;
   return (
-    <div className="relative rounded-lg border border-gray-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-gray-700 dark:hover:border-white">
+    <div className="relative rounded-lg border border-gray-200 bg-gray-50 pb-10 shadow-md transition-all hover:shadow-xl dark:border-gray-700 dark:hover:border-white">
       <Link
         href={
           href || `/city/${event.organization.subdomain}/events/${event.path}`
