@@ -28,7 +28,6 @@ export default function CampaignFundButton({
       <Button
         onClick={handleContribution}
         disabled={!isValidAmount()}
-        className={`${isValidAmount() ? "hover:bg-gray-700" : "bg-gray-500"}`}
       >
         Fund
       </Button>

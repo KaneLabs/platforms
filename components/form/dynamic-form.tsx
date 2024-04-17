@@ -364,7 +364,7 @@ export function DynamicForm(props: {
         })}
         <div className="flex flex-col">
           <div className="self-end">
-            <Button type="submit" className="hover:bg-gray-700">
+            <Button type="submit">
               Continue
             </Button>
           </div>

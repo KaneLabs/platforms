@@ -29,7 +29,7 @@ export default function CampaignContributeSection({
       <div className="mt-4">
         <Button
           onClick={() => router.push(`${campaign.id}/checkout/tiers`)}
-          className="w-full rounded-full hover:bg-gray-700"
+          className="w-full rounded-full"
         >
           Fund
         </Button>
