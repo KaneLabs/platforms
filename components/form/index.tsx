@@ -160,7 +160,7 @@ function FormButton() {
         "flex h-8 w-32 items-center justify-center space-x-2 rounded-md border text-sm transition-all focus:outline-none sm:h-10",
         pending
           ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
-          : "border-0 bg-gray-800 bg-button-gradient text-white hover:bg-gray-50 hover:bg-button-gradient-lighten dark:border-gray-700 dark:hover:border-gray-200 dark:hover:bg-gray-800 dark:hover:text-white dark:active:bg-gray-800",
+          : "border-0 bg-gray-800 bg-button-gradient text-white hover:bg-gray-50/90 hover:bg-button-gradient-lighten dark:border-gray-700 dark:hover:border-gray-200 dark:hover:bg-gray-800 dark:hover:text-white dark:active:bg-gray-800",
       )}
       disabled={pending}
     >

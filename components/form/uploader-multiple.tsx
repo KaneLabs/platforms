@@ -59,7 +59,7 @@ export default function MultiUploader({
       <label
         htmlFor={`${name}-upload`}
         className={cn(
-          "group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-500 shadow-sm transition-all hover:bg-gray-50 h-28",
+          "group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-500 shadow-sm transition-all hover:bg-gray-50/90 h-28",
           ratio
         )}
       >
@@ -93,7 +93,7 @@ export default function MultiUploader({
         <div
           className={`${
             dragActive ? "border-2 border-black" : ""
-          } absolute z-[3] flex h-full w-full flex-col items-center justify-center rounded-xl px-10 transition-all opacity-100 hover:bg-gray-50"}`}
+          } absolute z-[3] flex h-full w-full flex-col items-center justify-center rounded-xl px-10 transition-all opacity-100 hover:bg-gray-50/90"}`}
         >
           <svg
             className={`${
