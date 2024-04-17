@@ -23,7 +23,7 @@ export default function EmailForm({ loading, ...props }: EmailFormProps) {
     >
       <Input
         id="email"
-        className="w-full rounded border border-gray-800 bg-transparent p-2 text-gray-800 transition-all duration-200 placeholder:text-gray-700 hover:border-brand-primary/40 focus:border-brand-primary/50 focus:ring-brand-primary/50 dark:border-gray-300 placeholder:dark:text-gray-400"
+        className="w-full rounded border border-gray-700 bg-transparent p-2 text-gray-800 transition-all duration-200 placeholder:text-gray-700 hover:border-gray-700/40 focus:border-gray-700/50 focus:border-gray-700/50 dark:border-gray-300 placeholder:dark:text-gray-400"
         placeholder="you@your.city"
         name="email"
         required
