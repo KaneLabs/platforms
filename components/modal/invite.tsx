@@ -89,7 +89,7 @@ export default function InviteModal({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full rounded-md bg-gray-200/50 backdrop-blur-xl  dark:bg-gray-900/50 md:max-w-md md:border md:border-gray-200 md:shadow dark:md:border-gray-800"
+        className="w-full rounded-md bg-gray-50 backdrop-blur-xl  dark:bg-gray-900/50 md:max-w-md md:border md:border-gray-200 md:shadow dark:md:border-gray-800"
       >
         <div className="relative flex flex-col space-y-4 p-5 md:p-10">
           <FormTitle>Send invite to join {organization.name}</FormTitle>
