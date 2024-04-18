@@ -41,7 +41,7 @@ export const WaitlistWelcomeEmail = ({
         }}
       >
         <Body className={"font-sans"}>
-          <Container className="mx-auto  rounded bg-gray-150 px-16 pb-12 pt-10">
+          <Container className="mx-auto  rounded bg-gray-100 px-16 pb-12 pt-10">
             <Img
               src={`https://fora.co/fora-logo.png`}
               width="45"
