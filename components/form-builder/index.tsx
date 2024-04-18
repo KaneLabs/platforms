@@ -349,7 +349,7 @@ export default function FormBuilder({
               )}
             </FormTitle>
             <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
-              {form.published && (
+              {/* {form.published && (
                 <a
                   href={`${getSubdomainUrl(subdomain)}/forms/${form.id}`}
                   target="_blank"
@@ -362,7 +362,7 @@ export default function FormBuilder({
                   </span>
                   <ExternalLink className="h-4 w-4" />
                 </a>
-              )}
+              )} */}
               <div className="bg-brand-50 rounded-lg px-2 py-1 text-sm text-gray-400 dark:bg-gray-800 dark:text-gray-500">
                 {isPendingSaving ? "Saving..." : "Saved"}
               </div>
