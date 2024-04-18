@@ -63,7 +63,7 @@ export default function DataTable<TData, TValue>({
               return (
                 <TableRow
                   key={row.id}
-                  className={row.index % 2 === 0 ? "bg-gray-300 hover:bg-gray-300 border-0" : "bg-gray-100 hover:bg-gray-100 border-0"}
+                  className={row.index % 2 === 0 ? "bg-gray-200 hover:bg-gray-200 border-0" : "bg-gray-100 hover:bg-gray-100 border-0"}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {visibleCells.map((cell, cellIndex) => (
