@@ -267,7 +267,7 @@ export default function Drawer({ children }: { children: ReactNode }) {
               </a>
             ))}
           </div>
-          <div className="my-2 border-t border-gray-200 dark:border-gray-700" />
+          <div className="my-2 border-t border-gray-300 dark:border-gray-700" />
           {children}
         </div>
       </DrawerPaper>
