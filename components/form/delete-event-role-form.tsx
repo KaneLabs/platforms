@@ -27,7 +27,7 @@ export default function DeleteEventRoleForm({ roleName }: { roleName: string }) 
           })
           .catch((err: Error) => toast.error(err.message))
       }
-      className="rounded-lg border border-red-600 bg-gray-50 dark:bg-gray-900"
+      className="rounded-lg border border-accent-red bg-gray-50 dark:bg-gray-900"
     >
       <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
         <h2 className="font-cal text-xl dark:text-gray-50">Delete Role</h2>
@@ -66,7 +66,7 @@ function FormButton() {
         "flex h-8 w-32 items-center justify-center space-x-2 rounded-md border text-sm transition-all focus:outline-none sm:h-10",
         pending
           ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
-          : "border-red-600 bg-red-600 text-gray-50 hover:bg-gray-50 hover:text-red-600 dark:hover:bg-transparent",
+          : "border-accent-red bg-accent-red text-gray-50 hover:bg-gray-50 hover:text-accent-red dark:hover:bg-transparent",
       )}
       disabled={pending}
     >
