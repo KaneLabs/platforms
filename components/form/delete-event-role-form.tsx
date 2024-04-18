@@ -42,7 +42,7 @@ export default function DeleteEventRoleForm({ roleName }: { roleName: string }) 
           required
           pattern={roleName}
           placeholder={roleName}
-          className="w-full max-w-md rounded-md border border-gray-300 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-50 dark:placeholder-gray-700"
+          className="w-full max-w-md rounded-md border border-gray-300 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-50 dark:placeholder-gray-700"
         />
       </div>
 

@@ -46,7 +46,7 @@ export default function DeleteOrganizationForm({
           required
           pattern={organizationName}
           placeholder={organizationName}
-          className="focus:border-gray-500 focus:ring-gray-500 w-full max-w-md rounded-md border border-gray-300 text-sm text-gray-900 placeholder-gray-400 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-50 dark:placeholder-gray-700"
+          className="focus:border-gray-500 focus:ring-0 w-full max-w-md rounded-md border border-gray-300 text-sm text-gray-900 placeholder-gray-400 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-50 dark:placeholder-gray-700"
         />
       </div>
 
