@@ -428,15 +428,15 @@ function parseEthersError(inputError: any) {
 
   let userFriendlyMessage = error.message;
 
-  // Handle user rejection
   if (error.code === 4001) {
       userFriendlyMessage = 'You have rejected the transaction request.';
   }
-  // Handle insufficient funds for gas *Not always accurate due to gas fluctuations
   else if (error.message && error.message.includes('insufficient funds')) {
       userFriendlyMessage = 'Insufficient funds.';
   }
-  // Handle failed transaction due to revert or other conditions
+  else if (error.message && error.message.includes('transfer amount exceeds balance')) {
+    userFriendlyMessage = 'The transfer amount exceeds your balance.';
+  }
   else if (error.message && error.message.includes('execution reverted')) {
       userFriendlyMessage = 'Transaction failed: the transaction was reverted by the EVM.';
   }
