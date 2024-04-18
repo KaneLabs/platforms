@@ -99,7 +99,7 @@ export default function CreateOrganizationModal() {
               required
               className="w-full rounded-l-lg border border-gray-700 bg-gray-50 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-700 focus:border-gray-900 focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-700 dark:focus:ring-gray-100"
             />
-            <div className="flex items-center rounded-r-lg border border-l-0 border-gray-700 bg-gray-800 px-3 text-sm font-medium text-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
+            <div className="flex items-center rounded-r-lg border border-l-0 border-gray-700 bg-gray-100 px-3 text-sm font-medium text-gray-800 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
               .{process.env.NEXT_PUBLIC_ROOT_DOMAIN}
             </div>
           </div>
