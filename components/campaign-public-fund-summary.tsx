@@ -39,7 +39,7 @@ export default function CampaignPublicCheckoutSummary({
   return (
     <div className="flex flex-col min-h-full max-w-lg space-y-4 my-6">
       <div>Here&apos;s a summary of your contribution</div>
-      <div className="w-full transform overflow-hidden rounded-2xl border border-gray-500 py-8 px-8 text-left align-middle shadow-xl transition-all">
+      <div className="w-full transform overflow-hidden rounded-2xl border border-gray-300 py-8 px-8 text-left align-middle shadow-xl transition-all">
         <div className="flex flex-col space-y-6">
           {formattedFormAnswers || "Tier"}
         </div>
