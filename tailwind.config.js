@@ -19,11 +19,11 @@ module.exports = {
       },
       colors: {
         accent: {
-          tangerine: '#FF7C0A',
-          deepOrange: '#FF3700',
-          brightGreen: '#00C907',
+          orange: '#FF7C0A',
+          red: '#FF3700',
+          green: '#00C907',
           violet: '#8A2BE2',
-          cobalt: '#034FCA',
+          blue: '#034FCA',
         },
         warm: {
           50: "#fbfaf8",
