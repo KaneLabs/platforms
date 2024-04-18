@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CampaignTier, Form } from "@prisma/client";
 import { useState, useEffect } from 'react';
+import { toast } from "sonner";
 
 type EditedCampaignTier = Partial<Omit<CampaignTier, "price">> & { price: string | undefined }
 
@@ -33,6 +34,19 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
   const handleFieldChange = (field: string, value: string | number | null) => {
     setEditedTier(prev => ({ ...prev, [field]: value }));
   };
+
+  const onApply = () => {
+    if (!editedTier.name) {
+      toast.error("Tier name is required");
+      return;
+    } 
+    if (!editedTier.price) {
+      toast.error("Tier price is required");
+      return;
+    }
+
+    onSave(editedTier);
+  }
 
   return (
     <div className="mb-4 px-8 py-6 border rounded-lg">
@@ -109,9 +123,7 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
       <div className="flex justify-end">
         <Button
           className="mt-4"
-          onClick={() => {
-            onSave(editedTier)
-          }}
+          onClick={onApply}
         >
           Apply
         </Button>
