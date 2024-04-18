@@ -239,21 +239,39 @@ export default function CampaignEditor({
     }
   };
 
-  const saveChanges = () => {
+  const routeToNextPage = (isContinue: boolean) => {
+    if (isContinue) {
+      if (segment === "basic") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
+        );
+      } else if (segment === "details") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
+        );
+      } else {
+        router.push(`/city/${subdomain}/campaigns/${campaignId}`);
+      }
+    } else {
+      if (segment === "tiers") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
+        );
+      } else if (segment === "details") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/basic/${editType}`,
+        );
+      } else {
+        router.push(`/city/${subdomain}/campaigns/${campaignId}`);
+      }
+    }
+  }
+
+  const saveChanges = (isContinue: boolean) => {
     setLoading(true);
     submitChanges()
       .then(() => {
-        if (segment === "basic") {
-          router.push(
-            `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
-          );
-        } else if (segment === "details") {
-          router.push(
-            `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
-          );
-        } else {
-          router.push(`/city/${subdomain}/campaigns/${campaignId}`);
-        }
+        routeToNextPage(isContinue);
       })
       .catch((error: any) => {
         console.error("Error updating campaign", error);
@@ -453,9 +471,15 @@ export default function CampaignEditor({
             </div>
           </div>
           <Button
+            disabled={loading}
+            onClick={() => saveChanges(false)}
+          >
+            Back
+          </Button>
+          <Button
             className="float-right"
             disabled={loading}
-            onClick={saveChanges}
+            onClick={() => saveChanges(true)}
           >
             Continue
           </Button>
