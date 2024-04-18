@@ -197,7 +197,7 @@ export default function UpsertOrganizationPageLinksForm({
         </Button>
         <div className="flex flex-col items-center justify-center space-y-2 rounded-b-lg border-t border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800 sm:flex-row sm:justify-between sm:space-y-0 sm:px-10">
           <p className="text-sm text-gray-700 dark:text-gray-400">{helpText}</p>
-          <FormButton loading={loading} text={"Save"} />
+          <FormButton loading={loading} text={"Save Changes"} />
         </div>
       </form>
     </Form>
