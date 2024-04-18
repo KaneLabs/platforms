@@ -37,8 +37,10 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   }
 
   const declineApplication = async () => {
-    rowData.status = ApplicationStatus.REJECTED;
-    await rejectContribution(rowData.campaignData, rowData.applicationData, rowData.contributionData.walletEthAddress);
+    const success = await rejectContribution(rowData.campaignData, rowData.applicationData, rowData.contributionData.walletEthAddress);
+    if (success) {
+      rowData.status = ApplicationStatus.REJECTED;
+    }
   }
 
   const formattedUserData = (
@@ -99,6 +101,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
           </div>
           <div className="mt-6 flex justify-between pr-2">
             <Button
+              variant="ghost"
               key="prev"
               disabled={selectedRowIndex <= 0}
               onClick={(e) => {
@@ -111,6 +114,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
               />
             </Button>
             <Button
+              variant="destructive"
               key="decline"
               disabled={rowData.status === ApplicationStatus.REJECTED}
               onClick={async () => {
@@ -120,6 +124,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
               {loading ? <LoadingDots color="#808080" />: "DECLINE"}
             </Button>
             <Button
+              variant="green"
               key="approve"
               disabled={rowData.status === ApplicationStatus.ACCEPTED}
               onClick={async () => {
@@ -129,6 +134,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
               {loading ? <LoadingDots color="#808080" />: "APPROVE"}
             </Button>
             <Button
+              variant="ghost"
               key="next"
               disabled={selectedRowIndex >= rowsData.length - 1}
               onClick={(e) => {

@@ -141,6 +141,7 @@ export default function CampaignDashboard({
               <div className="flex flex-row gap-2 items-end">
                 <div className="mr-4">{Intl.NumberFormat("en-US").format(campaign.threshold as number)} in <span className="font-medium">{campaign.currency}</span></div>
                 <Button
+                  variant="outline"
                   onClick={() =>
                     router.push(
                       `/city/${subdomain}/campaigns/${campaignId}/settings/basic/edit`,

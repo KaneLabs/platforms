@@ -470,19 +470,22 @@ export default function CampaignEditor({
               )}
             </div>
           </div>
-          <Button
-            disabled={loading}
-            onClick={() => saveChanges(false)}
-          >
-            Back
-          </Button>
-          <Button
-            className="float-right"
-            disabled={loading}
-            onClick={() => saveChanges(true)}
-          >
-            Continue
-          </Button>
+          <div className="mt-8">
+            <Button
+              variant="secondary"
+              disabled={loading}
+              onClick={() => saveChanges(false)}
+            >
+              Back
+            </Button>
+            <Button
+              className="float-right"
+              disabled={loading}
+              onClick={() => saveChanges(true)}
+            >
+              Continue
+            </Button>
+          </div>
         </div>
       )}
     </div>

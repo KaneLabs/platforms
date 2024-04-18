@@ -266,7 +266,7 @@ export default function useEthereum() {
     }
   };
 
-  const rejectContribution = async (campaign: Campaign, application: CampaignApplication, contributor: string): Promise<void> => {
+  const rejectContribution = async (campaign: Campaign, application: CampaignApplication, contributor: string): Promise<boolean | void> => {
     try {
       const currentSigner = signer || await connectToWallet();
 
@@ -300,6 +300,8 @@ export default function useEthereum() {
       
       toast.dismiss();
       toast.success(`Contributor refunded and banned from further participation`);
+
+      return true;
     } catch (error: any) {
       console.error(error);
       const friendlyError = parseEthersError(error);
