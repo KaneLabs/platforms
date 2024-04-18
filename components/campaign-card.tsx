@@ -48,7 +48,7 @@ export default function CampaignCard({
             </div>
           ) : null}
           {!campaign.deployed && (
-            <span className="absolute bottom-6 right-6 rounded-md border border-gray-350 bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-600 shadow-md">
+            <span className="absolute bottom-6 right-6 rounded-md border border-gray-350 bg-accent-orange px-3 py-0.5 text-sm font-medium text-gray-50 shadow-md">
               Draft
             </span>
           )}

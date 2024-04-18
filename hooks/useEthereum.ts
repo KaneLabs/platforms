@@ -266,7 +266,7 @@ export default function useEthereum() {
     }
   };
 
-  const rejectContribution = async (campaign: Campaign, application: CampaignApplication, contributor: string): Promise<void> => {
+  const rejectContribution = async (campaign: Campaign, application: CampaignApplication, contributor: string): Promise<boolean | void> => {
     try {
       const currentSigner = signer || await connectToWallet();
 
@@ -300,6 +300,8 @@ export default function useEthereum() {
       
       toast.dismiss();
       toast.success(`Contributor refunded and banned from further participation`);
+
+      return true;
     } catch (error: any) {
       console.error(error);
       const friendlyError = parseEthersError(error);
@@ -416,11 +418,7 @@ export default function useEthereum() {
 };
 
 function parseEthersError(inputError: any) {
-  let error;
-
-  if (inputError && inputError.code && inputError.message) {
-    error = inputError;
-  }
+  let error = inputError;
 
   if (inputError.error && inputError.error.code && inputError.error.message) {
     error = inputError.error;
@@ -432,15 +430,15 @@ function parseEthersError(inputError: any) {
 
   let userFriendlyMessage = error.message;
 
-  // Handle user rejection
   if (error.code === 4001) {
       userFriendlyMessage = 'You have rejected the transaction request.';
   }
-  // Handle insufficient funds for gas *Not always accurate due to gas fluctuations
   else if (error.message && error.message.includes('insufficient funds')) {
       userFriendlyMessage = 'Insufficient funds.';
   }
-  // Handle failed transaction due to revert or other conditions
+  else if (error.message && error.message.includes('transfer amount exceeds balance')) {
+    userFriendlyMessage = 'The transfer amount exceeds your balance.';
+  }
   else if (error.message && error.message.includes('execution reverted')) {
       userFriendlyMessage = 'Transaction failed: the transaction was reverted by the EVM.';
   }

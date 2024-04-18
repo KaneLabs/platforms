@@ -127,7 +127,7 @@ export default function CampaignPublicView(
             <div className="flex flex-none">
               <CampaignContributeSection
                 campaign={campaign}
-                className={"p-8 border border-gray-500 rounded-xl min-w-52 max-h-44 shadow-md"}
+                className={"p-8 border border-gray-300 rounded-xl min-w-52 max-h-44 shadow-md"}
               />
             </div>
           </div>

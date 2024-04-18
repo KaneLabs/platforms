@@ -79,7 +79,6 @@ export default function CampaignPublicTiers({
                   router.push(`${selectedTier?.id}/fund/`)
                 }
               }}
-              className="hover:bg-gray-700"
               disabled={!selectedTier}
             >
               Continue

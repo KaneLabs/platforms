@@ -239,21 +239,39 @@ export default function CampaignEditor({
     }
   };
 
-  const saveChanges = () => {
+  const routeToNextPage = (isContinue: boolean) => {
+    if (isContinue) {
+      if (segment === "basic") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
+        );
+      } else if (segment === "details") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
+        );
+      } else {
+        router.push(`/city/${subdomain}/campaigns/${campaignId}`);
+      }
+    } else {
+      if (segment === "tiers") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
+        );
+      } else if (segment === "details") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/basic/${editType}`,
+        );
+      } else {
+        router.push(`/city/${subdomain}/campaigns/${campaignId}`);
+      }
+    }
+  }
+
+  const saveChanges = (isContinue: boolean) => {
     setLoading(true);
     submitChanges()
       .then(() => {
-        if (segment === "basic") {
-          router.push(
-            `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
-          );
-        } else if (segment === "details") {
-          router.push(
-            `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
-          );
-        } else {
-          router.push(`/city/${subdomain}/campaigns/${campaignId}`);
-        }
+        routeToNextPage(isContinue);
       })
       .catch((error: any) => {
         console.error("Error updating campaign", error);
@@ -412,19 +430,19 @@ export default function CampaignEditor({
                         disabled={campaign.deployed}
                       >
                         <ToggleGroup.Item
-                          className="w-20 rounded-l-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                          className="w-20 rounded-l-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-accent-green/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
                           value={CurrencyType.ETH}
                         >
                           ETH
                         </ToggleGroup.Item>
                         <ToggleGroup.Item
-                          className="w-20 bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                          className="w-20 bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-accent-green/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
                           value={CurrencyType.USDC}
                         >
                           USDC
                         </ToggleGroup.Item>
                         <ToggleGroup.Item
-                          className="w-20 rounded-r-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-gray-600/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+                          className="w-20 rounded-r-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-accent-green/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
                           value={CurrencyType.USDT}
                         >
                           USDT
@@ -452,13 +470,22 @@ export default function CampaignEditor({
               )}
             </div>
           </div>
-          <Button
-            className="float-right"
-            disabled={loading}
-            onClick={saveChanges}
-          >
-            Continue
-          </Button>
+          <div className="mt-8">
+            <Button
+              variant="secondary"
+              disabled={loading}
+              onClick={() => saveChanges(false)}
+            >
+              Back
+            </Button>
+            <Button
+              className="float-right"
+              disabled={loading}
+              onClick={() => saveChanges(true)}
+            >
+              Continue
+            </Button>
+          </div>
         </div>
       )}
     </div>

@@ -101,7 +101,7 @@ export const OrgInviteEmail = ({
         }}
       >
         <Body className={"font-sans"}>
-          <Container className="mx-auto flex justify-center  rounded bg-gray-150 px-16 pb-12 pt-10">
+          <Container className="mx-auto flex justify-center rounded bg-gray-100 px-16 pb-12 pt-10">
             <Img
               src={org.logo ? org.logo : `https://fora.co/fora-logo.png`}
               width="80"
@@ -130,7 +130,7 @@ export const OrgInviteEmail = ({
             <Section className="py-5">
               <Link
                 href={url}
-                className="h-10 cursor-pointer rounded-full bg-gray-800 px-6 py-3 font-semibold text-gray-200"
+                className="h-10 cursor-pointer rounded-full bg-brand-blue px-6 py-3 font-semibold text-gray-200"
               >
                 {`Accept Invite`}
               </Link>

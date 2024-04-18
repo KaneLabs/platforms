@@ -51,7 +51,7 @@ export default function RoleCard({
 
   return (
     <Link href={linkTo} className="flex flex-col overflow-hidden rounded-lg">
-      <div className="relative rounded-lg border border-gray-200 pb-5 shadow-md transition-all hover:shadow-xl dark:border-gray-700 dark:hover:border-white">
+      <div className="relative rounded-lg border border-gray-200 bg-gray-50 pb-5 shadow-md transition-all hover:shadow-xl dark:border-gray-700 dark:hover:border-white">
         {roleImage ? (
           <div className="w-full">
             <AspectRatio ratio={1 / 1}>

@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function OrganizationCard({ data }: { data: Organization }) {
   const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   return (
-    <div className="relative rounded-lg border border-gray-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-gray-700 dark:hover:border-white">
+    <div className="relative rounded-lg border border-gray-200 bg-gray-50 pb-10 shadow-md transition-all hover:shadow-xl dark:border-gray-700 dark:hover:border-white">
       <Link
         href={`/city/${data.subdomain}`}
         className="flex flex-col overflow-hidden rounded-lg"
@@ -45,7 +45,7 @@ export default function OrganizationCard({ data }: { data: Organization }) {
         </a>
         <Link
           href={`/city/${data.subdomain}/analytics`}
-          className="flex items-center rounded-md bg-green-100 px-2 py-1 text-sm font-medium text-green-600 transition-colors hover:bg-green-200 dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400 dark:hover:bg-green-800 dark:hover:bg-opacity-50"
+          className="flex items-center rounded-md bg-green-100 px-2 py-1 text-sm font-medium text-accent-green transition-colors hover:bg-green-200 dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400 dark:hover:bg-green-800 dark:hover:bg-opacity-50"
         >
           <BarChart height={16} />
           <p>{random(10, 40)}%</p>

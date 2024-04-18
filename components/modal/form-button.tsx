@@ -1,6 +1,7 @@
 import { useFormStatus } from "react-dom";
 import PrimaryButton from "../buttons/primary-button";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 export default function FormButton({
   text,
@@ -13,12 +14,11 @@ export default function FormButton({
 }) {
   const { pending } = useFormStatus();
   return (
-    <PrimaryButton
+    <Button
       type="submit"
       className={cn(className)}
-      loading={pending || (loading ?? false)}
     >
       <span>{text}</span>
-    </PrimaryButton>
+    </Button>
   );
 }

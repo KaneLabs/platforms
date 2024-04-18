@@ -40,7 +40,7 @@ export default function DataTable<TData, TValue>({
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="border-gray-300">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>

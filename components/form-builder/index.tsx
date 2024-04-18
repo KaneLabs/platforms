@@ -285,7 +285,7 @@ export default function FormBuilder({
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className={cn(
-                              "flex h-14 w-full items-center justify-between py-4 pl-4 pr-2 text-gray-800 hover:bg-gray-250 dark:text-gray-200 dark:hover:bg-gray-750",
+                              "flex h-14 w-full items-center justify-between py-4 pl-4 pr-2 text-gray-800 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-750",
                               selectedQuestion && selectedQuestion.id === q.id
                                 ? "bg-gray-300 dark:bg-gray-850"
                                 : "",
@@ -349,7 +349,7 @@ export default function FormBuilder({
               )}
             </FormTitle>
             <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
-              {form.published && (
+              {/* {form.published && (
                 <a
                   href={`${getSubdomainUrl(subdomain)}/forms/${form.id}`}
                   target="_blank"
@@ -362,7 +362,7 @@ export default function FormBuilder({
                   </span>
                   <ExternalLink className="h-4 w-4" />
                 </a>
-              )}
+              )} */}
               <div className="bg-brand-50 rounded-lg px-2 py-1 text-sm text-gray-400 dark:bg-gray-800 dark:text-gray-500">
                 {isPendingSaving ? "Saving..." : "Saved"}
               </div>
@@ -381,10 +381,10 @@ export default function FormBuilder({
                   });
                 }}
                 className={cn(
-                  "flex h-7 w-24 items-center justify-center space-x-2 rounded-lg border text-sm transition-all focus:outline-none",
+                  "flex h-7 w-24 items-center justify-center space-x-2 rounded-lg text-sm transition-all focus:outline-none",
                   isPendingPublishing
-                    ? "bg-brand-50 cursor-not-allowed border-gray-200 text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                    : "active:bg-brand-50 border border-black bg-black text-gray-100 hover:bg-gray-50 hover:text-black dark:border-gray-700 dark:hover:border-gray-200 dark:hover:bg-black dark:hover:text-gray-100 dark:active:bg-gray-800",
+                    ? "bg-brand-50 bg-button-gradient cursor-not-allowed text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                    : "active:bg-brand-50 active:bg-button-gradient-lighten text-gray-100 hover:bg-gray-50 hover:bg-button-gradient-lighten dark:border-gray-700 dark:hover:border-gray-200 dark:hover:bg-black dark:hover:text-gray-100 dark:active:bg-gray-800",
                 )}
                 disabled={isPendingPublishing}
               >

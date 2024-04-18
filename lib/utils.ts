@@ -153,12 +153,12 @@ export const getApplicationStatusText = (status: ApplicationStatus | null | unde
 
 export const getApplicationStatusColor = (status: ApplicationStatus | null | undefined) => {
   const colors = {
-    [ApplicationStatus.ACCEPTED]: "text-green-600", 
-    [ApplicationStatus.REJECTED]: "text-red-600", 
-    [ApplicationStatus.PENDING]: "text-orange-600", 
-    [ApplicationStatus.TIMED_OUT]: "text-yellow-600", 
-    [ApplicationStatus.NOT_SUBMITTED]: "text-gray-600", 
-    [ApplicationStatus.NOT_REQUIRED]: "text-blue-600",
+    [ApplicationStatus.ACCEPTED]: "text-accent-green", 
+    [ApplicationStatus.REJECTED]: "text-accent-red", 
+    [ApplicationStatus.PENDING]: "text-accent-orange", 
+    [ApplicationStatus.TIMED_OUT]: "text-accent-violet", 
+    [ApplicationStatus.NOT_SUBMITTED]: "text-gray-800", 
+    [ApplicationStatus.NOT_REQUIRED]: "text-accent-blue",
   };
   return status && colors[status] ? colors[status] : "";
 }
