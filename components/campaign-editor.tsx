@@ -203,6 +203,17 @@ export default function CampaignEditor({
   const submitChanges = async () => {
     // check in case somehow `campaign` hasn't loaded yet
     if (campaign) {
+      if (campaignTiers) {
+        campaignTiers.forEach((tier, tierIndex) => {
+          if (!tier.name) {
+            throw new Error(`Tier ${tierIndex+1}: Name is required`);
+          }
+          if (!tier.price) {
+            throw new Error(`Tier ${tierIndex+1}: Price is required`);
+          }
+        })
+      }
+
       let payload: Payload = { id: campaignId };
       if (editedCampaign.name) payload.name = editedCampaign.name;
       if (editedCampaign.threshold !== undefined)
@@ -336,13 +347,16 @@ export default function CampaignEditor({
                 </>
               )}
               {segment === "tiers" && (
-                <>
+                <div>
                   {campaignTiers.map((tier, index) =>
                     editingTierIndex === index ? (
                       <CampaignTierEditor
                         key={index}
                         tier={tier as CampaignTier}
                         forms={forms}
+                        onCancel={
+                          () => deleteTier(index)
+                        }
                         onSave={(updatedTier) => {
                           updateTier(index, updatedTier);
                           stopEditTier();
@@ -359,10 +373,10 @@ export default function CampaignEditor({
                       </div>
                     ),
                   )}
-                  <Button className="mt-2" onClick={addNewTier}>
+                  <Button onClick={addNewTier}>
                     Add New Tier
                   </Button>
-                </>
+                </div>
               )}
               {segment === "details" && (
                 <>

@@ -11,10 +11,11 @@ type EditedCampaignTier = Partial<Omit<CampaignTier, "price">> & { price: string
 interface CampaignTierEditorProps {
   tier: CampaignTier;
   forms: Form[];
+  onCancel: () => void;
   onSave: (tier: EditedCampaignTier) => void;
 }
 
-export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTierEditorProps) {
+export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: CampaignTierEditorProps) {
   const [editedTier, setEditedTier] = useState<EditedCampaignTier>(
     { name: tier.name, description: tier.description, quantity: tier.quantity,
       price: tier.price?.toString(), formId: tier.formId });
@@ -36,16 +37,19 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
   };
 
   const onApply = () => {
-    if (!editedTier.name) {
-      toast.error("Tier name is required");
-      return;
-    } 
-    if (!editedTier.price) {
-      toast.error("Tier price is required");
-      return;
-    }
+    try {
+      if (!editedTier.name) {
+        throw new Error("Tier name is required");
+      } 
+      if (!editedTier.price) {
+        throw new Error("Tier price is required");
+      }
 
-    onSave(editedTier);
+      onSave(editedTier);
+    } catch (e: any) {
+      console.error(e);
+      toast.error(e.message);
+    }
   }
 
   return (
@@ -122,12 +126,19 @@ export default function CampaignTierEditor({ tier, forms, onSave }: CampaignTier
       </div>
       <div className="flex justify-end">
         <Button
+          variant="ghost"
+          className="mt-4 mr-2"
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
+        <Button
           className="mt-4"
           onClick={onApply}
         >
           Apply
         </Button>
-    </div>
+      </div>
     </div>
   );
 }
