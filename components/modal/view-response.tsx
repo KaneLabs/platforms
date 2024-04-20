@@ -50,7 +50,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   )
 
   const formattedFormAnswers = formResponse && (
-    <div className="mt-2 flex flex-col space-y-6 rounded-lg border border-gray-500 bg-gray-100 py-6 px-8">
+    <div className="mt-2 flex flex-col space-y-6 rounded-lg border border-gray-300 bg-gray-100 py-6 px-8">
       {formResponse.answers.map(
         (value) => {
           const question = value.question;
