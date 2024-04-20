@@ -84,6 +84,10 @@ export default function useEthereum() {
         throw new Error("Campaign is missing deadline setting");
       }
 
+      if (campaign.deadline < new Date()) {
+        throw new Error("Campaign deadline must be in the future");
+      }
+
       const tokenAddress = getCurrencyTokenAddress(campaign.currency);
       const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
       const threshold = ethers.parseUnits(campaign.threshold.toString(), tokenDecimals);
