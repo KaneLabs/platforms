@@ -266,7 +266,7 @@ export default function useEthereum() {
     }
   };
 
-  const rejectContribution = async (campaign: Campaign, application: CampaignApplication, contributor: string): Promise<boolean | void> => {
+  const rejectContribution = async (campaign: Campaign, application: CampaignApplication, contributor: string, justRejected: boolean): Promise<boolean | void> => {
     try {
       const currentSigner = signer || await connectToWallet();
 
@@ -276,6 +276,12 @@ export default function useEthereum() {
 
       if (!contributor) {
         throw new Error("No contributor address available");
+      }
+
+      if (application.refundTransaction || justRejected) {
+        console.log("Contributor rejected before. Skipping smart contract transaction.")
+        await respondToCampaignApplication(application.id, false);
+        return true;
       }
 
       toast('Rejecting contribution...', { duration: 60000 });

@@ -174,6 +174,9 @@ export default function CampaignApplicationsDataTable({
           setModalOpen(false); 
           router.refresh();
         }}
+        onRefresh={() => {
+          router.refresh();
+        }}
         rowsData={selectedTableRows}
         selectedRowIndex={selectedRowIndex}
         onPrev={() => setSelectedRowIndex(selectedRowIndex - 1)}

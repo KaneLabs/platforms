@@ -2782,6 +2782,7 @@ export const respondToCampaignApplication = async (
         : ApplicationStatus.REJECTED,
     },
   });
+  return true;
 };
 
 export const createInvite = async (data: any) => {
