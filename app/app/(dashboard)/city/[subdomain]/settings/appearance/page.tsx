@@ -20,9 +20,9 @@ export default async function SiteSettingsAppearance({
   return (
     <div className="flex flex-col space-y-6">
       <Form
-        title="Thumbnail image"
-        description="Accepted formats: .png, .jpg, .jpeg"
-        helpText="Max file size 50MB. Recommended size 1200x630."
+        title="Cover image"
+        description="This is shown at the top of your subdomain page."
+        helpText="Accepted formats: .png, .jpg, .jpeg. Max file size 50MB. Recommended size 1200x630."
         inputAttrs={{
           name: "image",
           type: "file",
