@@ -309,8 +309,8 @@ export default function useEthereum() {
       await respondToCampaignApplication(application.id, false, transaction.hash);
       
       toast.dismiss();
-      toast.success(`Contributor refunded and banned from further participation`);
-
+      toast.success(`The user has been refunded. If the decline was in error or needs to be reversed, the user may resubmit using a different wallet.`);
+      
       return true;
     } catch (error: any) {
       console.error(error);
