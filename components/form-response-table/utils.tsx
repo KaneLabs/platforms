@@ -6,6 +6,10 @@ import {
 import format from "date-fns/format";
 
 export function formatCalendarDay(time: string) {
+  if (!time) {
+    time = new Date().toISOString();
+  }
+  
   return format(new Date(time), "MM/dd/yy");
 }
 
