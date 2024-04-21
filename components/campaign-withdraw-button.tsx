@@ -9,12 +9,14 @@ import useEthereum from "@/hooks/useEthereum";
 
 
 interface CampaignWithdrawButtonProps {
+  amountAvailable: number,
   campaign: Campaign;
   subdomain: string;
   onComplete: () => void;
 }
 
 export default function CampaignWithdrawButton({ 
+  amountAvailable,
   campaign, 
   subdomain,
   onComplete
@@ -32,15 +34,22 @@ export default function CampaignWithdrawButton({
     return recipient && recipient.length > 0 && /^0x[a-fA-F0-9]{40}$/.test(recipient);
   }
 
-  const handleWithdraw = () => {
+  const handleWithdraw = async () => {
     if (isValidAmount() && isValidRecipient()) {
-      withdrawFromCampaign(amount, recipient, campaign).then(onComplete);
+      try {
+        if (parseFloat(amount) > amountAvailable) {
+          throw new Error("Insufficient fund");
+        }
+        await withdrawFromCampaign(amount, recipient, campaign).then(onComplete);
+      } catch (e: any) {
+        toast.error(e.message);
+      }
     }
   };
 
   return (
     <div className="flex items-center space-x-4 my-4">
-      <div className="mb-4 space-y-8 font-medium text-gray-800">
+      <div className="mb-4 space-y-6 text-gray-800">
         <div className="flex flex-col space-y-4">
           <div>How much {campaign.currency} do you want to withdraw?</div>
           <Input

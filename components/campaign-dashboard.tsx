@@ -36,9 +36,9 @@ export default function CampaignDashboard({
   subdomain: string;
   isPublic: boolean;
 }) {
-  const { getContributionTotal, getContractBalance, isCampaignCompleted } = useEthereum();
-  const [totalContributions, setTotalContributions] = useState(BigInt(0));
-  const [contractBalance, setContractBalance] = useState(BigInt(0));
+  const { getContributionTotal, getContributionTransferred, isCampaignCompleted } = useEthereum();
+  const [totalContributions, setTotalContributions] = useState(0);
+  const [amountTransferred, setAmountTransferred] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(
@@ -71,13 +71,21 @@ export default function CampaignDashboard({
   }, [refreshFlag, campaign]);
 
   useEffect(() => {
-    // async function fetchTotalContributions() {
-    //   if (campaign?.deployed) {
-    //     const total = await getContributionTotal(campaign);
-    //     setTotalContributions(total);
-    //   }
-    // }
-    // fetchTotalContributions();
+    async function fetchTotalContributions() {
+      if (campaign?.deployed) {
+        const total = await getContributionTotal(campaign);
+        setTotalContributions(total);
+      }
+    }
+    fetchTotalContributions();
+
+    async function fetchAmountTransferred() {
+      if (campaign?.deployed) {
+        const tranferred = await getContributionTransferred(campaign);
+        setAmountTransferred(tranferred);
+      }
+    }
+    fetchAmountTransferred();
 
     // async function fetchContractBalance() {
     //   if (campaign?.deployed) {
@@ -248,7 +256,18 @@ export default function CampaignDashboard({
           {isCompleted && (
             <div className="mt-12">
               <h2 className="text-xl font-medium">Withdrawal</h2>
+              <div className="flex gap-4 mt-4 mb-6">
+                <div>
+                  <div className="text-sm">Amount Transferred</div>
+                  <div className="text-lg font-semibold text-gray-800">{getCurrencySymbol(campaign.currency)}{(amountTransferred).toFixed(5)} {campaign.currency}</div>
+                </div>
+                <div>
+                  <div className="text-sm">Amount Available</div>
+                  <div className="text-lg font-semibold text-gray-800">{getCurrencySymbol(campaign.currency)}{(totalContributions - amountTransferred).toFixed(5)} {campaign.currency}</div>
+                </div>
+              </div>
               <CampaignWithdrawButton 
+                amountAvailable={totalContributions - amountTransferred}
                 campaign={campaign}
                 subdomain={subdomain}
                 onComplete={triggerRefresh}

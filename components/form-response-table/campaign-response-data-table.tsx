@@ -161,7 +161,7 @@ export default function CampaignApplicationsDataTable({
                 </div>
                 <div>
                     <span className="text-sm font-medium text-gray-800">Amount raised: </span>
-                    <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(2)} {campaign.currency}</span>
+                    <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(5)} {campaign.currency}</span>
                 </div>
             </div>
             <DataTable columns={columns} data={statusData} />
