@@ -396,6 +396,26 @@ export default function useEthereum() {
     return total;
   }
 
+  const getContributionTransferred = async (campaign: Campaign) => {
+    const currentSigner = signer || await connectToWallet();
+
+    let campaignABI = "";
+
+    if (campaign.currency === CurrencyType.ETH) {
+      campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+    } else {
+      campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+    }
+
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const contributionTransferred = await campaignInstance.contributionTransferred();
+
+    const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
+    const transferred = parseFloat(ethers.formatUnits(contributionTransferred, tokenDecimals));
+
+    return transferred;
+  }
+
   const getContractBalance = async (contractAddr: string) => {
     try {
       if (!ethers.isAddress(contractAddr)) {
@@ -422,6 +442,7 @@ export default function useEthereum() {
     withdrawContribution,
     withdrawFromCampaign,
     getContributionTotal,
+    getContributionTransferred,
     getContractBalance,
     isCampaignCompleted
   };
