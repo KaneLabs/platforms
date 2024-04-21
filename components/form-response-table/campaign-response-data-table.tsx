@@ -150,22 +150,23 @@ export default function CampaignApplicationsDataTable({
 
         return (
           <div className="mt-4" key={status}>
-            <div className="flex items-center space-x-4 pb-2 border-b border-gray-300">
-                <div>
-                    <span className="text-sm font-medium text-gray-800">Status: </span>
-                    <span className="text-sm font-semibold">{getApplicationStatusText(status as ApplicationStatus)}</span>
+            <div className="flex items-center pb-2 border-b border-gray-300 justify-between">
+                <div className={`text-lg font-medium w-48 ${getApplicationStatusColor(status as ApplicationStatus)}`}>
+                  {getApplicationStatusText(status as ApplicationStatus)}
                 </div>
-                <div>
-                    <span className="text-sm font-medium text-gray-800">Applications: </span>
-                    <span className="text-sm font-semibold">{statusData.length}</span>
-                </div>
-                <div>
-                    <span className="text-sm font-medium text-gray-800">Amount raised: </span>
-                    <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(5)} {campaign.currency}</span>
+                <div className="flex flex-1 justify-end items-center space-x-10">
+                    <div>
+                        <span className="text-sm font-medium text-gray-800">Users: </span>
+                        <span className="text-sm font-semibold">{statusData.length}</span>
+                    </div>
+                    <div>
+                        <span className="text-sm font-medium text-gray-800">Subtotal: </span>
+                        <span className="text-sm font-semibold">{getCurrencySymbol(campaign.currency)}{contributionSum.toFixed(5)} {campaign.currency}</span>
+                    </div>
                 </div>
             </div>
             <DataTable columns={columns} data={statusData} />
-          </div>
+        </div>
         );
       })}
       <ResponseModal
