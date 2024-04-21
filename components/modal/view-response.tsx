@@ -39,6 +39,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
     const isSuccess = await respondToCampaignApplication(rowData.id, true);
     if (isSuccess) {
       rowData.status = ApplicationStatus.ACCEPTED;
+      nextStep();
     }
     setApproveLoading(false);
   }
@@ -49,8 +50,17 @@ const ResponseModal: React.FC<ResponseModalProps> = (
     if (isSuccess) {
       rowData.status = ApplicationStatus.REJECTED;
       rowData.justRejected = true;
+      nextStep();
     }
     setDeclineLoading(false);
+  }
+
+  const nextStep = async () => {
+    if (selectedRowIndex < rowsData.length - 1) {
+      onNext();
+    } else {
+      onClose();
+    }
   }
 
   const formattedUserData = (
