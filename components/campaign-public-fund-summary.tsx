@@ -26,9 +26,9 @@ export default function CampaignPublicCheckoutSummary({
 
       return (
         <div key={value.id}>
-          <h2 className="text-xl">{question.text}</h2>
-          <h2 className="text-xl">{question.description}</h2>
-          <p className="text-sm">
+          <p className="text-sm">{question.text}</p>
+          <p className="text-sm">{question.description}</p>
+          <p className="text-xl">
             {formatAnswer(question!, value)}
           </p>
         </div>
@@ -39,8 +39,8 @@ export default function CampaignPublicCheckoutSummary({
   return (
     <div className="flex flex-col min-h-full max-w-lg space-y-4 my-6">
       <div>Here&apos;s a summary of your contribution</div>
-      <div className="w-full transform overflow-hidden rounded-2xl border border-gray-300 py-8 px-8 text-left align-middle shadow-xl transition-all">
-        <div className="flex flex-col space-y-6">
+      <div className="w-full transform overflow-hidden rounded-2xl border border-gray-300 pt-8 pb-6 px-8 text-left align-middle shadow-xl transition-all">
+        <div className="flex flex-col space-y-4">
           {formattedFormAnswers || "Tier"}
         </div>
         <CampaignTierCard
