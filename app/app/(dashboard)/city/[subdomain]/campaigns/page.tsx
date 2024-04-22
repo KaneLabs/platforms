@@ -30,6 +30,9 @@ export default async function CampaignsPage({
   const campaigns = await prisma.campaign.findMany({
     where: {
       organizationId: organization.id,
+    },
+    include: {
+      medias: true
     }
   });
 
