@@ -15,9 +15,10 @@ export default function CampaignPublicView(
   {campaignId, subdomain}:
   {campaignId: string, subdomain: string, isPublic: boolean}
 ) {
-  const { getContributionTotal, getContractBalance } = useEthereum();
+  const { getContributionTotal, getContractBalance, isCampaignDeadlineExceeded } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(BigInt(0));
   const [contractBalance, setContractBalance] = useState(BigInt(0));
+  const [isDeadlineExceeded, setIsDeadlineExceeded] = useState(false);
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(undefined);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,14 @@ export default function CampaignPublicView(
   }, [refreshFlag, campaignId]);
 
   useEffect(() => {
+    async function fetchIsCampaignDeadlineExceeded() {
+      if (campaign?.deployed) {
+        const isExceeded = await isCampaignDeadlineExceeded(campaign);
+        setIsDeadlineExceeded(isExceeded);
+      }
+    }
+    fetchIsCampaignDeadlineExceeded();
+
     // async function fetchTotalContributions() {
     //   if (campaign?.deployed) {
     //     const total = await getContributionTotal(campaign.deployedAddress!);
@@ -127,6 +136,7 @@ export default function CampaignPublicView(
             <div className="flex flex-none">
               <CampaignContributeSection
                 campaign={campaign}
+                isDeadlineExceeded={isDeadlineExceeded}
                 className={"p-8 border border-gray-300 rounded-xl min-w-52 max-h-44 shadow-md"}
               />
             </div>

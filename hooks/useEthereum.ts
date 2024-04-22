@@ -359,6 +359,55 @@ export default function useEthereum() {
     }
   };
 
+  const extendCampaignDeadline = async (campaign: Campaign, extendedDeadline: Date): Promise<boolean | void> => {
+    try {
+      const currentSigner = signer || await connectToWallet();
+
+      if (!campaign.deployed) {
+        throw new Error("Campaign isn't deployed yet");
+      }
+
+      if (!extendedDeadline) {
+        throw new Error("Campaign is missing deadline setting");
+      }
+
+      if (extendedDeadline < new Date()) {
+        throw new Error("Campaign deadline must be in the future");
+      }
+
+      const newDeadline = Math.floor(new Date(extendedDeadline).getTime() / 1000);
+
+      toast('Extending campaign deadline...', { duration: 60000 });
+
+      let campaignABI = "";
+
+      if (campaign.currency === CurrencyType.ETH) {
+        campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+      } else {
+        campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+      }
+
+      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+      const transaction = await campaignInstance.extendContributionDeadline(newDeadline);
+
+      toast.dismiss();
+      toast('Confirming transaction...', { duration: 60000 });
+        
+      const receipt = await transaction.wait();
+      
+      toast.dismiss();
+      toast.success(`Campaign deadline has been extended.`);
+
+      return true;
+    } catch (error: any) {
+      console.error(error);
+      const friendlyError = parseEthersError(error);
+      toast.dismiss();
+      toast.error(friendlyError);
+      throw new Error("There is a problem extending the deadline")
+    }
+  };
+
   const isCampaignCompleted = async (campaign: Campaign) => {
     const currentSigner = signer || await connectToWallet();
 
@@ -374,6 +423,23 @@ export default function useEthereum() {
     const isCampaignCompleted = await campaignInstance.isCampaignCompleted();
 
     return isCampaignCompleted;
+  }
+
+  const isCampaignDeadlineExceeded = async (campaign: Campaign) => {
+    const currentSigner = signer || await connectToWallet();
+
+    let campaignABI = "";
+
+    if (campaign.currency === CurrencyType.ETH) {
+      campaignABI = JSON.stringify(CampaignETHV1ContractABI);
+    } else {
+      campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
+    }
+
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const isCampaignDeadlineExceeded = await campaignInstance.isContributionDeadlineExceeded();
+
+    return isCampaignDeadlineExceeded;
   }
 
   const getContributionTotal = async (campaign: Campaign) => {
@@ -441,10 +507,12 @@ export default function useEthereum() {
     rejectContribution,
     withdrawContribution,
     withdrawFromCampaign,
+    extendCampaignDeadline,
     getContributionTotal,
     getContributionTransferred,
     getContractBalance,
-    isCampaignCompleted
+    isCampaignCompleted,
+    isCampaignDeadlineExceeded
   };
 };
 

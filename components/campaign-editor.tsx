@@ -66,7 +66,7 @@ export default function CampaignEditor({
   segment: string;
   editType: string;
 }) {
-  const { getContributionTotal, getContractBalance } = useEthereum();
+  const { getContributionTotal, getContractBalance, extendCampaignDeadline } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(0);
   const [contractBalance, setContractBalance] = useState(BigInt(0));
   const [forms, setForms] = useState<Form[]>([]);
@@ -226,6 +226,15 @@ export default function CampaignEditor({
       if (editedCampaign.formId) payload.formId = editedCampaign.formId;
       if (editedCampaign.currency)
         payload.currency = editedCampaign.currency as CurrencyType;
+
+      if (campaign.deployed && payload.deadline && campaign.deadline) {
+        if (payload.deadline < campaign.deadline) {
+          throw new Error(`Campaign deadline must be in the future.`);
+        }
+        if (payload.deadline > campaign.deadline) {
+          await extendCampaignDeadline(campaign, payload.deadline);
+        }
+      }
 
       await updateCampaign(payload, { params: { subdomain } }, null);
 
@@ -395,7 +404,6 @@ export default function CampaignEditor({
                           handleFieldChange("deadline", date);
                         }
                       }}
-                      disabled={campaign.deployed}
                     />
                   </div>
                   <div className="flex flex-col space-y-4">
