@@ -25,11 +25,22 @@ export default function CampaignPublicView({
     contribution: CampaignContribution | null;
   };
 }) {
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { withdrawContribution } = useEthereum(); 
+  const [loading, setLoading] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const { withdrawContribution, isCampaignCompleted } = useEthereum(); 
 
   const campaign = campaignApplication.campaign;
+
+  useEffect(() => {
+    async function fetchIsCampaignCompleted() {
+      if (campaign?.deployed) {
+        const isCompleted = await isCampaignCompleted(campaign);
+        setIsCompleted(isCompleted);
+      }
+    }
+    fetchIsCampaignCompleted();
+  }, [campaign])
 
   const handleWithdraw = async () => {
     await withdrawContribution(campaign, campaignApplication, campaignApplication.contribution as CampaignContribution);
@@ -72,7 +83,7 @@ export default function CampaignPublicView({
                   Status: <span className="font-medium">{getApplicationStatusText(campaignApplication.status)}</span>
                 </div>
                 <div>
-                  {campaignApplication.status !==
+                  {!isCompleted && campaignApplication.status !==
                     ApplicationStatus.NOT_SUBMITTED && (
                     <Button onClick={handleWithdraw}>
                       Withdraw Application
