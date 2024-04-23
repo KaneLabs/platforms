@@ -15,7 +15,11 @@ interface LaunchCampaignButtonProps {
 export default function LaunchCampaignButton({ campaign, subdomain, onComplete }: LaunchCampaignButtonProps) {
   const { launch } = useEthereum();
   const onClick = async () => {
-    launch(campaign, { subdomain }).then(onComplete);
+    try {
+      await launch(campaign, { subdomain }).then(onComplete);
+    } catch (e) {
+      console.error(e);
+    }
   }
   return (
     <Button onClick={onClick}>
