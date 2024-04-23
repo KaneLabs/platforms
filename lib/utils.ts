@@ -124,8 +124,8 @@ export const getCurrencySymbol = (currency: CurrencyType | null | undefined) => 
 export const getCurrencyTokenAddress = (currency: CurrencyType | null | undefined) => {
   const addresses = {
     [CurrencyType.ETH]: "",
-    [CurrencyType.USDC]: "0x94a9d9ac8a22534e3faca9f4e7f2e2cf85d5e4c8",
-    [CurrencyType.USDT]: "0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0",
+    [CurrencyType.USDC]: `${process.env.NEXT_PUBLIC_USDC_TOKEN_ADDRESS}`,
+    [CurrencyType.USDT]: `${process.env.NEXT_PUBLIC_USDT_TOKEN_ADDRESS}`,
   };
   return currency && addresses[currency] ? addresses[currency] : "";
 }
