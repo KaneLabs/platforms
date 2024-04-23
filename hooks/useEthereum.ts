@@ -146,6 +146,7 @@ export default function useEthereum() {
       const friendlyError = parseEthersError(error);
       toast.dismiss();
       toast.error(friendlyError);
+      throw new Error("There is a problem launching the campaign")
     }
   };
 
