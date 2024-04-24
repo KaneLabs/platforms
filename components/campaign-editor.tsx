@@ -269,11 +269,19 @@ export default function CampaignEditor({
         router.push(
           `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
         );
+      } else if (segment === "tiers") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/links/${editType}`,
+        );
       } else {
         router.push(`/city/${subdomain}/campaigns/${campaignId}`);
       }
     } else {
-      if (segment === "tiers") {
+      if (segment === "links") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
+        );
+      } else if (segment === "tiers") {
         router.push(
           `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
         );
@@ -489,6 +497,38 @@ export default function CampaignEditor({
                     </div>
                   </div>
                 </>
+              )}
+              {segment === "links" && (
+                <div>
+                  {/* {campaignTiers.map((tier, index) =>
+                    editingTierIndex === index ? (
+                      <CampaignTierEditor
+                        key={index}
+                        tier={tier as CampaignTier}
+                        forms={forms}
+                        onCancel={
+                          () => deleteTier(index)
+                        }
+                        onSave={(updatedTier) => {
+                          updateTier(index, updatedTier);
+                          stopEditTier();
+                        }}
+                      />
+                    ) : (
+                      <div key={index}>
+                        <CampaignTierCard
+                          tier={tier as CampaignTier}
+                          currency={editedCampaign.currency as CurrencyType}
+                          onClickEdit={() => startEditTier(index)}
+                          onClickDelete={() => deleteTier(index)}
+                        />
+                      </div>
+                    ),
+                  )}
+                  <Button onClick={addNewTier}>
+                    Add New Tier
+                  </Button> */}
+                </div>
               )}
             </div>
           </div>

@@ -26,6 +26,12 @@ export default function CampaignSettingsNav() {
       segment: "tiers",
       disabled: true
     },
+    {
+      name: "Links",
+      href: `/city/${subdomain}/campaigns/${id}/settings/links/${editType}`,
+      segment: "links",
+      disabled: true
+    },
   ];
 
   return (
