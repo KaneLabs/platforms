@@ -8,11 +8,13 @@ import { getCurrencySymbol } from "@/lib/utils";
 
 interface CampaignContributeSectionProps {
   campaign: CampaignWithData;
+  isDeadlineExceeded: boolean;
   className: string;
 }
 
 export default function CampaignContributeSection({
   campaign,
+  isDeadlineExceeded,
   className,
 }: CampaignContributeSectionProps) {
 
@@ -30,8 +32,9 @@ export default function CampaignContributeSection({
         <Button
           onClick={() => router.push(`${campaign.id}/checkout/tiers`)}
           className="w-full rounded-full"
+          disabled={isDeadlineExceeded}
         >
-          Fund
+          {isDeadlineExceeded ? "Ended" : "Fund"}
         </Button>
       </div>
     </div>

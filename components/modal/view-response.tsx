@@ -12,6 +12,7 @@ import useEthereum from '@/hooks/useEthereum';
 interface ResponseModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onRefresh: () => void;
   onPrev: () => void;
   onNext: () => void;
   rowsData: Array<{[key: string]: any}>;
@@ -19,9 +20,11 @@ interface ResponseModalProps {
 }
 
 const ResponseModal: React.FC<ResponseModalProps> = (
-  { isOpen, onClose, onPrev, onNext, rowsData, selectedRowIndex }
+  { isOpen, onClose, onRefresh, onPrev, onNext, rowsData, selectedRowIndex }
 ) => {
   const [loading, setLoading] = useState(false);
+  const [approveLoading, setApproveLoading] = useState(false);
+  const [declineLoading, setDeclineLoading] = useState(false);
   const { rejectContribution } = useEthereum();
   
   if (!isOpen) {
@@ -32,14 +35,31 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   const formResponse: FormResponse & { answers: Array<Answer & { question: Question }> } = rowData.formResponseData ? rowData.formResponseData : null;
 
   const approveApplication = async () => {
-    rowData.status = ApplicationStatus.ACCEPTED;
-    return respondToCampaignApplication(rowData.id, true);
+    setApproveLoading(true);
+    const isSuccess = await respondToCampaignApplication(rowData.id, true);
+    if (isSuccess) {
+      rowData.status = ApplicationStatus.ACCEPTED;
+      nextStep();
+    }
+    setApproveLoading(false);
   }
 
   const declineApplication = async () => {
-    const success = await rejectContribution(rowData.campaignData, rowData.applicationData, rowData.contributionData.walletEthAddress);
-    if (success) {
+    setDeclineLoading(true);
+    const isSuccess = await rejectContribution(rowData.campaignData, rowData.applicationData, rowData.contributionData.walletEthAddress, rowData.justRejected);
+    if (isSuccess) {
       rowData.status = ApplicationStatus.REJECTED;
+      rowData.justRejected = true;
+      nextStep();
+    }
+    setDeclineLoading(false);
+  }
+
+  const nextStep = async () => {
+    if (selectedRowIndex < rowsData.length - 1) {
+      onNext();
+    } else {
+      onClose();
     }
   }
 
@@ -50,16 +70,16 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   )
 
   const formattedFormAnswers = formResponse && (
-    <div className="mt-2 flex flex-col space-y-6 rounded-lg border border-gray-500 bg-gray-100 py-6 px-8">
+    <div className="mt-2 flex flex-col space-y-4 rounded-lg border border-gray-300 bg-gray-100 py-6 px-8">
       {formResponse.answers.map(
         (value) => {
           const question = value.question;
 
           return (
             <div key={value.id}>
-              <h2 className="text-xl">{question.text}</h2>
-              <h2 className="text-xl">{question.description}</h2>
-              <p className="text-sm">
+              <p className="text-sm">{question.text}</p>
+              <p className="text-sm">{question.description}</p>
+              <p className="text-xl">
                 {formatAnswer(question!, value)}
               </p>
             </div>
@@ -121,7 +141,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
                 await declineApplication();
               }}
             >
-              {loading ? <LoadingDots color="#808080" />: "DECLINE"}
+              {declineLoading ? <LoadingDots color="#FFF" />: "Decline"}
             </Button>
             <Button
               variant="green"
@@ -131,7 +151,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
                 await approveApplication();
               }}
             >
-              {loading ? <LoadingDots color="#808080" />: "APPROVE"}
+              {approveLoading ? <LoadingDots color="#FFF" />: "Approve"}
             </Button>
             <Button
               variant="ghost"

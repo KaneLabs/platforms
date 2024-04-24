@@ -1,5 +1,5 @@
 import Image from "next/image";
-import CampaignCard from "./campaign-card";
+import CampaignCard, { CampaignWithMedia } from "./campaign-card";
 import { Campaign, Organization } from "@prisma/client";
 
 export default function Campaigns({
@@ -7,13 +7,13 @@ export default function Campaigns({
   campaigns,
 }: {
   organization: Organization;
-  campaigns: Campaign[];
+  campaigns: CampaignWithMedia[];
 }) {
 
   return (
     <div>
       {campaigns.length > 0 ? (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {campaigns.map((campaign) => (
             <CampaignCard
             {...campaign}

@@ -30,9 +30,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiConfig config={config}>
       <SessionProvider>
-          <OldToaster position="top-right" className="dark:hidden" />
+          <OldToaster richColors expand position="bottom-right" className="dark:hidden" />
           <OldToaster
-            position="top-right"
+            richColors
+            expand
+            position="bottom-right"
             theme="dark"
             className="hidden dark:block"
           />

@@ -86,7 +86,7 @@ export const PaymentConfirmationEmail = ({
                     <li>Transaction:&nbsp; 
                       <Link
                         className="font-medium"
-                        href={`https://sepolia.etherscan.io/tx/${id}`}
+                        href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${id}`}
                       >
                         Link
                       </Link>

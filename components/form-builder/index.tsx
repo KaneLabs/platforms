@@ -251,7 +251,9 @@ export default function FormBuilder({
                     .filter(
                       (type) =>
                         type !== QuestionType.MULTI_SELECT &&
-                        type !== QuestionType.SELECT,
+                        type !== QuestionType.SELECT && 
+                        type !== QuestionType.LINK && 
+                        type !== QuestionType.DROPDOWN
                     )
                     .map((type) => {
                       return (

@@ -43,7 +43,7 @@ export default function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id} className="border-gray-300">
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} style={{width: header.getSize()}}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -69,6 +69,7 @@ export default function DataTable<TData, TValue>({
                   {visibleCells.map((cell, cellIndex) => (
                     <TableCell 
                       key={cell.id}
+                      style={{width: cell.column.getSize()}}
                       className={`${
                         cellIndex === 0 ? "rounded-l-lg" : ""
                       } ${

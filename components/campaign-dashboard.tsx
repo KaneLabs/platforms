@@ -36,9 +36,9 @@ export default function CampaignDashboard({
   subdomain: string;
   isPublic: boolean;
 }) {
-  const { getContributionTotal, getContractBalance, isCampaignCompleted } = useEthereum();
-  const [totalContributions, setTotalContributions] = useState(BigInt(0));
-  const [contractBalance, setContractBalance] = useState(BigInt(0));
+  const { getContributionTotal, getContributionTransferred, isCampaignCompleted } = useEthereum();
+  const [totalContributions, setTotalContributions] = useState(0);
+  const [amountTransferred, setAmountTransferred] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(
@@ -56,6 +56,10 @@ export default function CampaignDashboard({
     setRefreshFlag((prev) => !prev);
   };
 
+  const routeToCampaignPage = () => {
+    router.push(`${getSubdomainUrl(subdomain)}/campaigns/${campaign?.id}`);
+  }
+
   useEffect(() => {
     getCampaign(campaignId)
       .then((result) => {
@@ -67,13 +71,21 @@ export default function CampaignDashboard({
   }, [refreshFlag, campaign]);
 
   useEffect(() => {
-    // async function fetchTotalContributions() {
-    //   if (campaign?.deployed) {
-    //     const total = await getContributionTotal(campaign);
-    //     setTotalContributions(total);
-    //   }
-    // }
-    // fetchTotalContributions();
+    async function fetchTotalContributions() {
+      if (campaign?.deployed) {
+        const total = await getContributionTotal(campaign);
+        setTotalContributions(total);
+      }
+    }
+    fetchTotalContributions();
+
+    async function fetchAmountTransferred() {
+      if (campaign?.deployed) {
+        const tranferred = await getContributionTransferred(campaign);
+        setAmountTransferred(tranferred);
+      }
+    }
+    fetchAmountTransferred();
 
     // async function fetchContractBalance() {
     //   if (campaign?.deployed) {
@@ -126,18 +138,22 @@ export default function CampaignDashboard({
         <div className="text-gray-800">
           <div className="my-4 space-y-4">
             <div className="flex flex-row my-6 items-start justify-between gap-[20px] flex-wrap">
-              <h1 className="font-serif text-3xl dark:text-white flex gap-2 items-center">
-                {campaign.name}
+              <div className="flex flex-col items-center space-x-4 space-y-2 sm:flex-row sm:space-y-0">
+                <h1 className="font-serif text-3xl dark:text-white flex gap-4 items-center">
+                  {campaign.name}
+                </h1>
                 {campaign.deployed && (
-                    <a
-                      href={`${getSubdomainUrl(subdomain)}/campaigns/${campaign.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
+                  <a
+                    href={`${getSubdomainUrl(subdomain)}/campaigns/${campaign.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-1 truncate rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700" 
+                  >
+                    View campaign page
+                    <ExternalLink className="h-3 w-3"/>
+                  </a>
                 )}
-              </h1>
+              </div>
               <div className="flex flex-row gap-2 items-end">
                 <div className="mr-4">{Intl.NumberFormat("en-US").format(campaign.threshold as number)} in <span className="font-medium">{campaign.currency}</span></div>
                 <Button
@@ -153,7 +169,9 @@ export default function CampaignDashboard({
                 {!campaign.deployed && <LaunchCampaignButton
                   campaign={campaign}
                   subdomain={subdomain}
-                  onComplete={triggerRefresh}
+                  onComplete={() => {
+                    routeToCampaignPage();
+                  }}
                 />}
                 </div>
             </div>
@@ -238,7 +256,18 @@ export default function CampaignDashboard({
           {isCompleted && (
             <div className="mt-12">
               <h2 className="text-xl font-medium">Withdrawal</h2>
+              <div className="flex gap-4 mt-4 mb-6">
+                <div>
+                  <div className="text-sm">Amount Transferred</div>
+                  <div className="text-lg font-semibold text-gray-800">{getCurrencySymbol(campaign.currency)}{(amountTransferred).toFixed(5)} {campaign.currency}</div>
+                </div>
+                <div>
+                  <div className="text-sm">Amount Available</div>
+                  <div className="text-lg font-semibold text-gray-800">{getCurrencySymbol(campaign.currency)}{(totalContributions - amountTransferred).toFixed(5)} {campaign.currency}</div>
+                </div>
+              </div>
               <CampaignWithdrawButton 
+                amountAvailable={totalContributions - amountTransferred}
                 campaign={campaign}
                 subdomain={subdomain}
                 onComplete={triggerRefresh}

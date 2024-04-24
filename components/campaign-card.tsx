@@ -1,59 +1,52 @@
-import { Campaign, Organization } from "@prisma/client";
+import BlurImage from "@/components/blur-image";
+import { placeholderBlurhash, random } from "@/lib/utils";
+import { Campaign, CampaignMedia, Event, Organization } from "@prisma/client";
 import Link from "next/link";
-import { AspectRatio } from "./ui/aspect-ratio";
-import Image from "next/image";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { Separator } from "./ui/separator";
 
-const getPlaceholderImage = (campaign: Campaign) => {
-  // @ts-ignore
-  return undefined;
-  // Add your own logic for placeholder images based on form
-};
+export type CampaignWithMedia = Campaign & { medias: CampaignMedia[] };
 
 export default function CampaignCard({
   campaign,
-  name,
   organization,
   isPublic
 }: {
-  campaign: Campaign;
+  campaign: CampaignWithMedia;
   name: string;
   organization: Organization;
   isPublic?: boolean;
 }) {
-  const campaignImage = getPlaceholderImage(campaign);
-  return (
-    <Card className="overflow-hidden">
-      <Link href={isPublic ? `/campaigns/${campaign.id}` : `/city/${organization.subdomain}/campaigns/${campaign.id}`}>
-        <div className="relative h-40 p-6">
-          <CardTitle>{campaign.name}</CardTitle>
+  const campaignImage = campaign.medias && campaign.medias[0] && campaign.medias[0].uri;
+  const href = isPublic ? `/campaigns/${campaign.id}` : `/city/${organization.subdomain}/campaigns/${campaign.id}`;
 
-          {campaignImage ? (
-            <div className="w-full">
-              <AspectRatio ratio={1 / 1}>
-                <Image
-                  src={campaignImage}
-                  alt={`${campaign.id} card image`}
-                  layout="fill"
-                />
-              </AspectRatio>
-            </div>
-          ) : null}
-          {!campaign.deployed && (
-            <span className="absolute bottom-6 right-6 rounded-md border border-gray-350 bg-accent-orange px-3 py-0.5 text-sm font-medium text-gray-50 shadow-md">
-              Draft
-            </span>
-          )}
+  return (
+    <div className="relative rounded-lg border border-gray-200 bg-gray-50 pb-10 shadow-md transition-all hover:shadow-xl dark:border-gray-700 dark:hover:border-white">
+      <Link
+        href={href}
+        className="flex flex-col overflow-hidden rounded-lg"
+      >
+        <BlurImage
+          alt={campaign.name ?? "Card thumbnail"}
+          className="h-44 object-cover"
+          src={campaignImage ?? "/placeholder.png"}
+          placeholder="blur"
+          blurDataURL={placeholderBlurhash}
+          width={800}
+          height={400}
+        />
+        <div className="border-t border-gray-200 p-4 dark:border-gray-700">
+          <h3 className="my-0 truncate text-xl font-bold tracking-wide text-gray-800 dark:text-gray-200">
+            {campaign.name}
+          </h3>
+          <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-gray-500 dark:text-gray-400">
+            {campaign.content}
+          </p>
         </div>
       </Link>
-    </Card>
+      {!campaign.deployed && (
+        <div className="absolute bottom-4 right-4 rounded-md bg-accent-orange px-3 py-0.5 text-sm font-medium text-gray-50 shadow-md">
+          Draft
+        </div>
+      )}
+    </div>
   );
 }

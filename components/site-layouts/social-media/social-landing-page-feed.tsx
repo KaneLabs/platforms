@@ -2,7 +2,7 @@ import { Campaign, Event, Organization, Post } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import PostCard from "../../post-card";
 import EventCard from "../../event-card";
-import CampaignCard from "../../campaign-card";
+import CampaignCard, { CampaignWithMedia } from "../../campaign-card";
 
 function mergeAndSortByDate(events: Event[], docs: Post[], campaigns: Campaign[]) {
   // Merge the two arrays
@@ -51,7 +51,10 @@ export default async function SocialLandingPageFeed({
       orderBy: {
         createdAt: "desc",
       },
-      take: 3
+      take: 3,
+      include: {
+        medias: true
+      }
     }),
   ]);
 
@@ -74,7 +77,7 @@ export default async function SocialLandingPageFeed({
             return (
               <CampaignCard
                 key={feedData.id}
-                campaign={feedData}
+                campaign={feedData as CampaignWithMedia}
                 name={feedData.name}
                 organization={sitedata}
                 isPublic={true}

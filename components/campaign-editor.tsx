@@ -66,7 +66,7 @@ export default function CampaignEditor({
   segment: string;
   editType: string;
 }) {
-  const { getContributionTotal, getContractBalance } = useEthereum();
+  const { getContributionTotal, getContractBalance, extendCampaignDeadline } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(0);
   const [contractBalance, setContractBalance] = useState(BigInt(0));
   const [forms, setForms] = useState<Form[]>([]);
@@ -203,6 +203,17 @@ export default function CampaignEditor({
   const submitChanges = async () => {
     // check in case somehow `campaign` hasn't loaded yet
     if (campaign) {
+      if (campaignTiers) {
+        campaignTiers.forEach((tier, tierIndex) => {
+          if (!tier.name) {
+            throw new Error(`Tier ${tierIndex+1}: Name is required`);
+          }
+          if (!tier.price) {
+            throw new Error(`Tier ${tierIndex+1}: Price is required`);
+          }
+        })
+      }
+
       let payload: Payload = { id: campaignId };
       if (editedCampaign.name) payload.name = editedCampaign.name;
       if (editedCampaign.threshold !== undefined)
@@ -215,6 +226,15 @@ export default function CampaignEditor({
       if (editedCampaign.formId) payload.formId = editedCampaign.formId;
       if (editedCampaign.currency)
         payload.currency = editedCampaign.currency as CurrencyType;
+
+      if (campaign.deployed && payload.deadline && campaign.deadline) {
+        if (payload.deadline < campaign.deadline) {
+          throw new Error(`Campaign deadline must be in the future.`);
+        }
+        if (payload.deadline > campaign.deadline) {
+          await extendCampaignDeadline(campaign, payload.deadline);
+        }
+      }
 
       await updateCampaign(payload, { params: { subdomain } }, null);
 
@@ -336,13 +356,16 @@ export default function CampaignEditor({
                 </>
               )}
               {segment === "tiers" && (
-                <>
+                <div>
                   {campaignTiers.map((tier, index) =>
                     editingTierIndex === index ? (
                       <CampaignTierEditor
                         key={index}
                         tier={tier as CampaignTier}
                         forms={forms}
+                        onCancel={
+                          () => deleteTier(index)
+                        }
                         onSave={(updatedTier) => {
                           updateTier(index, updatedTier);
                           stopEditTier();
@@ -359,10 +382,10 @@ export default function CampaignEditor({
                       </div>
                     ),
                   )}
-                  <Button className="mt-2" onClick={addNewTier}>
+                  <Button onClick={addNewTier}>
                     Add New Tier
                   </Button>
-                </>
+                </div>
               )}
               {segment === "details" && (
                 <>
@@ -381,7 +404,6 @@ export default function CampaignEditor({
                           handleFieldChange("deadline", date);
                         }
                       }}
-                      disabled={campaign.deployed}
                     />
                   </div>
                   <div className="flex flex-col space-y-4">
