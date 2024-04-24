@@ -7,6 +7,7 @@ import {
   Form,
   CurrencyType,
   CampaignMedia,
+  CampaignPageLink,
 } from "@prisma/client";
 import { useState, useEffect } from "react";
 import { Result, ethers } from "ethers";
@@ -16,6 +17,7 @@ import {
   upsertCampaignTiers,
   upsertCampaignMedias,
   getOrganizationForms,
+  upsertCampaignLinks,
 } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
 import { toast } from "sonner";
@@ -29,6 +31,8 @@ import { useRouter } from "next/navigation";
 import CampaignTierEditor from "@/components/campaign-tier-editor";
 import CampaignTierCard from "@/components/campaign-tier-card";
 import MultiUploader from "./form/uploader-multiple";
+import CampaignLinkEditor from "./campaign-link-editor";
+import CampaignLinkCard from "./campaign-link-card";
 
 interface EditedFields {
   name?: string;
@@ -48,7 +52,6 @@ interface Payload {
   content?: string | null;
   requireApproval?: boolean;
   deadline?: Date | null;
-  campaignTiers?: CampaignTier[] | null;
   formId?: string | null;
   currency?: CurrencyType | null;
 }
@@ -74,6 +77,9 @@ export default function CampaignEditor({
   const [campaignTiers, setCampaignTiers] = useState<Partial<CampaignTier>[]>(
     [],
   );
+  const [campaignLinks, setCampaignLinks] = useState<Partial<CampaignPageLink>[]>(
+    [],
+  );
   const [campaignMedias, setCampaignMedias] = useState<
     Partial<CampaignMedia>[]
   >([]);
@@ -89,6 +95,7 @@ export default function CampaignEditor({
     currency: undefined,
   });
   const [editingTierIndex, setEditingTierIndex] = useState<number | null>(null);
+  const [editingLinkIndex, setEditingLinkIndex] = useState<number | null>(null);
 
   const router = useRouter();
 
@@ -98,11 +105,15 @@ export default function CampaignEditor({
         if (result) {
           setCampaign(result);
           setCampaignTiers(result.campaignTiers);
+          setCampaignLinks(result.links);
           setCampaignMedias(result.medias || []);
           getOrganizationForms(result.organizationId).then(setForms);
 
           if (segment === "tiers" && result.campaignTiers.length === 0) {
             addNewTier();
+          }
+          if (segment === "links" && result.links.length === 0) {
+            addNewLink();
           }
         }
       })
@@ -149,6 +160,12 @@ export default function CampaignEditor({
     setCampaignTiers(updatedTiers);
   };
 
+  const deleteLink = (index: number) => {
+    const updatedLinks = [...campaignLinks];
+    updatedLinks.splice(index, 1);
+    setCampaignLinks(updatedLinks);
+  };
+
   const addNewTier = () => {
     const newNumTiers = campaignTiers.length + 1;
     setCampaignTiers([
@@ -156,6 +173,15 @@ export default function CampaignEditor({
       { name: "", description: "", price: null, formId: null },
     ]);
     startEditTier(newNumTiers - 1);
+  };
+
+  const addNewLink = () => {
+    const newNumLinks = campaignLinks.length + 1;
+    setCampaignLinks([
+      ...campaignLinks,
+      { href: "", title: "", description: "" },
+    ]);
+    startEditLink(newNumLinks - 1);
   };
 
   const updateTier = (index: number, updatedTier: EditedFields) => {
@@ -178,12 +204,26 @@ export default function CampaignEditor({
     setCampaignTiers(updatedTiers);
   };
 
+  const updateLink = (index: number, updatedLink: Partial<CampaignPageLink>) => {
+    const updatedLinks = [...campaignLinks];
+    updatedLinks[index] = updatedLink;
+    setCampaignLinks(updatedLinks);
+  };
+
   const startEditTier = (index: number) => {
     setEditingTierIndex(index);
   };
 
+  const startEditLink = (index: number) => {
+    setEditingLinkIndex(index);
+  };
+
   const stopEditTier = () => {
     setEditingTierIndex(null);
+  };
+
+  const stopEditLink = () => {
+    setEditingLinkIndex(null);
   };
 
   const handleFieldChange = (
@@ -214,6 +254,17 @@ export default function CampaignEditor({
         })
       }
 
+      if (campaignLinks) {
+        campaignLinks.forEach((link, linkIndex) => {
+          if (!link.href) {
+            throw new Error(`Link ${linkIndex+1}: Url is required`);
+          }
+          if (!link.title) {
+            throw new Error(`Link ${linkIndex+1}: Title is required`);
+          }
+        })
+      }
+
       let payload: Payload = { id: campaignId };
       if (editedCampaign.name) payload.name = editedCampaign.name;
       if (editedCampaign.threshold !== undefined)
@@ -240,6 +291,12 @@ export default function CampaignEditor({
 
       await upsertCampaignTiers(
         { tiers: campaignTiers, campaign: campaign },
+        { params: { subdomain: subdomain as string } },
+        null,
+      );
+
+      await upsertCampaignLinks(
+        { links: campaignLinks, campaign: campaign },
         { params: { subdomain: subdomain as string } },
         null,
       );
@@ -500,34 +557,32 @@ export default function CampaignEditor({
               )}
               {segment === "links" && (
                 <div>
-                  {/* {campaignTiers.map((tier, index) =>
-                    editingTierIndex === index ? (
-                      <CampaignTierEditor
+                  {campaignLinks.map((link, index) => 
+                    editingLinkIndex === index ? (
+                      <CampaignLinkEditor
                         key={index}
-                        tier={tier as CampaignTier}
-                        forms={forms}
+                        link={link as CampaignPageLink}
                         onCancel={
-                          () => deleteTier(index)
+                          () => deleteLink(index)
                         }
-                        onSave={(updatedTier) => {
-                          updateTier(index, updatedTier);
-                          stopEditTier();
+                        onSave={(updatedLink) => {
+                          updateLink(index, updatedLink);
+                          stopEditLink();
                         }}
                       />
                     ) : (
                       <div key={index}>
-                        <CampaignTierCard
-                          tier={tier as CampaignTier}
-                          currency={editedCampaign.currency as CurrencyType}
-                          onClickEdit={() => startEditTier(index)}
-                          onClickDelete={() => deleteTier(index)}
+                        <CampaignLinkCard
+                          link={link as CampaignPageLink}
+                          onClickEdit={() => startEditLink(index)}
+                          onClickDelete={() => deleteLink(index)}
                         />
                       </div>
-                    ),
+                    )
                   )}
-                  <Button onClick={addNewTier}>
-                    Add New Tier
-                  </Button> */}
+                  <Button onClick={addNewLink}>
+                    Add New Link
+                  </Button>
                 </div>
               )}
             </div>
