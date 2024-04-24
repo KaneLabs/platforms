@@ -18,6 +18,7 @@ import {
   ApplicationStatus,
   User,
   CampaignMedia,
+  CampaignPageLink,
 } from "@prisma/client";
 import { revalidatePath, revalidateTag } from "next/cache";
 import {
@@ -2552,6 +2553,7 @@ export type CampaignWithData = Campaign & {
   organization: Organization;
   contributions: CampaignContribution[];
   campaignTiers: CampaignTier[];
+  links: CampaignPageLink[];
   medias: CampaignMedia[];
   form: Form | null;
 };
@@ -2565,6 +2567,7 @@ export const getCampaign = async (id: string) => {
       organization: true,
       contributions: true,
       campaignTiers: true,
+      links: true,
       medias: true,
       form: true,
     },
@@ -2610,6 +2613,42 @@ export const upsertCampaignTiers = withOrganizationAuth(
     const tiers = await prisma.$transaction(txs);
 
     return tiers;
+  },
+);
+
+export const upsertCampaignLinks = withOrganizationAuth(
+  async (data: { links: CampaignPageLink[]; campaign: Campaign }) => {
+    const deleteTx = prisma.campaignPageLink.deleteMany({
+      where: {
+        campaignId: data.campaign.id,
+        id: {
+          notIn: data.links.map(({ id }) => id).filter(id => !!id) as string[],
+        },
+      },
+    });
+
+    const txs = [
+      deleteTx,
+      ...data.links.map((link) => {
+        return prisma.campaignPageLink.upsert({
+          where: {
+            id: link.id ?? "THIS_TEXT_JUST_TRIGGERS_A_NEW_ID_TO_BE_GENERATED",
+          },
+          create: {
+            ...link,
+            campaignId: data.campaign.id,
+          },
+          update: {
+            ...link,
+            campaignId: data.campaign.id,
+          },
+        });
+      })
+    ];
+
+    const links = await prisma.$transaction(txs);
+
+    return links;
   },
 );
 

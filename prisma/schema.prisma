@@ -472,6 +472,18 @@ model EmailSubscriber {
   createdAt         DateTime                @default(now())
 }
 
+model CampaignPageLink {
+  id             String        @id @default(cuid())
+  href           String
+  title          String
+  description    String?        
+  isPrimary      Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  campaign       Campaign      @relation(fields: [campaignId], references: [id])
+  campaignId     String
+}
+
 enum CurrencyType {
   ETH
   USDC
@@ -509,6 +521,7 @@ model Campaign {
   CampaignApplication CampaignApplication[]
   currency            CurrencyType?
   medias              CampaignMedia[]
+  links               CampaignPageLink[]
 
   @@unique([name, organizationId])
 }
