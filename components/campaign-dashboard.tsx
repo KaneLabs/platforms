@@ -12,6 +12,7 @@ import {
   CampaignApplication,
   CampaignContribution,
   Question,
+  CampaignPageLink,
 } from "@prisma/client";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
@@ -27,6 +28,7 @@ import { useRouter } from "next/navigation";
 import CampaignResponseDataTable from "@/components/form-response-table/campaign-response-data-table";
 import { ETH_PRICE_IN_DOLLARS, getCurrencySymbol, getSubdomainUrl } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
+import CampaignLinkCard from "./campaign-link-card";
 
 export default function CampaignDashboard({
   campaignId,
@@ -230,7 +232,7 @@ export default function CampaignDashboard({
               }
             </div>}
           </div>
-          {campaign.campaignTiers && (
+          {campaign.campaignTiers && campaign.campaignTiers.length > 0 && (
             <div className="mt-12">
               <h2 className="text-xl font-medium">Campaign Tiers</h2>
               {campaign.campaignTiers.map(
@@ -240,6 +242,25 @@ export default function CampaignDashboard({
                     tier={tier}
                     currency={campaign.currency}
                   />
+                ),
+              )}
+            </div>
+          )}
+          {campaign.links && campaign.links.length > 0 && (
+            <div className="mt-12">
+              <h2 className="text-xl font-medium">Links</h2>
+              {campaign.links.map(
+                (link: CampaignPageLink, index: number) => (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <CampaignLinkCard
+                      key={index}
+                      link={link}
+                    />
+                  </a>
                 ),
               )}
             </div>
