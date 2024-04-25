@@ -6,27 +6,29 @@ import { Edit, Link2, Trash2 } from "lucide-react";
 
 export default function CampaignLinkCard({
   link,
+  isPublic,
   onClickEdit,
   onClickDelete,
 }: {
   link: CampaignPageLink;
+  isPublic?: boolean;
   onClickEdit?: () => void;
   onClickDelete?: () => void;
 }) {
   return (
     <div
-      className={`dark:bg-gray-800 my-4 flex flex-col space-y-4 rounded-lg border bg-gray-100 px-8 py-6 transition ease-in-out`}
+      className={`dark:bg-gray-800 my-4 flex flex-col space-y-4 rounded-lg border bg-gray-100 ${isPublic ? "px-4 py-4" : "px-8 py-6"} transition ease-in-out`}
     >
       <div className="relative">
         <div className="flex flex-row flex-wrap items-start justify-between gap-[20px]">
-          <div className="flex flex-row gap-2 text-2xl font-semibold items-center">
+          <div className={`flex flex-row text-lg font-semibold items-center ${isPublic ? "justify-between w-full" : "gap-2"}`}>
             {link.title}
             <Link2
               className="text-gray-600"
               width={18}
             />
           </div>
-          <div className="flex items-center">
+          {!isPublic && <div className="flex items-center">
             {onClickEdit && (
               <Edit
                 className="cursor-pointer"
@@ -47,10 +49,10 @@ export default function CampaignLinkCard({
                 width={18}
               />
             )}
-          </div>
+          </div>}
         </div>
         {link.description && (
-          <div className="mb-2 mt-2 flex flex-col space-y-4 italic">
+          <div className="mt-2 flex flex-col space-y-4 text-sm">
             {link.description}
           </div>
         )}

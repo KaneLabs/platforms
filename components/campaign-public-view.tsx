@@ -1,7 +1,7 @@
 "use client";
 
 import useEthereum from "@/hooks/useEthereum";
-import { Campaign, CampaignTier } from "@prisma/client";
+import { Campaign, CampaignPageLink, CampaignTier } from "@prisma/client";
 import { useState, useEffect } from 'react';
 import { getCampaign, CampaignWithData } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
@@ -9,6 +9,7 @@ import CampaignContributeSection from "@/components/campaign-contribute-section"
 import CampaignTierCard from "@/components/campaign-tier-card";
 import Link from "next/link";
 import BannerImage from "./site-layouts/social-media/banner-image";
+import CampaignLinkCard from "./campaign-link-card";
 
 
 export default function CampaignPublicView(
@@ -133,12 +134,30 @@ export default function CampaignPublicView(
                 </div>
               }
             </div>
-            <div className="flex flex-none">
+            <div className="flex flex-col gap-y-4 max-w-64">
               <CampaignContributeSection
                 campaign={campaign}
                 isDeadlineExceeded={isDeadlineExceeded}
                 className={"p-8 border border-gray-300 rounded-xl min-w-52 max-h-44 shadow-md"}
               />
+              {campaign.links && campaign.links.length > 0 && <div>
+                <h2 className="text-xl mt-8 font-semibold">Links</h2>
+                {
+                  campaign.links.map((link) => (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <CampaignLinkCard
+                        isPublic={true}
+                        key={link.id}
+                        link={link}
+                      />
+                    </a>
+                  ))
+                }
+              </div>}
             </div>
           </div>
         </div>
