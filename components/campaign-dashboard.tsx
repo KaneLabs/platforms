@@ -89,14 +89,6 @@ export default function CampaignDashboard({
     }
     fetchAmountTransferred();
 
-    // async function fetchContractBalance() {
-    //   if (campaign?.deployed) {
-    //     const balance = await getContractBalance(campaign.deployedAddress!);
-    //     setContractBalance(balance);
-    //   }
-    // }
-    // fetchContractBalance();
-
     async function fetchIsCampaignCompleted() {
       if (campaign?.deployed) {
         const isCompleted = await isCampaignCompleted(campaign);
@@ -122,9 +114,9 @@ export default function CampaignDashboard({
     return <div>Campaign not found</div>;
   }
 
-  const getProgress = (contributions: bigint, thresholdWei: bigint) => {
-    if (contributions < thresholdWei) {
-      return Number((contributions * BigInt(100)) / thresholdWei);
+  const getProgress = (contributions: number, threshold: number) => {
+    if (contributions < threshold) {
+      return Number((contributions * 100) / threshold);
     } else {
       return 100;
     }
@@ -177,41 +169,6 @@ export default function CampaignDashboard({
                 />}
                 </div>
             </div>
-            <div className="mb-6 flex flex-col space-y-1">
-              {/* <div className="flex justify-between space-x-4">
-                <Progress
-                  value={getProgress(totalContributions, campaign.thresholdWei)}
-                  className="h-6 w-full"
-                />
-              </div> */}
-              {/* <div className="flex space-x-8">
-                <p className="text-sm">
-                  {`${Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  }).format(
-                    parseFloat(ethers.formatEther(totalContributions)) *
-                      ETH_PRICE_IN_DOLLARS,
-                  )} of 
-                  ${Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  }).format(
-                    parseFloat(ethers.formatEther(campaign.thresholdWei)) *
-                      ETH_PRICE_IN_DOLLARS,
-                  )} funded`}
-                </p>
-                <p className="text-sm">
-                  {`${Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  }).format(
-                    parseFloat(ethers.formatEther(contractBalance)) *
-                      ETH_PRICE_IN_DOLLARS,
-                  )} available`}
-                </p>
-              </div> */}
-            </div>
             {campaign.content && campaign.content.length > 0 && <div className="my-6">
               {campaign.content}
             </div>}
@@ -232,6 +189,27 @@ export default function CampaignDashboard({
               }
             </div>}
           </div>
+          {campaign.threshold && campaign.deployed && <div className="mt-12 mb-6 flex flex-col space-y-4">
+              <h2 className="text-xl font-medium">Current Progress</h2>
+              <div className="flex flex-col">
+                <p className="text-md mb-2">
+                  {`${getCurrencySymbol(campaign.currency)}${totalContributions} / 
+                  ${getCurrencySymbol(campaign.currency)}${campaign.threshold} ${campaign.currency} raised`}
+                </p>
+                <Progress
+                  value={getProgress(totalContributions, campaign.threshold)}
+                  className="h-6 w-full"
+                />
+                <div className="mt-4">
+                    <span className="text-md text-gray-800">Threshold: </span>
+                    <span className="text-md font-medium">{totalContributions >= campaign.threshold ? "Passed. Organizer can withdraw." : "Not yet passed. Users can withdraw contributions."}</span>
+                </div>
+                <div className="mt-2">
+                    <span className="text-md text-gray-800">Deadline: </span>
+                    <span className="text-md font-medium">{campaign.deadline?.toLocaleDateString()}</span>
+                </div>
+              </div>
+            </div>}
           {campaign.campaignTiers && campaign.campaignTiers.length > 0 && (
             <div className="mt-12">
               <h2 className="text-xl font-medium">Campaign Tiers</h2>
