@@ -189,7 +189,7 @@ export default function CampaignDashboard({
               }
             </div>}
           </div>
-          {campaign.threshold && campaign.deployed && <div className="mt-12 mb-6 flex flex-col space-y-4">
+          {campaign.threshold && campaign.deployed && totalContributions > 0 && <div className="mt-12 mb-6 flex flex-col space-y-4">
               <h2 className="text-xl font-medium">Current Progress</h2>
               <div className="flex flex-col">
                 <p className="text-md mb-2">
