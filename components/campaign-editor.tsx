@@ -258,7 +258,7 @@ export default function CampaignEditor({
           if (!tier.name) {
             throw new Error(`Tier ${tierIndex+1}: Name is required`);
           }
-          if (!tier.price) {
+          if (!tier.isOpenAmount && !tier.price) {
             throw new Error(`Tier ${tierIndex+1}: Price is required`);
           }
         })
@@ -288,7 +288,7 @@ export default function CampaignEditor({
       if (editedCampaign.financialVisibility)
         payload.financialVisibility = editedCampaign.financialVisibility as FinancialVisibilityType;
       
-      payload.content = editedCampaign.content ?? null;
+      payload.content = editedCampaign.content ?? "";
       payload.fundButtonText = editedCampaign.fundButtonText;
 
       if (campaign.deployed && payload.deadline && campaign.deadline) {
@@ -554,6 +554,24 @@ export default function CampaignEditor({
                   </div>
                   <div className="flex flex-col space-y-4">
                     <div>
+                      Please set the Fund button text
+                      <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
+                        Max 12 characters
+                      </div>
+                    </div>
+                    <Input
+                      className="w-60"
+                      type="text"
+                      maxLength={12}
+                      id="fundingButtonText"
+                      value={editedCampaign.fundButtonText}
+                      onChange={(e) =>
+                        handleFieldChange("fundButtonText", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>
                       Please select how visible financial participation should be on the campaign page
                     </div>
                     <div className="flex space-x-4">
@@ -610,19 +628,6 @@ export default function CampaignEditor({
                         </ToggleGroup.Item>
                       </ToggleGroup.Root>
                     </div>
-                  </div>
-                  <div className="flex flex-col space-y-4">
-                    <div>Customize "Fund" button text (12 chars max)</div>
-                    <Input
-                      className="w-60"
-                      type="text"
-                      maxLength={12}
-                      id="fundingButtonText"
-                      value={editedCampaign.fundButtonText}
-                      onChange={(e) =>
-                        handleFieldChange("fundButtonText", e.target.value)
-                      }
-                    />
                   </div>
                   <div className="flex space-x-6">
                     <div>Do contributors need to be approved?</div>
