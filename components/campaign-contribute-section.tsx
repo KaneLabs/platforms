@@ -8,6 +8,7 @@ import { Campaign, FinancialVisibilityType } from "@prisma/client";
 
 const defaultAmount = 0;
 const defaultTarget = 5000;
+const defaultFundText = "Fund";
 
 interface CampaignContributeSectionProps {
   campaign: Partial<Campaign>;
@@ -16,6 +17,7 @@ interface CampaignContributeSectionProps {
   className: string;
   visibility?: FinancialVisibilityType | null;
   isPublic?: boolean;
+  fundButtonText?: string | null;
 }
 
 export default function CampaignContributeSection({
@@ -24,7 +26,8 @@ export default function CampaignContributeSection({
   totalContribution,
   className,
   visibility,
-  isPublic
+  isPublic,
+  fundButtonText
 }: CampaignContributeSectionProps) {
 
   const router = useRouter();
@@ -37,7 +40,7 @@ export default function CampaignContributeSection({
           className="w-full rounded-full"
           disabled={isDeadlineExceeded}
         >
-          {isDeadlineExceeded ? "Ended" : "Fund"}
+          {isDeadlineExceeded ? "Ended" : fundButtonText || defaultFundText}
         </Button>
       </div>
     );
@@ -58,7 +61,7 @@ export default function CampaignContributeSection({
             className="w-full rounded-full"
             disabled={isDeadlineExceeded}
           >
-            {isDeadlineExceeded ? "Ended" : "Fund"}
+            {isDeadlineExceeded ? "Ended" : fundButtonText || defaultFundText}
           </Button>
         </div>
       </div>
@@ -79,7 +82,7 @@ export default function CampaignContributeSection({
           className="w-full rounded-full"
           disabled={isDeadlineExceeded}
         >
-          {isDeadlineExceeded ? "Ended" : "Fund"}
+          {isDeadlineExceeded ? "Ended" : fundButtonText || defaultFundText}
         </Button>
       </div>
     </div>
