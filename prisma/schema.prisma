@@ -529,6 +529,7 @@ model Campaign {
   medias              CampaignMedia[]
   links               CampaignPageLink[]
   financialVisibility FinancialVisibilityType?
+  fundButtonText      String?
 
   @@unique([name, organizationId])
 }
