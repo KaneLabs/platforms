@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CampaignTier, Form } from "@prisma/client";
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
+import * as Toggle from '@radix-ui/react-toggle';
 
 type EditedCampaignTier = Partial<Omit<CampaignTier, "price">> & { price: string | undefined }
 
@@ -18,7 +19,7 @@ interface CampaignTierEditorProps {
 export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: CampaignTierEditorProps) {
   const [editedTier, setEditedTier] = useState<EditedCampaignTier>(
     { name: tier.name, description: tier.description, quantity: tier.quantity,
-      price: tier.price?.toString(), formId: tier.formId });
+      price: tier.price?.toString(), isOpenAmount: tier.isOpenAmount, formId: tier.formId });
 
   useEffect(() => {
     if (tier) {
@@ -27,12 +28,13 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
         description: tier.description ?? undefined,
         quantity: tier.quantity ?? undefined,
         price: tier.price?.toString() ?? undefined,
+        isOpenAmount: tier.isOpenAmount ?? false,
         formId: tier.formId
       });
     }
   }, [tier]);
 
-  const handleFieldChange = (field: string, value: string | number | null) => {
+  const handleFieldChange = (field: string, value: boolean | string | number | null) => {
     setEditedTier(prev => ({ ...prev, [field]: value }));
   };
 
@@ -41,7 +43,7 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
       if (!editedTier.name) {
         throw new Error("Tier name is required");
       } 
-      if (!editedTier.price) {
+      if (!editedTier.isOpenAmount && !editedTier.price) {
         throw new Error("Tier price is required");
       }
 
@@ -64,31 +66,50 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
           placeholder="E.g. Residents Pass, Standard ticket, VIP ticket, Donor"
         />
         <div>How much is the contribution for this Tier?</div>
-        <Input
-          id="price"
-          type="text"
-          value={editedTier.price}
-          placeholder="E.g. 100, 8.99, 0.001"
-          pattern="^\d*\.?\d*$"
-          inputMode="decimal"
-          onKeyDown={(e) => {
-            if (!/[\d.]/.test(e.key) && 
-                e.key !== "Backspace" && 
-                e.key !== "Tab" && 
-                e.key !== "ArrowLeft" && 
-                e.key !== "ArrowRight"
-            ) {
-              e.preventDefault();
-            }
-          }}
-          onChange={(e) => {
-            let value = e.target.value.replace(/[^\d.]/g, '');
+        <div className="flex justify-between items-center">
+          <div className="flex-grow">
+            <Input
+              id="price"
+              type="text"
+              value={editedTier.price}
+              placeholder="E.g. 100, 8.99, 0.001"
+              pattern="^\d*\.?\d*$"
+              inputMode="decimal"
+              onKeyDown={(e) => {
+                if (!/[\d.]/.test(e.key) && 
+                    e.key !== "Backspace" && 
+                    e.key !== "Tab" && 
+                    e.key !== "ArrowLeft" && 
+                    e.key !== "ArrowRight"
+                ) {
+                  e.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                let value = e.target.value.replace(/[^\d.]/g, '');
 
-            if (parseFloat(value) < 0) value = '0';
+                if (parseFloat(value) < 0) value = '0';
 
-            handleFieldChange("price", value);
-          }}
-        />
+                handleFieldChange("price", value);
+                handleFieldChange("isOpenAmount", false);
+              }}
+            />
+          </div>
+          <div className="px-4">OR</div>
+          <Toggle.Root
+            id="openAmount"
+            pressed={!!editedTier.isOpenAmount}
+            onPressedChange={(pressed: boolean) => {
+              handleFieldChange("price", "");
+              handleFieldChange("isOpenAmount", !!pressed);
+            }}
+            className={`${
+              editedTier.isOpenAmount ? 'bg-accent-green text-gray-100' : 'bg-gray-100 text-gray-800'
+            } rounded-md p-2 `}
+          >
+            Open Amount
+          </Toggle.Root>
+        </div>
         <div>Describe the Tier</div>
         <Textarea 
           id="description"
