@@ -292,6 +292,7 @@ model CampaignTier {
   campaign             Campaign              @relation(fields: [campaignId], references: [id])
   Form                 Form?                 @relation(fields: [formId], references: [id])
   formId               String?
+  isOpenAmount         Boolean?              
   campaignApplications CampaignApplication[]
 }
 

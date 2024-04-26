@@ -240,9 +240,10 @@ const CampaignTierSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
   description: z.string().nullish().optional(),
   quantity: z.number().nullish().optional(),
-  price: z.number().optional(),
+  price: z.number().nullish().optional(),
   currency: z.string().nullish(),
   formId: z.string().nullish(),
+  isOpenAmount: z.boolean().nullish(),
 })
 
 export const UpsertCampaignTierSchemas = z.object({
