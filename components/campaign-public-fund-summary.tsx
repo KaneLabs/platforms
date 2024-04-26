@@ -18,7 +18,6 @@ export default function CampaignPublicCheckoutSummary({
   const { contribute } = useEthereum();
 
   const formResponse = campaignTier.Form?.formResponse?.[0];
-  const amount = Number(campaignTier.price);
 
   const formattedFormAnswers = formResponse && formResponse.answers.map(
     (value) => {
@@ -53,7 +52,8 @@ export default function CampaignPublicCheckoutSummary({
       </div>
       <div className="self-end ">
         <CampaignFundButton 
-          amount={amount}
+          isOpenAmount={!!campaignTier.isOpenAmount}
+          tierAmount={campaignTier.price?.toString()}
           onComplete={async (amount: number) => {
             try {
               await contribute(amount, campaignTier.campaign, campaignTier, formResponse);
