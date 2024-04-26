@@ -133,6 +133,7 @@ export default function CampaignPublicView(
                 isDeadlineExceeded={isDeadlineExceeded}
                 isPublic={true}
                 className={"p-8 border border-gray-300 rounded-xl min-w-52 shadow-md"}
+                fundButtonText={campaign.fundButtonText}
               />
               {campaign.links && campaign.links.length > 0 && <div>
                 <h2 className="text-xl mt-8 font-semibold">Links</h2>

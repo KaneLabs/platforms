@@ -46,6 +46,7 @@ interface EditedFields {
   currency?: string | null;
   images?: FileList | null;
   financialVisibility?: FinancialVisibilityType | null;
+  fundButtonText?: string;
 }
 
 interface Payload {
@@ -58,6 +59,7 @@ interface Payload {
   formId?: string | null;
   currency?: CurrencyType | null;
   financialVisibility?: FinancialVisibilityType | null;
+  fundButtonText?: string;
 }
 
 export default function CampaignEditor({
@@ -97,6 +99,8 @@ export default function CampaignEditor({
     requireApproval: undefined,
     formId: undefined,
     currency: undefined,
+    financialVisibility: undefined,
+    fundButtonText: undefined
   });
   const [editingTierIndex, setEditingTierIndex] = useState<number | null>(null);
   const [editingLinkIndex, setEditingLinkIndex] = useState<number | null>(null);
@@ -154,7 +158,8 @@ export default function CampaignEditor({
         requireApproval: campaign.requireApproval,
         formId: campaign.formId,
         currency: campaign.currency || CurrencyType.ETH,
-        financialVisibility: campaign.financialVisibility || FinancialVisibilityType.AMOUNT_AND_TARGET
+        financialVisibility: campaign.financialVisibility || FinancialVisibilityType.AMOUNT_AND_TARGET,
+        fundButtonText: campaign.fundButtonText ?? undefined
       });
     }
   }, [campaign]);
@@ -274,8 +279,6 @@ export default function CampaignEditor({
       if (editedCampaign.name) payload.name = editedCampaign.name;
       if (editedCampaign.threshold !== undefined)
         payload.threshold = parseFloat(editedCampaign.threshold);
-      if (editedCampaign.content)
-        payload.content = editedCampaign.content ?? null;
       if (editedCampaign.requireApproval !== undefined)
         payload.requireApproval = editedCampaign.requireApproval;
       if (editedCampaign.deadline) payload.deadline = editedCampaign.deadline;
@@ -284,6 +287,9 @@ export default function CampaignEditor({
         payload.currency = editedCampaign.currency as CurrencyType;
       if (editedCampaign.financialVisibility)
         payload.financialVisibility = editedCampaign.financialVisibility as FinancialVisibilityType;
+      
+      payload.content = editedCampaign.content ?? null;
+      payload.fundButtonText = editedCampaign.fundButtonText;
 
       if (campaign.deployed && payload.deadline && campaign.deadline) {
         if (payload.deadline < campaign.deadline) {
@@ -487,7 +493,7 @@ export default function CampaignEditor({
                     </div>
                     <div className="flex space-x-4">
                     <Input
-                      className="w-1/5"
+                      className="w-60"
                       type="text"
                       value={editedCampaign.threshold}
                       id="threshold"
@@ -572,6 +578,7 @@ export default function CampaignEditor({
                             totalContribution={totalContributions}
                             className={"p-8 rounded-xl w-64 min-h-44 shadow-md hover:bg-gray-50/50 border border-gray-300 group-data-[state=on]:!border-accent-green/90"}
                             visibility={FinancialVisibilityType.AMOUNT_AND_TARGET}
+                            fundButtonText={editedCampaign.fundButtonText}
                           />
                           <div className="mt-2">Amount raised & target</div>
                         </ToggleGroup.Item>
@@ -584,6 +591,7 @@ export default function CampaignEditor({
                             isDeadlineExceeded={false}
                             className={"p-8 rounded-xl w-64 min-h-44 shadow-md hover:bg-gray-50/50 border border-gray-300 group-data-[state=on]:!border-accent-green/90"}
                             visibility={FinancialVisibilityType.TARGET_ONLY}
+                            fundButtonText={editedCampaign.fundButtonText}
                           />
                           <div className="mt-2">Target only</div>
                         </ToggleGroup.Item>
@@ -596,11 +604,25 @@ export default function CampaignEditor({
                             isDeadlineExceeded={false}
                             className={"p-8 rounded-xl w-64 min-h-44 shadow-md hover:bg-gray-50/50 border border-gray-300 group-data-[state=on]:!border-accent-green/90"}
                             visibility={FinancialVisibilityType.BUTTON_ONLY}
+                            fundButtonText={editedCampaign.fundButtonText}
                           />
                           <div className="mt-2">No figures</div>
                         </ToggleGroup.Item>
                       </ToggleGroup.Root>
                     </div>
+                  </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>Customize "Fund" button text (12 chars max)</div>
+                    <Input
+                      className="w-60"
+                      type="text"
+                      maxLength={12}
+                      id="fundingButtonText"
+                      value={editedCampaign.fundButtonText}
+                      onChange={(e) =>
+                        handleFieldChange("fundButtonText", e.target.value)
+                      }
+                    />
                   </div>
                   <div className="flex space-x-6">
                     <div>Do contributors need to be approved?</div>
