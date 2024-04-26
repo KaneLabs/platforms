@@ -17,8 +17,7 @@ export default function CampaignPublicView(
   {campaignId: string, subdomain: string, isPublic: boolean}
 ) {
   const { getContributionTotal, getContractBalance, isCampaignDeadlineExceeded } = useEthereum();
-  const [totalContributions, setTotalContributions] = useState(BigInt(0));
-  const [contractBalance, setContractBalance] = useState(BigInt(0));
+  const [totalContributions, setTotalContributions] = useState(0);
   const [isDeadlineExceeded, setIsDeadlineExceeded] = useState(false);
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(undefined);
   const [refreshFlag, setRefreshFlag] = useState(false);
@@ -45,21 +44,13 @@ export default function CampaignPublicView(
     }
     fetchIsCampaignDeadlineExceeded();
 
-    // async function fetchTotalContributions() {
-    //   if (campaign?.deployed) {
-    //     const total = await getContributionTotal(campaign.deployedAddress!);
-    //     setTotalContributions(total);
-    //   }
-    // }
-    // fetchTotalContributions();
-
-    // async function fetchContractBalance() {
-    //   if (campaign?.deployed) {
-    //     const balance = await getContractBalance(campaign.deployedAddress!);
-    //     setContractBalance(balance);
-    //   }
-    // }
-    // fetchContractBalance();
+    async function fetchTotalContributions() {
+      if (campaign?.deployed) {
+        const total = await getContributionTotal(campaign);
+        setTotalContributions(total);
+      }
+    }
+    fetchTotalContributions();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaign]);
@@ -137,8 +128,11 @@ export default function CampaignPublicView(
             <div className="flex flex-col gap-y-4 max-w-64">
               <CampaignContributeSection
                 campaign={campaign}
+                totalContribution={totalContributions}
+                visibility={campaign.financialVisibility}
                 isDeadlineExceeded={isDeadlineExceeded}
-                className={"p-8 border border-gray-300 rounded-xl min-w-52 max-h-44 shadow-md"}
+                isPublic={true}
+                className={"p-8 border border-gray-300 rounded-xl min-w-52 shadow-md"}
               />
               {campaign.links && campaign.links.length > 0 && <div>
                 <h2 className="text-xl mt-8 font-semibold">Links</h2>

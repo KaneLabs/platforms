@@ -8,6 +8,7 @@ import {
   CurrencyType,
   CampaignMedia,
   CampaignPageLink,
+  FinancialVisibilityType,
 } from "@prisma/client";
 import { useState, useEffect } from "react";
 import { Result, ethers } from "ethers";
@@ -33,6 +34,7 @@ import CampaignTierCard from "@/components/campaign-tier-card";
 import MultiUploader from "./form/uploader-multiple";
 import CampaignLinkEditor from "./campaign-link-editor";
 import CampaignLinkCard from "./campaign-link-card";
+import CampaignContributeSection from "./campaign-contribute-section";
 
 interface EditedFields {
   name?: string;
@@ -43,6 +45,7 @@ interface EditedFields {
   formId?: string | null;
   currency?: string | null;
   images?: FileList | null;
+  financialVisibility?: FinancialVisibilityType | null;
 }
 
 interface Payload {
@@ -54,6 +57,7 @@ interface Payload {
   deadline?: Date | null;
   formId?: string | null;
   currency?: CurrencyType | null;
+  financialVisibility?: FinancialVisibilityType | null;
 }
 
 export default function CampaignEditor({
@@ -150,6 +154,7 @@ export default function CampaignEditor({
         requireApproval: campaign.requireApproval,
         formId: campaign.formId,
         currency: campaign.currency || CurrencyType.ETH,
+        financialVisibility: campaign.financialVisibility || FinancialVisibilityType.AMOUNT_AND_TARGET
       });
     }
   }, [campaign]);
@@ -277,6 +282,8 @@ export default function CampaignEditor({
       if (editedCampaign.formId) payload.formId = editedCampaign.formId;
       if (editedCampaign.currency)
         payload.currency = editedCampaign.currency as CurrencyType;
+      if (editedCampaign.financialVisibility)
+        payload.financialVisibility = editedCampaign.financialVisibility as FinancialVisibilityType;
 
       if (campaign.deployed && payload.deadline && campaign.deadline) {
         if (payload.deadline < campaign.deadline) {
@@ -511,9 +518,11 @@ export default function CampaignEditor({
                         type="single"
                         defaultValue={CurrencyType.ETH}
                         value={editedCampaign.currency ?? CurrencyType.ETH}
-                        onValueChange={(value) =>
-                          handleFieldChange("currency", value)
-                        }
+                        onValueChange={(value) => {
+                          if (value) {
+                            handleFieldChange("currency", value)
+                          }
+                        }}
                         disabled={campaign.deployed}
                       >
                         <ToggleGroup.Item
@@ -533,6 +542,62 @@ export default function CampaignEditor({
                           value={CurrencyType.USDT}
                         >
                           USDT
+                        </ToggleGroup.Item>
+                      </ToggleGroup.Root>
+                    </div>
+                  </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>
+                      Please select how visible financial participation should be on the campaign page
+                    </div>
+                    <div className="flex space-x-4">
+                      <ToggleGroup.Root
+                        className={`inline-flex space-x-4`}
+                        type="single"
+                        defaultValue={FinancialVisibilityType.AMOUNT_AND_TARGET}
+                        value={editedCampaign.financialVisibility ?? FinancialVisibilityType.AMOUNT_AND_TARGET}
+                        onValueChange={(value) => {
+                          if (value) {
+                            handleFieldChange("financialVisibility", value)
+                          }
+                        }}
+                      >
+                        <ToggleGroup.Item
+                          className="group"
+                          value={FinancialVisibilityType.AMOUNT_AND_TARGET}
+                        >
+                          <CampaignContributeSection 
+                            campaign={editedCampaign as Partial<Campaign>}
+                            isDeadlineExceeded={false}
+                            totalContribution={totalContributions}
+                            className={"p-8 rounded-xl w-64 min-h-44 shadow-md hover:bg-gray-50/50 border border-gray-300 group-data-[state=on]:!border-accent-green/90"}
+                            visibility={FinancialVisibilityType.AMOUNT_AND_TARGET}
+                          />
+                          <div className="mt-2">Amount raised & target</div>
+                        </ToggleGroup.Item>
+                        <ToggleGroup.Item
+                          className="group"
+                          value={FinancialVisibilityType.TARGET_ONLY}
+                        >
+                          <CampaignContributeSection 
+                            campaign={editedCampaign as Partial<Campaign>}
+                            isDeadlineExceeded={false}
+                            className={"p-8 rounded-xl w-64 min-h-44 shadow-md hover:bg-gray-50/50 border border-gray-300 group-data-[state=on]:!border-accent-green/90"}
+                            visibility={FinancialVisibilityType.TARGET_ONLY}
+                          />
+                          <div className="mt-2">Target only</div>
+                        </ToggleGroup.Item>
+                        <ToggleGroup.Item
+                          className="group"
+                          value={FinancialVisibilityType.BUTTON_ONLY}
+                        >
+                          <CampaignContributeSection 
+                            campaign={editedCampaign as Partial<Campaign>}
+                            isDeadlineExceeded={false}
+                            className={"p-8 rounded-xl w-64 min-h-44 shadow-md hover:bg-gray-50/50 border border-gray-300 group-data-[state=on]:!border-accent-green/90"}
+                            visibility={FinancialVisibilityType.BUTTON_ONLY}
+                          />
+                          <div className="mt-2">No figures</div>
                         </ToggleGroup.Item>
                       </ToggleGroup.Root>
                     </div>
