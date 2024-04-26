@@ -70,7 +70,7 @@ export default function CampaignDashboard({
         }
       })
       .then(() => setLoading(false));
-  }, [refreshFlag, campaign]);
+  }, [refreshFlag, campaignId]);
 
   useEffect(() => {
     async function fetchTotalContributions() {
@@ -249,6 +249,7 @@ export default function CampaignDashboard({
               <CampaignResponseDataTable
                 campaign={campaign}
                 applications={applications}
+                subdomain={subdomain}
               />
             </div>
           )}
