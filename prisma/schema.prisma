@@ -490,6 +490,12 @@ enum CurrencyType {
   USDT
 }
 
+enum FinancialVisibilityType {
+  AMOUNT_AND_TARGET
+  TARGET_ONLY
+  BUTTON_ONLY
+}
+
 model CampaignMedia {
   id         String    @id @default(cuid())
   uri        String
@@ -522,6 +528,7 @@ model Campaign {
   currency            CurrencyType?
   medias              CampaignMedia[]
   links               CampaignPageLink[]
+  financialVisibility FinancialVisibilityType?
 
   @@unique([name, organizationId])
 }
