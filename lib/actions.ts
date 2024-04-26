@@ -2736,6 +2736,30 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
+export const deleteCampaignApplication = withOrganizationAuth(
+  async (data: { applicationId: string, contributionId: string }) => {
+    try {
+      const result = await prisma.$transaction(async (tx) => {
+        const campaignContribution = await tx.campaignContribution.delete({
+          where: {
+            id: data.contributionId,
+          },
+        });
+    
+        const campaignApplication = await tx.campaignApplication.delete({
+          where: {
+            id: data.applicationId,
+          },
+        });
+      });
+    } catch (error: any) {
+      return {
+        error: error.message,
+      };
+    }
+  },
+);
+
 export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined, transactionHash: string, walletAddress: string) => {
   const session = await getSession();
   if (!session?.user.id) {

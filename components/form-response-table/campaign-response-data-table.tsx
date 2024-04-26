@@ -19,20 +19,26 @@ import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
 import { useRouter } from "next/navigation";
 import { getApplicationStatusColor, getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
-import { PictureInPicture2 } from "lucide-react";
+import { PictureInPicture2, Trash2 } from "lucide-react";
+import { deleteCampaignApplication } from "@/lib/actions";
+import useEthereum from "@/hooks/useEthereum";
+import LoadingDots from "../icons/loading-dots";
 
 export default function CampaignApplicationsDataTable({
   campaign,
   applications,
+  subdomain
 }: {
   campaign: Campaign,
   applications: Array<CampaignApplication & { user: User | null } & { campaignTier: CampaignTier | null } & { formResponse: FormResponse & { answers: Array<Answer & { question: Question }> } | null } & { contribution: CampaignContribution | null }>
+  subdomain: string
 }) {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Row<any>[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState<number>(0);
   const [selectedTableRows, setSelectedTableRows] = useState<Array<Row<any>>>([]);
-
+  const { rejectContribution } = useEthereum();
   const router = useRouter();
 
   useEffect(() => {
@@ -66,7 +72,7 @@ export default function CampaignApplicationsDataTable({
       });
 
       const nonNullFormattedData = formattedData.filter(row => row !== null) as Row<any>[];
-      setData(nonNullFormattedData);      
+      setData(nonNullFormattedData);  
     }
 
     formatCampaignApplicationRows();
@@ -76,6 +82,19 @@ export default function CampaignApplicationsDataTable({
     setSelectedRowIndex(row.index);
     setSelectedTableRows(rows);
     setModalOpen(true);
+  };
+
+  const handleRemoveApplication = async (row: Row<any>) => {
+    if (window.confirm("Are you sure you want to delete this application?")) {
+      setLoading(true);
+      await rejectContribution(row.original.campaignData, row.original.applicationData, row.original.contributionData.walletEthAddress, row.original.justRejected) &&
+      await deleteCampaignApplication({
+        applicationId: row.original.applicationData.id, 
+        contributionId: row.original.contributionData.id
+      }, { params: { subdomain } }, null);
+      setLoading(false);
+      setData(data.filter(d => d.id !== row.original.applicationData.id));  
+    }
   };
 
   const columns: ColumnDef<any, any>[] = [{
@@ -123,14 +142,30 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "expand",
     cell: ({ row, rows }: { row: Row<any>, rows?: Array<Row<any>> }) => {
       return (
-        <PictureInPicture2 
-          className="cursor-pointer" 
-          onClick={(e) => {
-            e.stopPropagation();
-            handleRowClick(row, rows || []);
-          }} 
-          width={18}
-        />
+        <>
+        {
+          loading 
+          ? <LoadingDots color="#808080" />
+          : <div className="flex space-x-4">
+              <PictureInPicture2 
+                className="cursor-pointer" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRowClick(row, rows || []);
+                }} 
+                width={18}
+              />
+              <Trash2 
+                className="cursor-pointer" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveApplication(row);
+                }}
+                width={18}
+              />
+            </div>
+        }
+        </>
       );
     },
   }];
