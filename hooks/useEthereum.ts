@@ -317,7 +317,7 @@ export default function useEthereum() {
       console.error(error);
       const friendlyError = parseEthersError(error);
       toast.dismiss();
-      toast.error(friendlyError);
+      toast.error("Please check that the wallet is not already declined: " + friendlyError);
     }
   };
 
