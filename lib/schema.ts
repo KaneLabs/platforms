@@ -235,6 +235,15 @@ export const UpsertOrganizationLinkSchemas = z.object({
   pageLinks: z.array(PageLinkSchema),
 });
 
+export const CreateApplicationSchema = z.object({
+  campaignId: z.string(),
+  campaignTierId: z.string(),
+  contributionAmount: z.string(),
+  transactionHash: z.string().optional(),
+  walletAddress: EthAddressSchema,
+  email: z.string().email(),
+});
+
 const CampaignTierSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, { message: "Name is required." }),

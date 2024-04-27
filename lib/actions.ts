@@ -2814,6 +2814,60 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
   return result;
 };
 
+export const createManualCampaignApplication = withOrganizationAuth(
+  async ({ campaignId, campaignTierId, contributionAmount, transactionHash, walletAddress, email } : { campaignId: string, campaignTierId: string, contributionAmount: string, transactionHash: string | undefined, walletAddress: string, email: string }) => {
+    const result = await prisma.$transaction(async (tx) => {
+      let user = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            email: email,
+          },
+        });
+      }
+
+      const campaign = await tx.campaign.findFirst({
+        where: {
+          id: campaignId
+        },
+        include: {
+          organization: true
+        }
+      });
+
+      const campaignContribution = await tx.campaignContribution.create({
+        data: {
+          campaignId: campaignId,
+          userId: user.id,
+          amount: parseFloat(contributionAmount),
+          transaction: transactionHash,
+          walletEthAddress: walletAddress
+        }
+      });
+
+      const campaignApplication = await tx.campaignApplication.create({
+        data: {
+          campaignId,
+          formResponseId: undefined,
+          userId: user.id,
+          contributionId: campaignContribution.id,
+          campaignTierId: campaignTierId,
+          status: campaign?.requireApproval ? ApplicationStatus.PENDING : ApplicationStatus.NOT_REQUIRED 
+        },
+      });
+
+      return campaignApplication;
+    });
+
+    return result;
+  }
+);
+
 export const withdrawCampaignApplication = async (
   applicationId: string,
   transactionHash: string
