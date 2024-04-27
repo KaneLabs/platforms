@@ -2885,7 +2885,7 @@ export const withdrawCampaignApplication = async (
 
 export const respondToCampaignApplication = async (
   applicationId: string,
-  isApprove: boolean,
+  status: ApplicationStatus,
   transactionHash?: string
 ) => {
   await prisma.campaignApplication.update({
@@ -2894,9 +2894,7 @@ export const respondToCampaignApplication = async (
     },
     data: {
       refundTransaction: transactionHash,
-      status: isApprove
-        ? ApplicationStatus.ACCEPTED
-        : ApplicationStatus.REJECTED,
+      status: status,
     },
   });
   return true;

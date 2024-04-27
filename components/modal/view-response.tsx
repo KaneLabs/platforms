@@ -25,6 +25,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   const [loading, setLoading] = useState(false);
   const [approveLoading, setApproveLoading] = useState(false);
   const [declineLoading, setDeclineLoading] = useState(false);
+  const [pendingLoading, setPendingLoading] = useState(false);
   const { rejectContribution } = useEthereum();
   
   if (!isOpen) {
@@ -34,9 +35,19 @@ const ResponseModal: React.FC<ResponseModalProps> = (
   const rowData = rowsData[selectedRowIndex].original;
   const formResponse: FormResponse & { answers: Array<Answer & { question: Question }> } = rowData.formResponseData ? rowData.formResponseData : null;
 
+  const setApplicationPending = async () => {
+    setPendingLoading(true);
+    const isSuccess = await respondToCampaignApplication(rowData.id, ApplicationStatus.PENDING);
+    if (isSuccess) {
+      rowData.status = ApplicationStatus.PENDING;
+      nextStep();
+    }
+    setPendingLoading(false);
+  }
+
   const approveApplication = async () => {
     setApproveLoading(true);
-    const isSuccess = await respondToCampaignApplication(rowData.id, true);
+    const isSuccess = await respondToCampaignApplication(rowData.id, ApplicationStatus.ACCEPTED);
     if (isSuccess) {
       rowData.status = ApplicationStatus.ACCEPTED;
       nextStep();
@@ -132,6 +143,16 @@ const ResponseModal: React.FC<ResponseModalProps> = (
                 className="cursor-pointer" 
                 width={18} 
               />
+            </Button>
+            <Button
+              variant="orange"
+              key="review"
+              disabled={rowData.status === ApplicationStatus.PENDING}
+              onClick={async () => {
+                await setApplicationPending();
+              }}
+            >
+              {pendingLoading ? <LoadingDots color="#FFF" />: "Pending"}
             </Button>
             <Button
               variant="destructive"

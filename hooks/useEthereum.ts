@@ -5,7 +5,7 @@ import CampaignERC20V1ContractABI from '@/protocol/campaigns/abi/CampaignERC20V1
 import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.json';
 import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFactoryV1.json';
 import { toast } from "sonner";
-import { Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
+import { ApplicationStatus, Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
 import { createCampaignApplication, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
 import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
@@ -285,7 +285,7 @@ export default function useEthereum() {
 
       if (application.refundTransaction || justRejected) {
         console.log("Contributor rejected before. Skipping smart contract transaction.")
-        await respondToCampaignApplication(application.id, false);
+        await respondToCampaignApplication(application.id, ApplicationStatus.REJECTED);
         return true;
       }
 
@@ -307,7 +307,7 @@ export default function useEthereum() {
         
       const receipt = await transaction.wait();
       
-      await respondToCampaignApplication(application.id, false, transaction.hash);
+      await respondToCampaignApplication(application.id, ApplicationStatus.REJECTED, transaction.hash);
       
       toast.dismiss();
       toast.success(`The user has been refunded. If the decline was in error or needs to be reversed, the user may resubmit using a different wallet.`);
