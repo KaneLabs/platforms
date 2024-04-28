@@ -28,6 +28,21 @@ export const truncate = (str: string, num: number) => {
   return str.slice(0, num) + "...";
 };
 
+export const truncateMiddle = (fullStr: string, strLen: number, separator?: string) => {
+  if (fullStr.length <= strLen) return fullStr;
+
+  separator = separator || '...';
+
+  var sepLen = separator.length,
+      charsToShow = strLen - sepLen,
+      frontChars = Math.ceil(charsToShow/2),
+      backChars = Math.floor(charsToShow/2);
+
+  return fullStr.substr(0, frontChars) + 
+         separator + 
+         fullStr.substr(fullStr.length - backChars);
+};
+
 export const getBlurDataURL = async (url: string | null) => {
   if (!url) {
     return "data:image/webp;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";

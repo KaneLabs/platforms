@@ -16,6 +16,7 @@ import { render } from "@react-email/render";
 import { brand } from "@/lib/constants";
 import { Resend } from "resend";
 import EmailFooter from "../email-footer";
+import { truncateMiddle } from "@/lib/utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
@@ -88,7 +89,7 @@ export const PaymentConfirmationEmail = ({
                         className="font-medium"
                         href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${id}`}
                       >
-                        Link
+                        {truncateMiddle(id, 12)}
                       </Link>
                     </li>
                 </ul>
