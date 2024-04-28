@@ -71,6 +71,7 @@ import {
 } from "./assertions";
 import { createInviteParams } from "./auth/create-invite-params";
 import { sendPaymentConfirmationEmail } from "./email/templates/payment-confirmation";
+import { sendApplicationStatusEmail } from "./email/templates/application-status";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
@@ -2884,6 +2885,8 @@ export const withdrawCampaignApplication = async (
 };
 
 export const respondToCampaignApplication = async (
+  email: string,
+  campaign: CampaignWithData,
   applicationId: string,
   status: ApplicationStatus,
   transactionHash?: string
@@ -2897,6 +2900,15 @@ export const respondToCampaignApplication = async (
       status: status,
     },
   });
+
+  await sendApplicationStatusEmail({
+    email: email,
+    status: status,
+    campaignName: campaign.name,
+    organizerName: campaign.organization.name,
+    detailsLink: campaign?.organization ? getCityUrl(campaign?.organization) + `/campaigns/${campaign.id}/contributions`: "",
+  });
+  
   return true;
 };
 

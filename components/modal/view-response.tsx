@@ -37,7 +37,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
 
   const setApplicationPending = async () => {
     setPendingLoading(true);
-    const isSuccess = await respondToCampaignApplication(rowData.id, ApplicationStatus.PENDING);
+    const isSuccess = await respondToCampaignApplication(rowData.applicant, rowData.campaignData, rowData.id, ApplicationStatus.PENDING);
     if (isSuccess) {
       rowData.status = ApplicationStatus.PENDING;
       nextStep();
@@ -47,7 +47,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
 
   const approveApplication = async () => {
     setApproveLoading(true);
-    const isSuccess = await respondToCampaignApplication(rowData.id, ApplicationStatus.ACCEPTED);
+    const isSuccess = await respondToCampaignApplication(rowData.applicant, rowData.campaignData, rowData.id, ApplicationStatus.ACCEPTED);
     if (isSuccess) {
       rowData.status = ApplicationStatus.ACCEPTED;
       nextStep();

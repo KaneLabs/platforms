@@ -5,8 +5,8 @@ import CampaignERC20V1ContractABI from '@/protocol/campaigns/abi/CampaignERC20V1
 import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.json';
 import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFactoryV1.json';
 import { toast } from "sonner";
-import { ApplicationStatus, Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse } from "@prisma/client";
-import { createCampaignApplication, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
+import { ApplicationStatus, Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse, User } from "@prisma/client";
+import { CampaignWithData, createCampaignApplication, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
 import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import { getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
@@ -271,7 +271,7 @@ export default function useEthereum() {
     }
   };
 
-  const rejectContribution = async (campaign: Campaign, application: CampaignApplication, contributor: string, justRejected: boolean): Promise<boolean | void> => {
+  const rejectContribution = async (campaign: CampaignWithData, application: CampaignApplication & { user: User }, contributor: string, justRejected: boolean): Promise<boolean | void> => {
     try {
       const currentSigner = signer || await connectToWallet();
 
@@ -285,7 +285,7 @@ export default function useEthereum() {
 
       if (application.refundTransaction || justRejected) {
         console.log("Contributor rejected before. Skipping smart contract transaction.")
-        await respondToCampaignApplication(application.id, ApplicationStatus.REJECTED);
+        await respondToCampaignApplication(application.user.email as string, campaign, application.id, ApplicationStatus.REJECTED);
         return true;
       }
 
@@ -307,7 +307,7 @@ export default function useEthereum() {
         
       const receipt = await transaction.wait();
       
-      await respondToCampaignApplication(application.id, ApplicationStatus.REJECTED, transaction.hash);
+      await respondToCampaignApplication(application.user.email as string, campaign, application.id, ApplicationStatus.REJECTED, transaction.hash);
       
       toast.dismiss();
       toast.success(`The user has been refunded. If the decline was in error or needs to be reversed, the user may resubmit using a different wallet.`);
