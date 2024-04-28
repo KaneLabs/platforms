@@ -20,6 +20,7 @@ import {
   getCampaign,
   CampaignWithData,
   getCampaignApplications,
+  deleteCampaign,
 } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ import CampaignResponseDataTable from "@/components/form-response-table/campaign
 import { ETH_PRICE_IN_DOLLARS, getCurrencySymbol, getSubdomainUrl } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import CampaignLinkCard from "./campaign-link-card";
+import { toast } from "sonner";
 
 export default function CampaignDashboard({
   campaignId,
@@ -159,6 +161,29 @@ export default function CampaignDashboard({
                   }
                 >
                   Edit
+                </Button>
+                <Button
+                  variant="destructive"
+                  disabled={campaign.deployed}
+                  onClick={async () =>
+                    window.confirm("Are you sure you want to delete your campaign?") &&
+                    deleteCampaign({
+                      campaign
+                    }, { params: { subdomain } }, "delete")
+                      .then(async (res) => {
+                        if (res.error) {
+                          toast.error(res.error);
+                        } else {
+                          router.push(
+                            `/city/${subdomain}/campaigns/`,
+                          )
+                          toast.success(`Successfully deleted campaign!`);
+                        }
+                      })
+                      .catch((err: Error) => toast.error(err.message))
+                  }
+                >
+                  Delete
                 </Button>
                 {!campaign.deployed && <LaunchCampaignButton
                   campaign={campaign}

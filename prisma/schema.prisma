@@ -289,7 +289,7 @@ model CampaignTier {
   price                Float?
   currency             String?
   campaignId           String
-  campaign             Campaign              @relation(fields: [campaignId], references: [id])
+  campaign             Campaign              @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   Form                 Form?                 @relation(fields: [formId], references: [id])
   formId               String?
   isOpenAmount         Boolean?              
@@ -481,7 +481,7 @@ model CampaignPageLink {
   isPrimary      Boolean       @default(false)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  campaign       Campaign      @relation(fields: [campaignId], references: [id])
+  campaign       Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId     String
 }
 
@@ -518,7 +518,7 @@ model Campaign {
   deployedAddress     String?
   sponsorEthAddress   String?
   contributions       CampaignContribution[]
-  organization        Organization           @relation(fields: [organizationId], references: [id], onUpdate: Cascade)
+  organization        Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId      String
   deadline            DateTime?
   requireApproval     Boolean                @default(false)
@@ -540,7 +540,7 @@ model CampaignContribution {
   amount      Float                         
   userId      String
   user        User                 @relation(fields: [userId], references: [id])
-  campaign    Campaign             @relation(fields: [campaignId], references: [id])
+  campaign    Campaign             @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId  String
   application CampaignApplication?
   transaction String?
@@ -572,7 +572,7 @@ enum InviteStatus {
 model CampaignApplication {
   id             String                @id @default(cuid())
   user           User                  @relation(fields: [userId], references: [id])
-  campaign       Campaign              @relation(fields: [campaignId], references: [id])
+  campaign       Campaign              @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   status         ApplicationStatus     @default(PENDING)
   createdAt      DateTime              @default(now())
   acceptedAt     DateTime?

@@ -863,6 +863,23 @@ export const deleteOrganization = withOrganizationAuth(
   },
 );
 
+export const deleteCampaign = withOrganizationAuth(
+  async ({ campaign }: { campaign: Campaign }) => {
+    try {
+      const response = await prisma.campaign.delete({
+        where: {
+          id: campaign.id,
+        },
+      });
+      return response;
+    } catch (error: any) {
+      return {
+        error: error.message,
+      };
+    }
+  },
+);
+
 export const getOrganizationFromPostId = async (postId: string) => {
   const post = await prisma.post.findUnique({
     where: {
