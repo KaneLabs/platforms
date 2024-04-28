@@ -2737,6 +2737,24 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
+export const getUserOrWalletCampaignContribution = async (
+  campaignId: string,
+  userId: string,
+  walletAddress: string,
+) => {
+  const campaignContribution = await prisma.campaignContribution.findFirst({
+    where: {
+      campaignId: campaignId,
+      OR: [
+        { userId: userId },
+        { walletEthAddress: walletAddress },
+      ],
+    },
+  });
+
+  return campaignContribution;
+};
+
 export const deleteCampaignApplication = withOrganizationAuth(
   async (data: { applicationId: string, contributionId: string }) => {
     try {

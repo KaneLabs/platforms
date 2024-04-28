@@ -6,7 +6,7 @@ import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.jso
 import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFactoryV1.json';
 import { toast } from "sonner";
 import { ApplicationStatus, Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse, User } from "@prisma/client";
-import { CampaignWithData, createCampaignApplication, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
+import { CampaignWithData, createCampaignApplication, getUserOrWalletCampaignContribution, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
 import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import { getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
@@ -150,13 +150,18 @@ export default function useEthereum() {
     }
   };
 
-  const contribute = async (amount: number, campaign: Campaign, campaignTier: CampaignTier, formResponse?: FormResponse): Promise<void> => {
+  const contribute = async (userId: string, amount: number, campaign: Campaign, campaignTier: CampaignTier, formResponse?: FormResponse): Promise<void> => {
     try {
       const currentSigner = signer || await connectToWallet();
       const currentSignerAddress = await currentSigner.getAddress();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
+      }
+
+      const alreadyContributed = await getUserOrWalletCampaignContribution(campaign.id, userId, currentSignerAddress);
+      if (alreadyContributed) {
+        throw new Error("You have already contributed to this campaign with this email or wallet. You can only contribute to this campaign once.")
       }
 
       const tokenAddress = getCurrencyTokenAddress(campaign.currency);
