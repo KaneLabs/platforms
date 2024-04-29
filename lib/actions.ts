@@ -18,6 +18,7 @@ import {
   ApplicationStatus,
   User,
   CampaignMedia,
+  CampaignPageLink,
 } from "@prisma/client";
 import { revalidatePath, revalidateTag } from "next/cache";
 import {
@@ -70,6 +71,7 @@ import {
 } from "./assertions";
 import { createInviteParams } from "./auth/create-invite-params";
 import { sendPaymentConfirmationEmail } from "./email/templates/payment-confirmation";
+import { sendApplicationStatusEmail } from "./email/templates/application-status";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
@@ -852,6 +854,23 @@ export const deleteOrganization = withOrganizationAuth(
       );
       response.customDomain &&
         (await revalidateTag(`${organization.customDomain}-metadata`));
+      return response;
+    } catch (error: any) {
+      return {
+        error: error.message,
+      };
+    }
+  },
+);
+
+export const deleteCampaign = withOrganizationAuth(
+  async ({ campaign }: { campaign: Campaign }) => {
+    try {
+      const response = await prisma.campaign.delete({
+        where: {
+          id: campaign.id,
+        },
+      });
       return response;
     } catch (error: any) {
       return {
@@ -2552,6 +2571,7 @@ export type CampaignWithData = Campaign & {
   organization: Organization;
   contributions: CampaignContribution[];
   campaignTiers: CampaignTier[];
+  links: CampaignPageLink[];
   medias: CampaignMedia[];
   form: Form | null;
 };
@@ -2565,6 +2585,7 @@ export const getCampaign = async (id: string) => {
       organization: true,
       contributions: true,
       campaignTiers: true,
+      links: true,
       medias: true,
       form: true,
     },
@@ -2610,6 +2631,42 @@ export const upsertCampaignTiers = withOrganizationAuth(
     const tiers = await prisma.$transaction(txs);
 
     return tiers;
+  },
+);
+
+export const upsertCampaignLinks = withOrganizationAuth(
+  async (data: { links: CampaignPageLink[]; campaign: Campaign }) => {
+    const deleteTx = prisma.campaignPageLink.deleteMany({
+      where: {
+        campaignId: data.campaign.id,
+        id: {
+          notIn: data.links.map(({ id }) => id).filter(id => !!id) as string[],
+        },
+      },
+    });
+
+    const txs = [
+      deleteTx,
+      ...data.links.map((link) => {
+        return prisma.campaignPageLink.upsert({
+          where: {
+            id: link.id ?? "THIS_TEXT_JUST_TRIGGERS_A_NEW_ID_TO_BE_GENERATED",
+          },
+          create: {
+            ...link,
+            campaignId: data.campaign.id,
+          },
+          update: {
+            ...link,
+            campaignId: data.campaign.id,
+          },
+        });
+      })
+    ];
+
+    const links = await prisma.$transaction(txs);
+
+    return links;
   },
 );
 
@@ -2697,7 +2754,49 @@ export const getUserCampaignApplication = async (
   return campaignApplication;
 };
 
-export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined, transactionHash: string, walletAddress: string) => {
+export const getUserOrWalletCampaignContribution = async (
+  campaignId: string,
+  userId: string,
+  walletAddress: string,
+) => {
+  const campaignContribution = await prisma.campaignContribution.findFirst({
+    where: {
+      campaignId: campaignId,
+      OR: [
+        { userId: userId },
+        { walletEthAddress: walletAddress },
+      ],
+    },
+  });
+
+  return campaignContribution;
+};
+
+export const deleteCampaignApplication = withOrganizationAuth(
+  async (data: { applicationId: string, contributionId: string }) => {
+    try {
+      const result = await prisma.$transaction(async (tx) => {
+        const campaignContribution = await tx.campaignContribution.delete({
+          where: {
+            id: data.contributionId,
+          },
+        });
+    
+        const campaignApplication = await tx.campaignApplication.delete({
+          where: {
+            id: data.applicationId,
+          },
+        });
+      });
+    } catch (error: any) {
+      return {
+        error: error.message,
+      };
+    }
+  },
+);
+
+export const createCampaignApplication = async (chainId: bigint, campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined, transactionHash: string, walletAddress: string) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {
@@ -2738,6 +2837,7 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
 
     sendPaymentConfirmationEmail({
       id: transactionHash,
+      chainId: chainId,
       campaign: campaign ? campaign?.name : "The Campaign",
       date: campaignApplication.createdAt.toLocaleDateString(),
       amount: `${getCurrencySymbol(campaign?.currency)}${contributionAmount} ${campaign?.currency}`,
@@ -2750,6 +2850,60 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
 
   return result;
 };
+
+export const createManualCampaignApplication = withOrganizationAuth(
+  async ({ campaignId, campaignTierId, contributionAmount, transactionHash, walletAddress, email } : { campaignId: string, campaignTierId: string, contributionAmount: string, transactionHash: string | undefined, walletAddress: string, email: string }) => {
+    const result = await prisma.$transaction(async (tx) => {
+      let user = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            email: email,
+          },
+        });
+      }
+
+      const campaign = await tx.campaign.findFirst({
+        where: {
+          id: campaignId
+        },
+        include: {
+          organization: true
+        }
+      });
+
+      const campaignContribution = await tx.campaignContribution.create({
+        data: {
+          campaignId: campaignId,
+          userId: user.id,
+          amount: parseFloat(contributionAmount),
+          transaction: transactionHash,
+          walletEthAddress: walletAddress
+        }
+      });
+
+      const campaignApplication = await tx.campaignApplication.create({
+        data: {
+          campaignId,
+          formResponseId: undefined,
+          userId: user.id,
+          contributionId: campaignContribution.id,
+          campaignTierId: campaignTierId,
+          status: campaign?.requireApproval ? ApplicationStatus.PENDING : ApplicationStatus.NOT_REQUIRED 
+        },
+      });
+
+      return campaignApplication;
+    });
+
+    return result;
+  }
+);
 
 export const withdrawCampaignApplication = async (
   applicationId: string,
@@ -2767,8 +2921,10 @@ export const withdrawCampaignApplication = async (
 };
 
 export const respondToCampaignApplication = async (
+  email: string,
+  campaign: CampaignWithData,
   applicationId: string,
-  isApprove: boolean,
+  status: ApplicationStatus,
   transactionHash?: string
 ) => {
   await prisma.campaignApplication.update({
@@ -2777,11 +2933,18 @@ export const respondToCampaignApplication = async (
     },
     data: {
       refundTransaction: transactionHash,
-      status: isApprove
-        ? ApplicationStatus.ACCEPTED
-        : ApplicationStatus.REJECTED,
+      status: status,
     },
   });
+
+  await sendApplicationStatusEmail({
+    email: email,
+    status: status,
+    campaignName: campaign.name,
+    organizerName: campaign.organization.name,
+    detailsLink: campaign?.organization ? getCityUrl(campaign?.organization) + `/campaigns/${campaign.id}/contributions`: "",
+  });
+  
   return true;
 };
 

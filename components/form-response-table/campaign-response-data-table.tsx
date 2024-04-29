@@ -17,23 +17,33 @@ import DataTable from "./data-table";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
+import AddApplicationModal from '@/components/modal/add-application';
 import { useRouter } from "next/navigation";
 import { getApplicationStatusColor, getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
-import { PictureInPicture2 } from "lucide-react";
+import { PictureInPicture2, Trash2, UserPlus } from "lucide-react";
+import { CampaignWithData, deleteCampaignApplication } from "@/lib/actions";
+import useEthereum from "@/hooks/useEthereum";
+import LoadingDots from "../icons/loading-dots";
+import { Button } from "../ui/button";
+import { useModal } from "@/components/modal/provider";
 
 export default function CampaignApplicationsDataTable({
   campaign,
   applications,
+  subdomain
 }: {
-  campaign: Campaign,
+  campaign: CampaignWithData,
   applications: Array<CampaignApplication & { user: User | null } & { campaignTier: CampaignTier | null } & { formResponse: FormResponse & { answers: Array<Answer & { question: Question }> } | null } & { contribution: CampaignContribution | null }>
+  subdomain: string
 }) {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Row<any>[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState<number>(0);
   const [selectedTableRows, setSelectedTableRows] = useState<Array<Row<any>>>([]);
-
+  const { rejectContribution } = useEthereum();
   const router = useRouter();
+  const modal = useModal();
 
   useEffect(() => {
     async function formatCampaignApplicationRows() {
@@ -66,7 +76,7 @@ export default function CampaignApplicationsDataTable({
       });
 
       const nonNullFormattedData = formattedData.filter(row => row !== null) as Row<any>[];
-      setData(nonNullFormattedData);      
+      setData(nonNullFormattedData);  
     }
 
     formatCampaignApplicationRows();
@@ -76,6 +86,21 @@ export default function CampaignApplicationsDataTable({
     setSelectedRowIndex(row.index);
     setSelectedTableRows(rows);
     setModalOpen(true);
+  };
+
+  const handleRemoveApplication = async (row: Row<any>) => {
+    if (window.confirm("Are you sure you want to delete this application?")) {
+      setLoading(true);
+      // const success = await rejectContribution(row.original.campaignData, row.original.applicationData, row.original.contributionData.walletEthAddress, row.original.justRejected);
+      // if (success) {
+        await deleteCampaignApplication({
+          applicationId: row.original.applicationData.id, 
+          contributionId: row.original.contributionData.id
+        }, { params: { subdomain } }, null);
+        setData(data.filter(d => d.id !== row.original.applicationData.id));  
+      // }
+      setLoading(false);
+    }
   };
 
   const columns: ColumnDef<any, any>[] = [{
@@ -123,14 +148,30 @@ export default function CampaignApplicationsDataTable({
     accessorKey: "expand",
     cell: ({ row, rows }: { row: Row<any>, rows?: Array<Row<any>> }) => {
       return (
-        <PictureInPicture2 
-          className="cursor-pointer" 
-          onClick={(e) => {
-            e.stopPropagation();
-            handleRowClick(row, rows || []);
-          }} 
-          width={18}
-        />
+        <>
+        {
+          loading 
+          ? <LoadingDots color="#808080" />
+          : <div className="flex space-x-4">
+              <PictureInPicture2 
+                className="cursor-pointer" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRowClick(row, rows || []);
+                }} 
+                width={18}
+              />
+              <Trash2 
+                className="cursor-pointer" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveApplication(row);
+                }}
+                width={18}
+              />
+            </div>
+        }
+        </>
       );
     },
   }];
@@ -151,8 +192,23 @@ export default function CampaignApplicationsDataTable({
         return (
           <div className="mt-4" key={status}>
             <div className="flex items-center pb-2 border-b border-gray-300 justify-between">
-                <div className={`text-lg font-medium w-48 ${getApplicationStatusColor(status as ApplicationStatus)}`}>
-                  {getApplicationStatusText(status as ApplicationStatus)}
+                <div className="flex gap-x-4">
+                  <div className={`text-lg font-medium flex items-center ${getApplicationStatusColor(status as ApplicationStatus)}`}>
+                    {getApplicationStatusText(status as ApplicationStatus)}
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="p-4"
+                    onClick={() =>
+                      modal?.show(
+                        <AddApplicationModal campaign={campaign} campaignTiers={campaign.campaignTiers}/>,
+                      )
+                    }
+                  >
+                    <UserPlus 
+                      width={18} 
+                    />
+                  </Button>
                 </div>
                 <div className="flex flex-1 justify-end items-center space-x-10">
                     <div>

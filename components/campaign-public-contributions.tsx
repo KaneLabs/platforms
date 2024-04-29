@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import LoadingDots from "@/components/icons/loading-dots";
 import CampaignTierCard from "@/components/campaign-tier-card";
 import { Button } from "./ui/button";
-import { getApplicationStatusText } from "@/lib/utils";
+import { getApplicationStatusText, getCurrencySymbol } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 export default function CampaignPublicView({
@@ -82,6 +82,9 @@ export default function CampaignPublicView({
                 <div>
                   Status: <span className="font-medium">{getApplicationStatusText(campaignApplication.status)}</span>
                 </div>
+                {campaignApplication.campaignTier.isOpenAmount && <div>
+                  Amount: <span className="font-medium">{getCurrencySymbol(campaign.currency)}{campaignApplication.contribution?.amount} {campaign.currency}</span>
+                </div>}
                 <div>
                   {!isCompleted && campaignApplication.status !==
                     ApplicationStatus.NOT_SUBMITTED && (

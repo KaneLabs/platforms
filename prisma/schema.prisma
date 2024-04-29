@@ -289,9 +289,10 @@ model CampaignTier {
   price                Float?
   currency             String?
   campaignId           String
-  campaign             Campaign              @relation(fields: [campaignId], references: [id])
+  campaign             Campaign              @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   Form                 Form?                 @relation(fields: [formId], references: [id])
   formId               String?
+  isOpenAmount         Boolean?              
   campaignApplications CampaignApplication[]
 }
 
@@ -472,10 +473,28 @@ model EmailSubscriber {
   createdAt         DateTime                @default(now())
 }
 
+model CampaignPageLink {
+  id             String        @id @default(cuid())
+  href           String
+  title          String
+  description    String?        
+  isPrimary      Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  campaign       Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  campaignId     String
+}
+
 enum CurrencyType {
   ETH
   USDC
   USDT
+}
+
+enum FinancialVisibilityType {
+  AMOUNT_AND_TARGET
+  TARGET_ONLY
+  BUTTON_ONLY
 }
 
 model CampaignMedia {
@@ -499,7 +518,7 @@ model Campaign {
   deployedAddress     String?
   sponsorEthAddress   String?
   contributions       CampaignContribution[]
-  organization        Organization           @relation(fields: [organizationId], references: [id], onUpdate: Cascade)
+  organization        Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId      String
   deadline            DateTime?
   requireApproval     Boolean                @default(false)
@@ -509,6 +528,9 @@ model Campaign {
   CampaignApplication CampaignApplication[]
   currency            CurrencyType?
   medias              CampaignMedia[]
+  links               CampaignPageLink[]
+  financialVisibility FinancialVisibilityType?
+  fundButtonText      String?
 
   @@unique([name, organizationId])
 }
@@ -518,7 +540,7 @@ model CampaignContribution {
   amount      Float                         
   userId      String
   user        User                 @relation(fields: [userId], references: [id])
-  campaign    Campaign             @relation(fields: [campaignId], references: [id])
+  campaign    Campaign             @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId  String
   application CampaignApplication?
   transaction String?
@@ -550,7 +572,7 @@ enum InviteStatus {
 model CampaignApplication {
   id             String                @id @default(cuid())
   user           User                  @relation(fields: [userId], references: [id])
-  campaign       Campaign              @relation(fields: [campaignId], references: [id])
+  campaign       Campaign              @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   status         ApplicationStatus     @default(PENDING)
   createdAt      DateTime              @default(now())
   acceptedAt     DateTime?

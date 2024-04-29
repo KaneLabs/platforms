@@ -7,6 +7,8 @@ import {
   Form,
   CurrencyType,
   CampaignMedia,
+  CampaignPageLink,
+  FinancialVisibilityType,
 } from "@prisma/client";
 import { useState, useEffect } from "react";
 import { Result, ethers } from "ethers";
@@ -16,6 +18,7 @@ import {
   upsertCampaignTiers,
   upsertCampaignMedias,
   getOrganizationForms,
+  upsertCampaignLinks,
 } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
 import { toast } from "sonner";
@@ -29,6 +32,9 @@ import { useRouter } from "next/navigation";
 import CampaignTierEditor from "@/components/campaign-tier-editor";
 import CampaignTierCard from "@/components/campaign-tier-card";
 import MultiUploader from "./form/uploader-multiple";
+import CampaignLinkEditor from "./campaign-link-editor";
+import CampaignLinkCard from "./campaign-link-card";
+import CampaignContributeSection from "./campaign-contribute-section";
 
 interface EditedFields {
   name?: string;
@@ -39,6 +45,8 @@ interface EditedFields {
   formId?: string | null;
   currency?: string | null;
   images?: FileList | null;
+  financialVisibility?: FinancialVisibilityType | null;
+  fundButtonText?: string;
 }
 
 interface Payload {
@@ -48,9 +56,10 @@ interface Payload {
   content?: string | null;
   requireApproval?: boolean;
   deadline?: Date | null;
-  campaignTiers?: CampaignTier[] | null;
   formId?: string | null;
   currency?: CurrencyType | null;
+  financialVisibility?: FinancialVisibilityType | null;
+  fundButtonText?: string;
 }
 
 export default function CampaignEditor({
@@ -74,6 +83,9 @@ export default function CampaignEditor({
   const [campaignTiers, setCampaignTiers] = useState<Partial<CampaignTier>[]>(
     [],
   );
+  const [campaignLinks, setCampaignLinks] = useState<Partial<CampaignPageLink>[]>(
+    [],
+  );
   const [campaignMedias, setCampaignMedias] = useState<
     Partial<CampaignMedia>[]
   >([]);
@@ -87,8 +99,11 @@ export default function CampaignEditor({
     requireApproval: undefined,
     formId: undefined,
     currency: undefined,
+    financialVisibility: undefined,
+    fundButtonText: undefined
   });
   const [editingTierIndex, setEditingTierIndex] = useState<number | null>(null);
+  const [editingLinkIndex, setEditingLinkIndex] = useState<number | null>(null);
 
   const router = useRouter();
 
@@ -98,11 +113,15 @@ export default function CampaignEditor({
         if (result) {
           setCampaign(result);
           setCampaignTiers(result.campaignTiers);
+          setCampaignLinks(result.links);
           setCampaignMedias(result.medias || []);
           getOrganizationForms(result.organizationId).then(setForms);
 
           if (segment === "tiers" && result.campaignTiers.length === 0) {
             addNewTier();
+          }
+          if (segment === "links" && result.links.length === 0) {
+            addNewLink();
           }
         }
       })
@@ -139,6 +158,8 @@ export default function CampaignEditor({
         requireApproval: campaign.requireApproval,
         formId: campaign.formId,
         currency: campaign.currency || CurrencyType.ETH,
+        financialVisibility: campaign.financialVisibility || FinancialVisibilityType.AMOUNT_AND_TARGET,
+        fundButtonText: campaign.fundButtonText ?? undefined
       });
     }
   }, [campaign]);
@@ -149,6 +170,12 @@ export default function CampaignEditor({
     setCampaignTiers(updatedTiers);
   };
 
+  const deleteLink = (index: number) => {
+    const updatedLinks = [...campaignLinks];
+    updatedLinks.splice(index, 1);
+    setCampaignLinks(updatedLinks);
+  };
+
   const addNewTier = () => {
     const newNumTiers = campaignTiers.length + 1;
     setCampaignTiers([
@@ -156,6 +183,15 @@ export default function CampaignEditor({
       { name: "", description: "", price: null, formId: null },
     ]);
     startEditTier(newNumTiers - 1);
+  };
+
+  const addNewLink = () => {
+    const newNumLinks = campaignLinks.length + 1;
+    setCampaignLinks([
+      ...campaignLinks,
+      { href: "", title: "", description: "" },
+    ]);
+    startEditLink(newNumLinks - 1);
   };
 
   const updateTier = (index: number, updatedTier: EditedFields) => {
@@ -178,12 +214,26 @@ export default function CampaignEditor({
     setCampaignTiers(updatedTiers);
   };
 
+  const updateLink = (index: number, updatedLink: Partial<CampaignPageLink>) => {
+    const updatedLinks = [...campaignLinks];
+    updatedLinks[index] = updatedLink;
+    setCampaignLinks(updatedLinks);
+  };
+
   const startEditTier = (index: number) => {
     setEditingTierIndex(index);
   };
 
+  const startEditLink = (index: number) => {
+    setEditingLinkIndex(index);
+  };
+
   const stopEditTier = () => {
     setEditingTierIndex(null);
+  };
+
+  const stopEditLink = () => {
+    setEditingLinkIndex(null);
   };
 
   const handleFieldChange = (
@@ -208,8 +258,19 @@ export default function CampaignEditor({
           if (!tier.name) {
             throw new Error(`Tier ${tierIndex+1}: Name is required`);
           }
-          if (!tier.price) {
+          if (!tier.isOpenAmount && !tier.price) {
             throw new Error(`Tier ${tierIndex+1}: Price is required`);
+          }
+        })
+      }
+
+      if (campaignLinks) {
+        campaignLinks.forEach((link, linkIndex) => {
+          if (!link.href) {
+            throw new Error(`Link ${linkIndex+1}: Url is required`);
+          }
+          if (!link.title) {
+            throw new Error(`Link ${linkIndex+1}: Title is required`);
           }
         })
       }
@@ -218,14 +279,17 @@ export default function CampaignEditor({
       if (editedCampaign.name) payload.name = editedCampaign.name;
       if (editedCampaign.threshold !== undefined)
         payload.threshold = parseFloat(editedCampaign.threshold);
-      if (editedCampaign.content)
-        payload.content = editedCampaign.content ?? null;
       if (editedCampaign.requireApproval !== undefined)
         payload.requireApproval = editedCampaign.requireApproval;
       if (editedCampaign.deadline) payload.deadline = editedCampaign.deadline;
       if (editedCampaign.formId) payload.formId = editedCampaign.formId;
       if (editedCampaign.currency)
         payload.currency = editedCampaign.currency as CurrencyType;
+      if (editedCampaign.financialVisibility)
+        payload.financialVisibility = editedCampaign.financialVisibility as FinancialVisibilityType;
+      
+      payload.content = editedCampaign.content ?? "";
+      payload.fundButtonText = editedCampaign.fundButtonText;
 
       if (campaign.deployed && payload.deadline && campaign.deadline) {
         if (payload.deadline < campaign.deadline) {
@@ -240,6 +304,12 @@ export default function CampaignEditor({
 
       await upsertCampaignTiers(
         { tiers: campaignTiers, campaign: campaign },
+        { params: { subdomain: subdomain as string } },
+        null,
+      );
+
+      await upsertCampaignLinks(
+        { links: campaignLinks, campaign: campaign },
         { params: { subdomain: subdomain as string } },
         null,
       );
@@ -269,11 +339,19 @@ export default function CampaignEditor({
         router.push(
           `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
         );
+      } else if (segment === "tiers") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/links/${editType}`,
+        );
       } else {
         router.push(`/city/${subdomain}/campaigns/${campaignId}`);
       }
     } else {
-      if (segment === "tiers") {
+      if (segment === "links") {
+        router.push(
+          `/city/${subdomain}/campaigns/${campaignId}/settings/tiers/${editType}`,
+        );
+      } else if (segment === "tiers") {
         router.push(
           `/city/${subdomain}/campaigns/${campaignId}/settings/details/${editType}`,
         );
@@ -415,7 +493,7 @@ export default function CampaignEditor({
                     </div>
                     <div className="flex space-x-4">
                     <Input
-                      className="w-1/5"
+                      className="w-60"
                       type="text"
                       value={editedCampaign.threshold}
                       id="threshold"
@@ -446,9 +524,11 @@ export default function CampaignEditor({
                         type="single"
                         defaultValue={CurrencyType.ETH}
                         value={editedCampaign.currency ?? CurrencyType.ETH}
-                        onValueChange={(value) =>
-                          handleFieldChange("currency", value)
-                        }
+                        onValueChange={(value) => {
+                          if (value) {
+                            handleFieldChange("currency", value)
+                          }
+                        }}
                         disabled={campaign.deployed}
                       >
                         <ToggleGroup.Item
@@ -472,6 +552,83 @@ export default function CampaignEditor({
                       </ToggleGroup.Root>
                     </div>
                   </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>
+                      Please set the Fund button text
+                      <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
+                        Max 12 characters
+                      </div>
+                    </div>
+                    <Input
+                      className="w-60"
+                      type="text"
+                      maxLength={12}
+                      id="fundingButtonText"
+                      value={editedCampaign.fundButtonText}
+                      onChange={(e) =>
+                        handleFieldChange("fundButtonText", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-4">
+                    <div>
+                      Please select how visible financial participation should be on the campaign page
+                    </div>
+                    <div className="flex space-x-4">
+                      <ToggleGroup.Root
+                        className={`inline-flex space-x-4`}
+                        type="single"
+                        defaultValue={FinancialVisibilityType.AMOUNT_AND_TARGET}
+                        value={editedCampaign.financialVisibility ?? FinancialVisibilityType.AMOUNT_AND_TARGET}
+                        onValueChange={(value) => {
+                          if (value) {
+                            handleFieldChange("financialVisibility", value)
+                          }
+                        }}
+                      >
+                        <ToggleGroup.Item
+                          className="group"
+                          value={FinancialVisibilityType.AMOUNT_AND_TARGET}
+                        >
+                          <CampaignContributeSection 
+                            campaign={editedCampaign as Partial<Campaign>}
+                            isDeadlineExceeded={false}
+                            totalContribution={totalContributions}
+                            className={"p-8 rounded-xl w-64 min-h-44 shadow-md hover:bg-gray-50/50 border border-gray-300 group-data-[state=on]:!border-accent-green/90"}
+                            visibility={FinancialVisibilityType.AMOUNT_AND_TARGET}
+                            fundButtonText={editedCampaign.fundButtonText}
+                          />
+                          <div className="mt-2">Amount raised & target</div>
+                        </ToggleGroup.Item>
+                        <ToggleGroup.Item
+                          className="group"
+                          value={FinancialVisibilityType.TARGET_ONLY}
+                        >
+                          <CampaignContributeSection 
+                            campaign={editedCampaign as Partial<Campaign>}
+                            isDeadlineExceeded={false}
+                            className={"p-8 rounded-xl w-64 min-h-44 shadow-md hover:bg-gray-50/50 border border-gray-300 group-data-[state=on]:!border-accent-green/90"}
+                            visibility={FinancialVisibilityType.TARGET_ONLY}
+                            fundButtonText={editedCampaign.fundButtonText}
+                          />
+                          <div className="mt-2">Target only</div>
+                        </ToggleGroup.Item>
+                        <ToggleGroup.Item
+                          className="group"
+                          value={FinancialVisibilityType.BUTTON_ONLY}
+                        >
+                          <CampaignContributeSection 
+                            campaign={editedCampaign as Partial<Campaign>}
+                            isDeadlineExceeded={false}
+                            className={"p-8 rounded-xl w-64 min-h-44 shadow-md hover:bg-gray-50/50 border border-gray-300 group-data-[state=on]:!border-accent-green/90"}
+                            visibility={FinancialVisibilityType.BUTTON_ONLY}
+                            fundButtonText={editedCampaign.fundButtonText}
+                          />
+                          <div className="mt-2">No figures</div>
+                        </ToggleGroup.Item>
+                      </ToggleGroup.Root>
+                    </div>
+                  </div>
                   <div className="flex space-x-6">
                     <div>Do contributors need to be approved?</div>
                     <div className="flex space-x-2">
@@ -489,6 +646,36 @@ export default function CampaignEditor({
                     </div>
                   </div>
                 </>
+              )}
+              {segment === "links" && (
+                <div>
+                  {campaignLinks.map((link, index) => 
+                    editingLinkIndex === index ? (
+                      <CampaignLinkEditor
+                        key={index}
+                        link={link as CampaignPageLink}
+                        onCancel={
+                          () => deleteLink(index)
+                        }
+                        onSave={(updatedLink) => {
+                          updateLink(index, updatedLink);
+                          stopEditLink();
+                        }}
+                      />
+                    ) : (
+                      <div key={index}>
+                        <CampaignLinkCard
+                          link={link as CampaignPageLink}
+                          onClickEdit={() => startEditLink(index)}
+                          onClickDelete={() => deleteLink(index)}
+                        />
+                      </div>
+                    )
+                  )}
+                  <Button onClick={addNewLink}>
+                    Add New Link
+                  </Button>
+                </div>
               )}
             </div>
           </div>

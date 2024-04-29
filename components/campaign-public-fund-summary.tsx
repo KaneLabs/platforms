@@ -6,6 +6,7 @@ import CampaignFundButton from "@/components/campaign-fund-button";
 import { Answer, Campaign, CampaignTier, Form, FormResponse, Question } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import useEthereum from "@/hooks/useEthereum";
+import { useSession } from "next-auth/react";
 
 export type CampaignTierWithData = CampaignTier & { campaign: Campaign } & { Form: Form & { formResponse?: Array<FormResponse & { answers: Array<Answer & { question: Question }> }> }};
 
@@ -16,9 +17,9 @@ export default function CampaignPublicCheckoutSummary({
 }) {
   const router = useRouter();
   const { contribute } = useEthereum();
+  const { data: session } = useSession();
 
   const formResponse = campaignTier.Form?.formResponse?.[0];
-  const amount = Number(campaignTier.price);
 
   const formattedFormAnswers = formResponse && formResponse.answers.map(
     (value) => {
@@ -53,10 +54,11 @@ export default function CampaignPublicCheckoutSummary({
       </div>
       <div className="self-end ">
         <CampaignFundButton 
-          amount={amount}
+          isOpenAmount={!!campaignTier.isOpenAmount}
+          tierAmount={campaignTier.price?.toString()}
           onComplete={async (amount: number) => {
             try {
-              await contribute(amount, campaignTier.campaign, campaignTier, formResponse);
+              await contribute(session?.user.id as string, amount, campaignTier.campaign, campaignTier, formResponse);
               router.push(`/campaigns/${campaignTier.campaign.id}/contributions`);
             } catch (e) {
               console.error(e);

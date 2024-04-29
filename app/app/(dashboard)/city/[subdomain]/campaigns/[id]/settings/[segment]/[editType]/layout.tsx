@@ -8,7 +8,8 @@ import { userHasOrgRole } from "@/lib/actions";
 const subTextDict: { [key: string]: string; } = {
   basic: "Start with the basic information of your Campaign",
   tiers: "Set your contribution tiers",
-  details: "Set parameters for how you want contributions to be made"
+  details: "Set parameters for how you want contributions to be made",
+  links: "Provide links to additional information for your Campaign"
 }
 
 export default async function CampaignSettingsLayout({
