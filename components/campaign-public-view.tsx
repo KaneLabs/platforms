@@ -140,6 +140,7 @@ export default function CampaignPublicView(
                 {
                   campaign.links.map((link) => (
                     <a
+                      key={link.id}
                       href={link.href}
                       target="_blank"
                       rel="noreferrer"

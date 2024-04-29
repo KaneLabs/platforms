@@ -255,6 +255,7 @@ export default function CampaignDashboard({
               {campaign.links.map(
                 (link: CampaignPageLink, index: number) => (
                   <a
+                    key={link.id}
                     href={link.href}
                     target="_blank"
                     rel="noreferrer"
