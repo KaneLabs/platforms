@@ -2796,7 +2796,7 @@ export const deleteCampaignApplication = withOrganizationAuth(
   },
 );
 
-export const createCampaignApplication = async (campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined, transactionHash: string, walletAddress: string) => {
+export const createCampaignApplication = async (chainId: bigint, campaignId: string, campaignTierId: string, contributionAmount: number, formResponseId: string | undefined, transactionHash: string, walletAddress: string) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {
@@ -2837,6 +2837,7 @@ export const createCampaignApplication = async (campaignId: string, campaignTier
 
     sendPaymentConfirmationEmail({
       id: transactionHash,
+      chainId: chainId,
       campaign: campaign ? campaign?.name : "The Campaign",
       date: campaignApplication.createdAt.toLocaleDateString(),
       amount: `${getCurrencySymbol(campaign?.currency)}${contributionAmount} ${campaign?.currency}`,

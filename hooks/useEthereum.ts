@@ -1,5 +1,4 @@
 import { LogDescription, ethers } from "ethers";
-import CampaignContract from '@/protocol/campaigns/out/Campaign.sol/Campaign.json';
 import ERC20ABI from '@/protocol/campaigns/abi/ERC20.json';
 import CampaignERC20V1ContractABI from '@/protocol/campaigns/abi/CampaignERC20V1.json';
 import CampaignETHV1ContractABI from '@/protocol/campaigns/abi/CampaignETHV1.json';
@@ -7,11 +6,8 @@ import CampaignFactoryV1ContractABI from '@/protocol/campaigns/abi/CampaignFacto
 import { toast } from "sonner";
 import { ApplicationStatus, Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse, User } from "@prisma/client";
 import { CampaignWithData, createCampaignApplication, getUserOrWalletCampaignContribution, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
-import { withCampaignAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
-import { getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
-
-const CampaignFactoryV1ContractAddress = "0x2488b39a46e1ef74093b0b9b7a561a432ed97e29";
+import { getCampaignFactoryV1ContractAddress, getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
 
 interface LaunchCampaignData {
   id: string;
@@ -31,6 +27,7 @@ interface Log {
 
 export default function useEthereum() {
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
+  const [chainId, setChainId] = useState<bigint | null>(null);
 
   useEffect(() => {
     const handleAccountsChanged = async (accounts: string[]) => {
@@ -61,8 +58,21 @@ export default function useEthereum() {
     await provider.send("eth_requestAccounts", []);
     const newSigner = await provider.getSigner();
     setSigner(newSigner);
+
     return newSigner;
   };
+
+  const getChainId = async () => {
+    if (chainId) {
+      return chainId;
+    }
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const { chainId: chain } = await provider.getNetwork();
+    setChainId(chain);
+
+    return chain;
+  }
 
   const launch = async (campaign: Campaign, params: LaunchParams): Promise<void> => {
     try {
@@ -71,6 +81,8 @@ export default function useEthereum() {
       const campaignABI = JSON.stringify(CampaignFactoryV1ContractABI);
 
       const creatorAddress = await currentSigner.getAddress();
+
+      const chainId = await getChainId();
 
       if (!campaign.currency) {
         throw new Error("Campaign is missing currency setting");
@@ -88,14 +100,19 @@ export default function useEthereum() {
         throw new Error("Campaign deadline must be in the future");
       }
 
-      const tokenAddress = getCurrencyTokenAddress(campaign.currency);
+      if (!chainId) {
+        throw new Error("Please wait for your wallet to connect");
+      }
+      
+      const tokenAddress = getCurrencyTokenAddress(chainId, campaign.currency);
       const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
       const threshold = ethers.parseUnits(campaign.threshold.toString(), tokenDecimals);
       const deadline = Math.floor(new Date(campaign.deadline).getTime() / 1000)
 
       toast('Launching campaign...', { duration: 60000 });
 
-      const campaignFactory = new ethers.Contract(CampaignFactoryV1ContractAddress, campaignABI, currentSigner);
+      const campaignFactoryV1ContractAddress = getCampaignFactoryV1ContractAddress(chainId);
+      const campaignFactory = new ethers.Contract(campaignFactoryV1ContractAddress, campaignABI, currentSigner);
       
       let campaignAddress = "";
 
@@ -154,9 +171,14 @@ export default function useEthereum() {
     try {
       const currentSigner = signer || await connectToWallet();
       const currentSignerAddress = await currentSigner.getAddress();
+      const chainId = await getChainId();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
+      }
+
+      if (!chainId) {
+        throw new Error("Please wait for your wallet to connect");
       }
 
       const alreadyContributed = await getUserOrWalletCampaignContribution(campaign.id, userId, currentSignerAddress);
@@ -164,7 +186,7 @@ export default function useEthereum() {
         throw new Error("You have already contributed to this campaign with this email or wallet. You can only contribute to this campaign once.")
       }
 
-      const tokenAddress = getCurrencyTokenAddress(campaign.currency);
+      const tokenAddress = getCurrencyTokenAddress(chainId, campaign.currency);
       const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
       const contributeAmount = ethers.parseUnits(amount.toString(), tokenDecimals);
 
@@ -222,7 +244,7 @@ export default function useEthereum() {
       const { actualSubmittedContribution } = contributionSubmittedEvent.args;
       const actualSubmittedContributionAmount = parseFloat(ethers.formatUnits(actualSubmittedContribution, tokenDecimals));
 
-      await createCampaignApplication(campaign.id, campaignTier.id, actualSubmittedContributionAmount, formResponse?.id, transactionHash, currentSignerAddress);
+      await createCampaignApplication(chainId, campaign.id, campaignTier.id, actualSubmittedContributionAmount, formResponse?.id, transactionHash, currentSignerAddress);
       
       toast.dismiss();
       toast.success(`Contribution sent!`);

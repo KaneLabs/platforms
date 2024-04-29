@@ -136,24 +136,6 @@ export const getCurrencySymbol = (currency: CurrencyType | null | undefined) => 
   return currency && symbols[currency] ? symbols[currency] : "";
 }
 
-export const getCurrencyTokenAddress = (currency: CurrencyType | null | undefined) => {
-  const addresses = {
-    [CurrencyType.ETH]: "",
-    [CurrencyType.USDC]: `${process.env.NEXT_PUBLIC_USDC_TOKEN_ADDRESS}`,
-    [CurrencyType.USDT]: `${process.env.NEXT_PUBLIC_USDT_TOKEN_ADDRESS}`,
-  };
-  return currency && addresses[currency] ? addresses[currency] : "";
-}
-
-export const getCurrencyTokenDecimals = (currency: CurrencyType | null | undefined) => {
-  const decimals = {
-    [CurrencyType.ETH]: 18,
-    [CurrencyType.USDC]: 6,
-    [CurrencyType.USDT]: 6,
-  };
-  return currency && decimals[currency] ? decimals[currency] : 0;
-}
-
 export const getApplicationStatusText = (status: ApplicationStatus | null | undefined) => {
   const displayTexts = {
     [ApplicationStatus.ACCEPTED]: "Accepted",
@@ -176,6 +158,49 @@ export const getApplicationStatusColor = (status: ApplicationStatus | null | und
     [ApplicationStatus.NOT_REQUIRED]: "text-accent-blue",
   };
   return status && colors[status] ? colors[status] : "";
+}
+
+export const getCampaignFactoryV1ContractAddress = (chainId: bigint) => {
+  const campaignFactoryV1ContractAddresses: { [key: string]: string } = {
+    "11155111": "0x2488b39a46e1ef74093b0b9b7a561a432ed97e29",   // Eth Sepolia
+    "11155420": "0x289200BD3b7E865E7Ad6094276BD69E795fe2E17"    // OP Sepolia
+  }
+
+  return campaignFactoryV1ContractAddresses[chainId.toString()] || "";
+}
+
+export const getCurrencyTokenAddress = (chainId: bigint, currency: CurrencyType | null | undefined) => {
+  const chain = chainId.toString();
+  const addresses: { [key: string]: { [key: string]: string } } = {
+    "11155111": {   // Eth Sepolia
+      [CurrencyType.ETH]: "",
+      [CurrencyType.USDC]: `0x94a9d9ac8a22534e3faca9f4e7f2e2cf85d5e4c8`,
+      [CurrencyType.USDT]: `0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0`,
+    },   
+    "11155420": {   // OP Sepolia
+      [CurrencyType.ETH]: "",
+      [CurrencyType.USDC]: `0x5fd84259d66Cd46123540766Be93DFE6D43130D7`,
+      [CurrencyType.USDT]: `0x5fd84259d66Cd46123540766Be93DFE6D43130D7`,
+    }    
+  }
+  return currency && addresses[chain] && addresses[chain][currency] ? addresses[chain][currency] : "";
+}
+
+export const getCurrencyTokenDecimals = (currency: CurrencyType | null | undefined) => {
+  const decimals = {
+    [CurrencyType.ETH]: 18,
+    [CurrencyType.USDC]: 6,
+    [CurrencyType.USDT]: 6,
+  };
+  return currency && decimals[currency] ? decimals[currency] : 0;
+}
+
+export const getEtherscanUrl = (chainId: bigint) => {
+  const url: { [key: string]: string } = {
+    "11155111": "https://sepolia.etherscan.io/",              // Eth Sepolia
+    "11155420": "https://optimism-sepolia.blockscout.com/"    // OP Sepolia
+  }
+  return url[chainId.toString()] || "";
 }
 
 export const getSubdomainFromDomain = (domain: string) => domain.replace('%3A', ':').endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)

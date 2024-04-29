@@ -16,12 +16,13 @@ import { render } from "@react-email/render";
 import { brand } from "@/lib/constants";
 import { Resend } from "resend";
 import EmailFooter from "../email-footer";
-import { truncateMiddle } from "@/lib/utils";
+import { truncateMiddle, getEtherscanUrl } from "@/lib/utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
 type PaymentConfirmationEmailProps = {
   id: string;
+  chainId: bigint;
   campaign: string;
   date: string;
   amount: string;
@@ -42,6 +43,7 @@ export const sendPaymentConfirmationEmail = (props: PaymentConfirmationEmailProp
 
 export const PaymentConfirmationEmail = ({
   id,
+  chainId,
   date,
   amount,
   contributionLink,
@@ -87,7 +89,7 @@ export const PaymentConfirmationEmail = ({
                     <li>Transaction:&nbsp; 
                       <Link
                         className="font-medium"
-                        href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${id}`}
+                        href={`${getEtherscanUrl(chainId)}/tx/${id}`}
                       >
                         {truncateMiddle(id, 12)}
                       </Link>
