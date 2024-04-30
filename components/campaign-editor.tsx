@@ -442,7 +442,13 @@ export default function CampaignEditor({
                         tier={tier as CampaignTier}
                         forms={forms}
                         onCancel={
-                          () => deleteTier(index)
+                          (updatedTier) => {
+                            if (updatedTier.name || updatedTier.price) {
+                              stopEditTier();
+                            } else {
+                              deleteTier(index);
+                            }
+                          }
                         }
                         onSave={(updatedTier) => {
                           updateTier(index, updatedTier);
