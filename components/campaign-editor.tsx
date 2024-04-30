@@ -460,15 +460,15 @@ export default function CampaignEditor({
                         <CampaignTierCard
                           tier={tier as CampaignTier}
                           currency={editedCampaign.currency as CurrencyType}
-                          onClickEdit={() => startEditTier(index)}
-                          onClickDelete={() => deleteTier(index)}
+                          onClickEdit={!campaign.deployed ? () => startEditTier(index) : undefined}
+                          onClickDelete={!campaign.deployed ? () => deleteTier(index) : undefined}
                         />
                       </div>
                     ),
                   )}
-                  <Button onClick={addNewTier}>
+                  {!campaign.deployed && <Button onClick={addNewTier}>
                     Add New Tier
-                  </Button>
+                  </Button>}
                 </div>
               )}
               {segment === "details" && (
