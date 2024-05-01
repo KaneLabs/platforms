@@ -9,7 +9,7 @@ export default function CampaignSettingsNav() {
 
   const navItems = [
     {
-      name: "Basic",
+      name: "Basics",
       href: `/city/${subdomain}/campaigns/${id}/settings/basic/${editType}`,
       segment: "basic",
       disabled: true
