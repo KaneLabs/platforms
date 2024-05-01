@@ -225,8 +225,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(date-fns@2.30.0)
       ethers:
-        specifier: ^6.7.1
-        version: 6.9.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: ^6.12.0
+        version: 6.12.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       focus-trap-react:
         specifier: ^10.2.1
         version: 10.2.3(prop-types@15.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -328,7 +328,7 @@ importers:
         version: 0.31.3
       siwe:
         specifier: ^2.1.4
-        version: 2.1.4(ethers@6.9.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+        version: 2.1.4(ethers@6.12.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       snarkjs:
         specifier: ^0.7.2
         version: 0.7.2
@@ -465,6 +465,9 @@ packages:
 
   '@adraffy/ens-normalize@1.10.0':
     resolution: {integrity: sha512-nA9XHtlAkYfJxY7bce8DcN7eKxWWCWkU+1GR9d+U6MbNpfwQp8TI7vqOsBsMcHoT4mBu2kypKoSKnghEzOOq5Q==}
+
+  '@adraffy/ens-normalize@1.10.1':
+    resolution: {integrity: sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw==}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -4051,8 +4054,8 @@ packages:
   ethers@5.7.2:
     resolution: {integrity: sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==}
 
-  ethers@6.9.0:
-    resolution: {integrity: sha512-pmfNyQzc2mseLe91FnT2vmNaTt8dDzhxZ/xItAV7uGsF4dI4ek2ufMu3rAkgQETL/TIs0GS5A+U05g9QyWnv3Q==}
+  ethers@6.12.0:
+    resolution: {integrity: sha512-zL5NlOTjML239gIvtVJuaSk0N9GQLi1Hom3ZWUszE5lDTQE/IVB62mrPkQ2W1bGcZwVGSLaetQbWNQSvI4rGDQ==}
     engines: {node: '>=14.0.0'}
 
   eventemitter3@3.1.2:
@@ -7616,6 +7619,8 @@ snapshots:
 
   '@adraffy/ens-normalize@1.10.0': {}
 
+  '@adraffy/ens-normalize@1.10.1': {}
+
   '@alloc/quick-lru@5.2.0': {}
 
   '@ampproject/remapping@2.2.1':
@@ -9812,12 +9817,12 @@ snapshots:
   '@scure/bip32@1.3.2':
     dependencies:
       '@noble/curves': 1.2.0
-      '@noble/hashes': 1.3.2
+      '@noble/hashes': 1.3.3
       '@scure/base': 1.1.4
 
   '@scure/bip39@1.2.1':
     dependencies:
-      '@noble/hashes': 1.3.2
+      '@noble/hashes': 1.3.3
       '@scure/base': 1.1.4
 
   '@selderee/plugin-htmlparser2@0.11.0':
@@ -12551,9 +12556,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  ethers@6.9.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+  ethers@6.12.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:
-      '@adraffy/ens-normalize': 1.10.0
+      '@adraffy/ens-normalize': 1.10.1
       '@noble/curves': 1.2.0
       '@noble/hashes': 1.3.2
       '@types/node': 18.15.13
@@ -15416,11 +15421,11 @@ snapshots:
 
   simplesignal@2.1.7: {}
 
-  siwe@2.1.4(ethers@6.9.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)):
+  siwe@2.1.4(ethers@6.12.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)):
     dependencies:
       '@spruceid/siwe-parser': 2.0.2
       '@stablelib/random': 1.0.2
-      ethers: 6.9.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ethers: 6.12.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       uri-js: 4.4.1
       valid-url: 1.0.9
 
