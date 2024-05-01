@@ -22,7 +22,7 @@ export default function CampaignTierCard({ tier, currency, onClickEdit, onClickD
           <div className="text-2xl font-semibold">{tier.name}</div>
           {tier.isOpenAmount && 
             <div className="flex space-x-4 items-center text-2xl font-semibold">
-              {getCurrencySymbol(currency)}... {currency}
+              {getCurrencySymbol(currency)}Custom {currency}
             </div>
           }
           {tier.price &&

@@ -12,7 +12,7 @@ type EditedCampaignTier = Partial<Omit<CampaignTier, "price">> & { price: string
 interface CampaignTierEditorProps {
   tier: CampaignTier;
   forms: Form[];
-  onCancel: () => void;
+  onCancel: (tier: EditedCampaignTier) => void;
   onSave: (tier: EditedCampaignTier) => void;
 }
 
@@ -149,7 +149,7 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
         <Button
           variant="ghost"
           className="mt-4 mr-2"
-          onClick={onCancel}
+          onClick={() => onCancel(editedTier)}
         >
           Cancel
         </Button>

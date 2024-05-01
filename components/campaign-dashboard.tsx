@@ -194,7 +194,7 @@ export default function CampaignDashboard({
                 />}
                 </div>
             </div>
-            {campaign.content && campaign.content.length > 0 && <div className="my-6">
+            {campaign.content && campaign.content.length > 0 && <div className="my-6 whitespace-pre-wrap">
               {campaign.content}
             </div>}
             {campaign.medias && campaign.medias.length > 0 && <div className="pt-6 flex flex-wrap gap-2">

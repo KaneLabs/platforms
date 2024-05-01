@@ -397,7 +397,7 @@ export default function CampaignEditor({
               {segment === "basic" && (
                 <>
                   <div className="flex flex-col space-y-4">
-                    <div>What is your Campaign named?</div>
+                    <div>How would you like to name the Campaign?</div>
                     <Input
                       type="text"
                       id="campaignName"
@@ -409,7 +409,7 @@ export default function CampaignEditor({
                     />
                   </div>
                   <div className="flex flex-col space-y-4">
-                    <div>How would you describe it?</div>
+                    <div>Tell your audience a bit more about the Campaign (you will get the chance to edit this later)</div>
                     <Textarea
                       value={editedCampaign.content}
                       id="content"
@@ -427,8 +427,8 @@ export default function CampaignEditor({
                       aspectRatio={"aspect-square"}
                       onChange={(files) => handleFieldChange("images", files)}
                     />
-                    <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
-                      Your first image will be used as a campaign cover image.
+                    <div className="rounded-md text-sm font-medium text-gray-600 transition-colors">
+                      Upload all your images in one batch. The first image will be used as your Campaign cover image. Other images will be shown on your Campaign page under your Campaign description in the order you selected them.
                     </div>
                   </div>
                 </>
@@ -442,7 +442,13 @@ export default function CampaignEditor({
                         tier={tier as CampaignTier}
                         forms={forms}
                         onCancel={
-                          () => deleteTier(index)
+                          (updatedTier) => {
+                            if (updatedTier.name || updatedTier.price) {
+                              stopEditTier();
+                            } else {
+                              deleteTier(index);
+                            }
+                          }
                         }
                         onSave={(updatedTier) => {
                           updateTier(index, updatedTier);
@@ -454,15 +460,15 @@ export default function CampaignEditor({
                         <CampaignTierCard
                           tier={tier as CampaignTier}
                           currency={editedCampaign.currency as CurrencyType}
-                          onClickEdit={() => startEditTier(index)}
-                          onClickDelete={() => deleteTier(index)}
+                          onClickEdit={!campaign.deployed ? () => startEditTier(index) : undefined}
+                          onClickDelete={!campaign.deployed ? () => deleteTier(index) : undefined}
                         />
                       </div>
                     ),
                   )}
-                  <Button onClick={addNewTier}>
+                  {!campaign.deployed && <Button onClick={addNewTier}>
                     Add New Tier
-                  </Button>
+                  </Button>}
                 </div>
               )}
               {segment === "details" && (
@@ -486,9 +492,9 @@ export default function CampaignEditor({
                   </div>
                   <div className="flex flex-col space-y-4">
                     <div>
-                      Please set your contribution threshold & token
-                      <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
-                        Once the campaign is launched, these settings will not be able to be changed
+                      What is the minimum you are looking to raise with this Campaign (aka contribution threshold)?
+                      <div className="rounded-md text-sm font-medium text-gray-600 transition-colors">
+                        Campaign contributors will be able to freely withdraw their tokens until the contribution threshold is reached. To make all contributions non-refundable, set a threshold lower than your lowest tier.
                       </div>
                     </div>
                     <div className="flex space-x-4">
@@ -556,13 +562,13 @@ export default function CampaignEditor({
                     <div>
                       Please set the Fund button text
                       <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
-                        Max 12 characters
+                        Max 15 characters
                       </div>
                     </div>
                     <Input
                       className="w-60"
                       type="text"
-                      maxLength={12}
+                      maxLength={15}
                       id="fundingButtonText"
                       value={editedCampaign.fundButtonText}
                       onChange={(e) =>
@@ -572,7 +578,7 @@ export default function CampaignEditor({
                   </div>
                   <div className="flex flex-col space-y-4">
                     <div>
-                      Please select how visible financial participation should be on the campaign page
+                      Should Campaign page visitors see how much has been raised so far?
                     </div>
                     <div className="flex space-x-4">
                       <ToggleGroup.Root

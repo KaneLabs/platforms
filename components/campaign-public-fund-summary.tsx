@@ -56,6 +56,7 @@ export default function CampaignPublicCheckoutSummary({
         <CampaignFundButton 
           isOpenAmount={!!campaignTier.isOpenAmount}
           tierAmount={campaignTier.price?.toString()}
+          fundButtonText={campaignTier.campaign.fundButtonText}
           onComplete={async (amount: number) => {
             try {
               await contribute(session?.user.id as string, amount, campaignTier.campaign, campaignTier, formResponse);

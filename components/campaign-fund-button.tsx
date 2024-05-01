@@ -7,12 +7,14 @@ import { Input } from "./ui/input";
 interface CampaignFundButtonProps {
   isOpenAmount: boolean;
   tierAmount: string | undefined;
+  fundButtonText: string | null;
   onComplete: (amount: number) => void;
 }
 
 export default function CampaignFundButton({
   isOpenAmount,
   tierAmount,
+  fundButtonText,
   onComplete,
 }: CampaignFundButtonProps) {
   const [amount, setAmount] = useState("");
@@ -64,7 +66,7 @@ export default function CampaignFundButton({
         onClick={handleContribution}
         disabled={!isValidAmount()}
       >
-        Fund
+        {fundButtonText || "Fund"}
       </Button>
     </div>
   );

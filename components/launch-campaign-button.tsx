@@ -22,7 +22,7 @@ export default function LaunchCampaignButton({ campaign, subdomain, onComplete }
     }
   }
   return (
-    <Button onClick={onClick}>
+    <Button onClick={onClick} title='Once the campaign is launched, the contribution threshold and token will not be able to be changed.'>
       Launch Campaign
     </Button>
   );

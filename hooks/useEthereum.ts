@@ -572,6 +572,12 @@ function parseEthersError(inputError: any) {
   else if (error.code === -32002) {
       userFriendlyMessage = 'Request already pending. Please check your wallet and approve or reject the previous request.';
   }
+  else if (error.message && error.message.includes('contract target must be correctly configured')) {
+      userFriendlyMessage = 'Please check that your wallet is on the correct network.';
+  }
+  else if (error.message && error.message.includes('invalid FixedNumber string value')) {
+      userFriendlyMessage = 'The amount is invalid. Please check that the amount is not too small or too big.';
+  }
 
   return userFriendlyMessage;
 }

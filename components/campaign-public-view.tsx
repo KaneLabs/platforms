@@ -93,7 +93,7 @@ export default function CampaignPublicView(
                   </Link>
                 </p>
               </div>
-              {campaign.content && campaign.content.length > 0 && <p className="whitespace-pre-line font-medium tracking-[-0.02em] text-gray-800">{campaign.content}</p>}
+              {campaign.content && campaign.content.length > 0 && <p className="whitespace-pre-wrap font-medium tracking-[-0.02em] text-gray-800">{campaign.content}</p>}
               {campaign.medias && campaign.medias[1] && <div className="flex flex-wrap gap-2">
                 {campaign.medias 
                   ? campaign.medias.map((m, i) => {
