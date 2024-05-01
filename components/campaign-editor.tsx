@@ -562,13 +562,13 @@ export default function CampaignEditor({
                     <div>
                       Please set the Fund button text
                       <div className="truncate rounded-md text-sm font-medium text-gray-600 transition-colors">
-                        Max 12 characters
+                        Max 15 characters
                       </div>
                     </div>
                     <Input
                       className="w-60"
                       type="text"
-                      maxLength={12}
+                      maxLength={15}
                       id="fundingButtonText"
                       value={editedCampaign.fundButtonText}
                       onChange={(e) =>
