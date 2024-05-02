@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { ApplicationStatus, Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse, User } from "@prisma/client";
 import { CampaignWithData, createCampaignApplication, getUserOrWalletCampaignContribution, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
 import { useEffect, useState } from "react";
-import { getCampaignFactoryV1ContractAddress, getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals } from "@/lib/utils";
+import { getCampaignFactoryV1ContractAddress, getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals, getSupportedChainIds } from "@/lib/utils";
 
 interface LaunchCampaignData {
   id: string;
@@ -27,7 +27,6 @@ interface Log {
 
 export default function useEthereum() {
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
-  const [chainId, setChainId] = useState<bigint | null>(null);
 
   useEffect(() => {
     const handleAccountsChanged = async (accounts: string[]) => {
@@ -63,15 +62,16 @@ export default function useEthereum() {
   };
 
   const getChainId = async () => {
-    if (chainId) {
-      return chainId;
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const network = await provider.getNetwork();
+
+    const supportedChainIds = getSupportedChainIds();
+
+    if (!supportedChainIds.includes(network.chainId.toString())) {
+      throw new Error(`Please switch to a supported network. Your current network is ${network.name}.`);
     }
 
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const { chainId: chain } = await provider.getNetwork();
-    setChainId(chain);
-
-    return chain;
+    return network.chainId;
   }
 
   const launch = async (campaign: Campaign, params: LaunchParams): Promise<void> => {
@@ -98,10 +98,6 @@ export default function useEthereum() {
 
       if (campaign.deadline < new Date()) {
         throw new Error("Campaign deadline must be in the future");
-      }
-
-      if (!chainId) {
-        throw new Error("Please wait for your wallet to connect");
       }
       
       const tokenAddress = getCurrencyTokenAddress(chainId, campaign.currency);
@@ -175,10 +171,6 @@ export default function useEthereum() {
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
-      }
-
-      if (!chainId) {
-        throw new Error("Please wait for your wallet to connect");
       }
 
       const alreadyContributed = await getUserOrWalletCampaignContribution(campaign.id, userId, currentSignerAddress);
