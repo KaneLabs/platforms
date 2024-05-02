@@ -517,6 +517,7 @@ model Campaign {
   timeDeployed        DateTime?
   deployedAddress     String?
   sponsorEthAddress   String?
+  chainId             String?
   contributions       CampaignContribution[]
   organization        Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId      String
