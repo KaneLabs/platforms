@@ -160,6 +160,11 @@ export const getApplicationStatusColor = (status: ApplicationStatus | null | und
   return status && colors[status] ? colors[status] : "";
 }
 
+export const getSupportedChainIds = () => [
+  "11155111", // Eth Sepolia
+  "11155420"  // OP Sepolia
+];
+
 export const getCampaignFactoryV1ContractAddress = (chainId: bigint) => {
   const campaignFactoryV1ContractAddresses: { [key: string]: string } = {
     "11155111": "0x2488b39a46e1ef74093b0b9b7a561a432ed97e29",   // Eth Sepolia

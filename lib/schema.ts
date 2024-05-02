@@ -219,6 +219,7 @@ export const UpdateCampaignSchema = z.object({
 export const DeployCampaignSchema = z.object({
   sponsorEthAddress: EthAddressSchema,
   deployedAddress: EthAddressSchema,
+  chainId: z.string()
 });
 
 const PageLinkSchema = z.object({
