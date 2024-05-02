@@ -258,9 +258,14 @@ export default function useEthereum() {
   const withdrawContribution = async (campaign: Campaign, application: CampaignApplication, contribution: CampaignContribution): Promise<void> => {
     try {
       const currentSigner = signer || await connectToWallet();
+      const chainId = await getChainId();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
+      }
+
+      if (campaign.chainId && campaign.chainId !== chainId.toString()) {
+        throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
       }
 
       const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
@@ -299,9 +304,14 @@ export default function useEthereum() {
   const rejectContribution = async (campaign: CampaignWithData, application: CampaignApplication & { user: User }, contributor: string, justRejected: boolean): Promise<boolean | void> => {
     try {
       const currentSigner = signer || await connectToWallet();
+      const chainId = await getChainId();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
+      }
+
+      if (campaign.chainId && campaign.chainId !== chainId.toString()) {
+        throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
       }
 
       if (!contributor) {
@@ -349,9 +359,14 @@ export default function useEthereum() {
   const withdrawFromCampaign = async (amount: string, recipientAddress: string, campaign: Campaign): Promise<void> => {
     try {
       const currentSigner = signer || await connectToWallet();
+      const chainId = await getChainId();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
+      }
+
+      if (campaign.chainId && campaign.chainId !== chainId.toString()) {
+        throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
       }
 
       const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
@@ -388,9 +403,14 @@ export default function useEthereum() {
   const extendCampaignDeadline = async (campaign: Campaign, extendedDeadline: Date): Promise<boolean | void> => {
     try {
       const currentSigner = signer || await connectToWallet();
+      const chainId = await getChainId();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
+      }
+
+      if (campaign.chainId && campaign.chainId !== chainId.toString()) {
+        throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
       }
 
       if (!extendedDeadline) {
