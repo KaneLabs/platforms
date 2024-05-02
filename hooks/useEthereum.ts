@@ -175,11 +175,7 @@ export default function useEthereum() {
         throw new Error("Campaign isn't deployed yet");
       }
 
-      if (!campaign.chainId) {
-        throw new Error("This campaign is outdated and lacks support for multiple networks. Please set up a new campaign.");
-      }
-
-      if (campaign.chainId !== chainId.toString()) {
+      if (campaign.chainId && campaign.chainId !== chainId.toString()) {
         throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
       }
 
