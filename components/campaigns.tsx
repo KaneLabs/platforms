@@ -1,14 +1,30 @@
+"use client";
+
 import Image from "next/image";
 import CampaignCard, { CampaignWithMedia } from "./campaign-card";
 import { Campaign, Organization } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { getCampaigns } from "@/lib/actions";
+import LoadingDots from "./icons/loading-dots";
 
 export default function Campaigns({
   organization,
-  campaigns,
 }: {
   organization: Organization;
-  campaigns: CampaignWithMedia[];
 }) {
+  const [campaigns, setCampaigns] = useState<CampaignWithMedia[] | null>(null);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      const data = await getCampaigns(organization.id);
+      setCampaigns(data);
+    }
+    fetchCampaigns();
+  }, [organization.id]);
+
+  if (campaigns == null) {
+    return <div><LoadingDots /></div>;
+  }
 
   return (
     <div>

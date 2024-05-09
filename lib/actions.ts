@@ -2043,6 +2043,17 @@ export const upsertPlace = withOrganizationAuth(
   },
 );
 
+export const getCampaigns = async (organizationId: string) => {
+  return await prisma.campaign.findMany({
+    where: {
+      organizationId: organizationId,
+    },
+    include: {
+      medias: true
+    }
+  });
+}
+
 export const deletePlace = withOrganizationAuth(
   async (id: string, organization: Organization) => {
     // Delete the place with the provided ID
