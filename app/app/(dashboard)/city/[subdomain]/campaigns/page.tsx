@@ -27,15 +27,6 @@ export default async function CampaignsPage({
     return notFound();
   }
 
-  const campaigns = await prisma.campaign.findMany({
-    where: {
-      organizationId: organization.id,
-    },
-    include: {
-      medias: true
-    }
-  });
-
   return (
     <div className="flex flex-col space-y-6">
       <PageHeader
@@ -46,7 +37,6 @@ export default async function CampaignsPage({
       />
       <Campaigns
         organization={organization}
-        campaigns={campaigns}
       />
     </div>
   );
