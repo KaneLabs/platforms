@@ -2595,7 +2595,11 @@ export const getCampaign = async (id: string) => {
     include: {
       organization: true,
       contributions: true,
-      campaignTiers: true,
+      campaignTiers: {
+        orderBy: {
+          id: 'asc',
+        },
+      },
       links: true,
       medias: true,
       form: true,
