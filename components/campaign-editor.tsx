@@ -19,6 +19,7 @@ import {
   upsertCampaignMedias,
   getOrganizationForms,
   upsertCampaignLinks,
+  CampaignWithData,
 } from "@/lib/actions";
 import LoadingDots from "@/components/icons/loading-dots";
 import { toast } from "sonner";
@@ -79,7 +80,7 @@ export default function CampaignEditor({
   const [totalContributions, setTotalContributions] = useState(0);
   const [contractBalance, setContractBalance] = useState(BigInt(0));
   const [forms, setForms] = useState<Form[]>([]);
-  const [campaign, setCampaign] = useState<Campaign | undefined>(undefined);
+  const [campaign, setCampaign] = useState<CampaignWithData | undefined>(undefined);
   const [campaignTiers, setCampaignTiers] = useState<Partial<CampaignTier>[]>(
     [],
   );
@@ -435,12 +436,15 @@ export default function CampaignEditor({
               )}
               {segment === "tiers" && (
                 <div>
-                  {campaignTiers.map((tier, index) =>
-                    editingTierIndex === index ? (
+                  {campaignTiers.map((tier, index) => {
+                    const isOldCampaignTier = campaign.campaignTiers.some(t => t.id === tier.id);
+                    const shouldEnableTierFields = campaign.deployed && !isOldCampaignTier || !campaign.deployed;
+                    return editingTierIndex === index ? (
                       <CampaignTierEditor
                         key={index}
                         tier={tier as CampaignTier}
                         forms={forms}
+                        disableFields={!shouldEnableTierFields}
                         onCancel={
                           (updatedTier) => {
                             if (updatedTier.name || updatedTier.price) {
@@ -460,15 +464,15 @@ export default function CampaignEditor({
                         <CampaignTierCard
                           tier={tier as CampaignTier}
                           currency={editedCampaign.currency as CurrencyType}
-                          onClickEdit={!campaign.deployed ? () => startEditTier(index) : undefined}
-                          onClickDelete={!campaign.deployed ? () => deleteTier(index) : undefined}
+                          onClickEdit={() => startEditTier(index)}
+                          onClickDelete={shouldEnableTierFields ? () => deleteTier(index) : undefined}
                         />
                       </div>
-                    ),
-                  )}
-                  {!campaign.deployed && <Button onClick={addNewTier}>
+                    );
+                  })}
+                  <Button onClick={addNewTier}>
                     Add New Tier
-                  </Button>}
+                  </Button>
                 </div>
               )}
               {segment === "details" && (

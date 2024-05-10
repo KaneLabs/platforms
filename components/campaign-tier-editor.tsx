@@ -12,11 +12,12 @@ type EditedCampaignTier = Partial<Omit<CampaignTier, "price">> & { price: string
 interface CampaignTierEditorProps {
   tier: CampaignTier;
   forms: Form[];
+  disableFields: boolean;
   onCancel: (tier: EditedCampaignTier) => void;
   onSave: (tier: EditedCampaignTier) => void;
 }
 
-export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: CampaignTierEditorProps) {
+export default function CampaignTierEditor({ tier, forms, disableFields, onCancel, onSave }: CampaignTierEditorProps) {
   const [editedTier, setEditedTier] = useState<EditedCampaignTier>(
     { name: tier.name, description: tier.description, quantity: tier.quantity,
       price: tier.price?.toString(), isOpenAmount: tier.isOpenAmount, formId: tier.formId });
@@ -64,15 +65,17 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
           value={editedTier.name}
           onChange={(e) => handleFieldChange('name', e.target.value)}
           placeholder="E.g. Residents Pass, Standard ticket, VIP ticket, Donor"
+          disabled={disableFields}
         />
         <div>How much is the contribution for this Tier?</div>
         <div className="flex justify-between items-center gap-4">
           <ToggleGroup.Root
             id="openAmount"
-            className={`inline-flex rounded-full bg-gray-200 shadow-md`}
+            className={`inline-flex rounded-full bg-gray-200 shadow-md ${disableFields && "opacity-50 cursor-not-allowed"}`}
             type="single"
             defaultValue="false"
             value={String(editedTier.isOpenAmount)}
+            disabled={disableFields}
             onValueChange={(value) => {
               if (value === "true") {
                 handleFieldChange("price", "");
@@ -103,6 +106,7 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
               placeholder="E.g. 100, 8.99, 0.001"
               pattern="^\d*\.?\d*$"
               inputMode="decimal"
+              disabled={disableFields}
               onKeyDown={(e) => {
                 if (!/[\d.]/.test(e.key) && 
                     e.key !== "Backspace" && 
@@ -138,6 +142,7 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
           onValueChange={(value) => {
             handleFieldChange("formId", value === "none" ? null : value)
           }}
+          disabled={disableFields}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a Form" />
