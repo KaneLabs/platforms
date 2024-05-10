@@ -121,9 +121,6 @@ export default function CampaignEditor({
           if (segment === "tiers" && result.campaignTiers.length === 0) {
             addNewTier();
           }
-          if (segment === "links" && result.links.length === 0) {
-            addNewLink();
-          }
         }
       })
       .then(() => setLoading(false));
