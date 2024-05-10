@@ -5,18 +5,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CampaignTier, Form } from "@prisma/client";
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
-import * as Toggle from '@radix-ui/react-toggle';
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
 
 type EditedCampaignTier = Partial<Omit<CampaignTier, "price">> & { price: string | undefined }
 
 interface CampaignTierEditorProps {
   tier: CampaignTier;
   forms: Form[];
+  disableFields: boolean;
   onCancel: (tier: EditedCampaignTier) => void;
   onSave: (tier: EditedCampaignTier) => void;
 }
 
-export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: CampaignTierEditorProps) {
+export default function CampaignTierEditor({ tier, forms, disableFields, onCancel, onSave }: CampaignTierEditorProps) {
   const [editedTier, setEditedTier] = useState<EditedCampaignTier>(
     { name: tier.name, description: tier.description, quantity: tier.quantity,
       price: tier.price?.toString(), isOpenAmount: tier.isOpenAmount, formId: tier.formId });
@@ -64,9 +65,39 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
           value={editedTier.name}
           onChange={(e) => handleFieldChange('name', e.target.value)}
           placeholder="E.g. Residents Pass, Standard ticket, VIP ticket, Donor"
+          disabled={disableFields}
         />
         <div>How much is the contribution for this Tier?</div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-4">
+          <ToggleGroup.Root
+            id="openAmount"
+            className={`inline-flex rounded-full bg-gray-200 shadow-md ${disableFields && "opacity-50 cursor-not-allowed"}`}
+            type="single"
+            defaultValue="false"
+            value={String(editedTier.isOpenAmount)}
+            disabled={disableFields}
+            onValueChange={(value) => {
+              if (value === "true") {
+                handleFieldChange("price", "");
+                handleFieldChange("isOpenAmount", true);
+              } else {
+                handleFieldChange("isOpenAmount", false);
+              }
+            }}
+          >
+            <ToggleGroup.Item
+              className="px-4 py-2 rounded-l-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-accent-green/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+              value="false"
+            >
+              Fixed amount
+            </ToggleGroup.Item>
+            <ToggleGroup.Item
+              className="px-4 py-2 rounded-r-full bg-gray-800 text-gray-100 shadow hover:bg-gray-800/90 data-[state=on]:!bg-accent-green/90 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300/90"
+              value="true"
+            >
+              Open amount
+            </ToggleGroup.Item>
+          </ToggleGroup.Root>
           <div className="flex-grow">
             <Input
               id="price"
@@ -75,6 +106,7 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
               placeholder="E.g. 100, 8.99, 0.001"
               pattern="^\d*\.?\d*$"
               inputMode="decimal"
+              disabled={disableFields}
               onKeyDown={(e) => {
                 if (!/[\d.]/.test(e.key) && 
                     e.key !== "Backspace" && 
@@ -95,20 +127,6 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
               }}
             />
           </div>
-          <div className="px-4">OR</div>
-          <Toggle.Root
-            id="openAmount"
-            pressed={!!editedTier.isOpenAmount}
-            onPressedChange={(pressed: boolean) => {
-              handleFieldChange("price", "");
-              handleFieldChange("isOpenAmount", !!pressed);
-            }}
-            className={`${
-              editedTier.isOpenAmount ? 'bg-accent-green text-gray-100' : 'bg-gray-100 text-gray-800'
-            } rounded-md p-2 `}
-          >
-            Open Amount
-          </Toggle.Root>
         </div>
         <div>Describe the Tier</div>
         <Textarea 
@@ -124,6 +142,7 @@ export default function CampaignTierEditor({ tier, forms, onCancel, onSave }: Ca
           onValueChange={(value) => {
             handleFieldChange("formId", value === "none" ? null : value)
           }}
+          disabled={disableFields}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a Form" />
