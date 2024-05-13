@@ -10,6 +10,7 @@ import CampaignTierCard from "@/components/campaign-tier-card";
 import Link from "next/link";
 import BannerImage from "./site-layouts/social-media/banner-image";
 import CampaignLinkCard from "./campaign-link-card";
+import { useRouter } from "next/navigation";
 
 
 export default function CampaignPublicView(
@@ -22,6 +23,7 @@ export default function CampaignPublicView(
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(undefined);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const triggerRefresh = () => {
     setRefreshFlag(prev => !prev);
@@ -120,6 +122,13 @@ export default function CampaignPublicView(
                       key={index}
                       tier={tier}
                       currency={campaign.currency}
+                      onClickPrimaryButton={() => {
+                        if (tier.formId) {
+                          router.push(`${campaign.id}/checkout/${tier.id}/form/`)
+                        } else {
+                          router.push(`${campaign.id}/checkout/${tier.id}/fund/`)
+                        }
+                      }}
                     />
                   )}
                 </div>

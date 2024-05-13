@@ -4,6 +4,7 @@ import React from "react";
 import { CampaignTier, CurrencyType } from "@prisma/client";
 import { Edit, Trash2 } from "lucide-react";
 import { getCurrencySymbol } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 export default function CampaignTierCard({
   tier,
@@ -12,6 +13,7 @@ export default function CampaignTierCard({
   onClickDelete,
   isSelected,
   onClickSelect,
+  onClickPrimaryButton,
 }: {
   tier: CampaignTier;
   currency?: CurrencyType | null;
@@ -19,6 +21,7 @@ export default function CampaignTierCard({
   onClickDelete?: () => void;
   isSelected?: boolean;
   onClickSelect?: (tierId: string) => void;
+  onClickPrimaryButton?: () => void;
 }) {
   return (
     <div
@@ -75,6 +78,18 @@ export default function CampaignTierCard({
               }}
               width={18}
             />
+          )}
+          {onClickPrimaryButton && (
+            <Button
+              className="mt-2 rounded-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClickPrimaryButton();
+              }}
+            >
+              Pledge {getCurrencySymbol(currency)}
+              {tier.isOpenAmount ? "Custom" : tier.price}
+            </Button>
           )}
         </div>
       </div>
