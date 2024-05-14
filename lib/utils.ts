@@ -208,6 +208,14 @@ export const getEtherscanUrl = (chainId: bigint) => {
   return url[chainId.toString()] || "";
 }
 
+export const getRPCUrl = (chainId: string) => {
+  const url: { [key: string]: string } = {
+    "11155111": `${process.env.NEXT_PUBLIC_ETH_SEPOLIA_RPC}`,  // Eth Sepolia
+    "11155420": `${process.env.NEXT_PUBLIC_OP_SEPOLIA_RPC}`    // OP Sepolia
+  }
+  return url[chainId] || "";
+}
+
 export const getSubdomainFromDomain = (domain: string) => domain.replace('%3A', ':').endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
 ? domain.replace('%3A', ':').replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
 : domain;
