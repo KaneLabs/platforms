@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { ApplicationStatus, Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse, User } from "@prisma/client";
 import { CampaignWithData, createCampaignApplication, getUserOrWalletCampaignContribution, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
 import { useEffect, useState } from "react";
-import { getCampaignFactoryV1ContractAddress, getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals, getSupportedChainIds } from "@/lib/utils";
+import { getCampaignFactoryV1ContractAddress, getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals, getRPCUrl, getSupportedChainIds } from "@/lib/utils";
 
 interface LaunchCampaignData {
   id: string;
@@ -48,6 +48,11 @@ export default function useEthereum() {
       }
     };
   }, []);
+
+  const getProviderForChain = (chainId: string) => {
+    const rpcUrl = getRPCUrl(chainId);
+    return new ethers.JsonRpcProvider(rpcUrl);
+  }
 
   const connectToWallet = async () => {
     if (!window.ethereum) {
@@ -455,7 +460,11 @@ export default function useEthereum() {
   };
 
   const isCampaignCompleted = async (campaign: Campaign) => {
-    const currentSigner = signer || await connectToWallet();
+    if (!campaign.chainId) {
+      throw new Error("Campaign is not associated with a network. Pleased create a new campaign.");
+    }
+
+    const provider = getProviderForChain(campaign.chainId);
 
     let campaignABI = "";
 
@@ -465,14 +474,18 @@ export default function useEthereum() {
       campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
     }
 
-    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, provider);
     const isCampaignCompleted = await campaignInstance.isCampaignCompleted();
 
     return isCampaignCompleted;
   }
 
   const isCampaignDeadlineExceeded = async (campaign: Campaign) => {
-    const currentSigner = signer || await connectToWallet();
+    if (!campaign.chainId) {
+      throw new Error("Campaign is not associated with a network. Pleased create a new campaign.");
+    }
+
+    const provider = getProviderForChain(campaign.chainId);
 
     let campaignABI = "";
 
@@ -482,14 +495,18 @@ export default function useEthereum() {
       campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
     }
 
-    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, provider);
     const isCampaignDeadlineExceeded = await campaignInstance.isContributionDeadlineExceeded();
 
     return isCampaignDeadlineExceeded;
   }
 
   const getContributionTotal = async (campaign: Campaign) => {
-    const currentSigner = signer || await connectToWallet();
+    if (!campaign.chainId) {
+      throw new Error("Campaign is not associated with a network. Pleased create a new campaign.");
+    }
+
+    const provider = getProviderForChain(campaign.chainId);
 
     let campaignABI = "";
 
@@ -499,7 +516,7 @@ export default function useEthereum() {
       campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
     }
 
-    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, provider);
     const totalContributions = await campaignInstance.totalContributions();
 
     const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
@@ -509,7 +526,11 @@ export default function useEthereum() {
   }
 
   const getContributionTransferred = async (campaign: Campaign) => {
-    const currentSigner = signer || await connectToWallet();
+    if (!campaign.chainId) {
+      throw new Error("Campaign is not associated with a network. Pleased create a new campaign.");
+    }
+
+    const provider = getProviderForChain(campaign.chainId);
 
     let campaignABI = "";
 
@@ -519,31 +540,13 @@ export default function useEthereum() {
       campaignABI = JSON.stringify(CampaignERC20V1ContractABI);
     }
 
-    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
+    const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, provider);
     const contributionTransferred = await campaignInstance.contributionTransferred();
 
     const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
     const transferred = parseFloat(ethers.formatUnits(contributionTransferred, tokenDecimals));
 
     return transferred;
-  }
-
-  const getContractBalance = async (contractAddr: string) => {
-    try {
-      if (!ethers.isAddress(contractAddr)) {
-        throw new Error("Invalid contract address");
-      }
-
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const balance = await provider.getBalance(contractAddr);
-      return balance;
-    } catch (error: any) {
-      console.error(error);
-      const friendlyError = parseEthersError(error);
-      toast.dismiss();
-      toast.error(friendlyError);
-      throw error;
-    }
   }
 
   return {
@@ -556,7 +559,6 @@ export default function useEthereum() {
     extendCampaignDeadline,
     getContributionTotal,
     getContributionTransferred,
-    getContractBalance,
     isCampaignCompleted,
     isCampaignDeadlineExceeded
   };
@@ -571,6 +573,10 @@ function parseEthersError(inputError: any) {
 
   if (inputError.info && inputError.info.error && inputError.info.error.code && inputError.info.error.message) {
     error = inputError.info.error;
+
+    if (error.data && error.data.code && error.data.message) {
+      error = error.data;
+    }
   }
 
   let userFriendlyMessage = error.message;
