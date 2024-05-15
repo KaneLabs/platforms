@@ -142,7 +142,6 @@ export default function CampaignTierEditor({ tier, forms, disableFields, onCance
           onValueChange={(value) => {
             handleFieldChange("formId", value === "none" ? null : value)
           }}
-          disabled={disableFields}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a Form" />

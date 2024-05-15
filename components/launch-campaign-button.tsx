@@ -16,6 +16,7 @@ export default function LaunchCampaignButton({ campaign, subdomain, onComplete }
   const { launch } = useEthereum();
   const onClick = async () => {
     try {
+      window.confirm("Fora currently supports Campaigns on Ethereum and Optimism. Please make sure your Metamask wallet is set to your preferred network for all contributions and withdrawals as it will not be able to be changed later.") &&
       await launch(campaign, { subdomain }).then(onComplete);
     } catch (e) {
       console.error(e);

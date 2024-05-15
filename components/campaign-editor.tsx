@@ -48,6 +48,7 @@ interface EditedFields {
   images?: FileList | null;
   financialVisibility?: FinancialVisibilityType | null;
   fundButtonText?: string;
+  chainId?: string | null | undefined;
 }
 
 interface Payload {
@@ -76,7 +77,7 @@ export default function CampaignEditor({
   segment: string;
   editType: string;
 }) {
-  const { getContributionTotal, getContractBalance, extendCampaignDeadline } = useEthereum();
+  const { getContributionTotal, extendCampaignDeadline } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(0);
   const [contractBalance, setContractBalance] = useState(BigInt(0));
   const [forms, setForms] = useState<Form[]>([]);
@@ -157,7 +158,8 @@ export default function CampaignEditor({
         formId: campaign.formId,
         currency: campaign.currency || CurrencyType.ETH,
         financialVisibility: campaign.financialVisibility || FinancialVisibilityType.AMOUNT_AND_TARGET,
-        fundButtonText: campaign.fundButtonText ?? undefined
+        fundButtonText: campaign.fundButtonText ?? undefined,
+        chainId: campaign.chainId 
       });
     }
   }, [campaign]);

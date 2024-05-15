@@ -165,6 +165,14 @@ export const getSupportedChainIds = () => [
   "11155420"  // OP Sepolia
 ];
 
+export const getChainName = (chainId: string | null | undefined) => {
+  const names: { [key: string]: string } = {
+    "11155111": "Ethereum",   // Eth Sepolia
+    "11155420": "Optimism"    // OP Sepolia
+  }
+  return chainId && names[chainId] ? names[chainId] : "Ethereum";
+}
+
 export const getCampaignFactoryV1ContractAddress = (chainId: bigint) => {
   const campaignFactoryV1ContractAddresses: { [key: string]: string } = {
     "11155111": "0x2488b39a46e1ef74093b0b9b7a561a432ed97e29",   // Eth Sepolia
@@ -206,6 +214,14 @@ export const getEtherscanUrl = (chainId: bigint) => {
     "11155420": "https://optimism-sepolia.blockscout.com/"    // OP Sepolia
   }
   return url[chainId.toString()] || "";
+}
+
+export const getRPCUrl = (chainId: string) => {
+  const url: { [key: string]: string } = {
+    "11155111": `${process.env.NEXT_PUBLIC_ETH_SEPOLIA_RPC}`,  // Eth Sepolia
+    "11155420": `${process.env.NEXT_PUBLIC_OP_SEPOLIA_RPC}`    // OP Sepolia
+  }
+  return url[chainId] || "";
 }
 
 export const getSubdomainFromDomain = (domain: string) => domain.replace('%3A', ':').endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
