@@ -165,6 +165,14 @@ export const getSupportedChainIds = () => [
   "11155420"  // OP Sepolia
 ];
 
+export const getChainName = (chainId: string | null | undefined) => {
+  const names: { [key: string]: string } = {
+    "11155111": "Ethereum",   // Eth Sepolia
+    "11155420": "Optimism"    // OP Sepolia
+  }
+  return chainId && names[chainId] ? names[chainId] : "Ethereum";
+}
+
 export const getCampaignFactoryV1ContractAddress = (chainId: bigint) => {
   const campaignFactoryV1ContractAddresses: { [key: string]: string } = {
     "11155111": "0x2488b39a46e1ef74093b0b9b7a561a432ed97e29",   // Eth Sepolia

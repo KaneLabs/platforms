@@ -3,7 +3,7 @@
 import { Button } from "./ui/button";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrencySymbol } from "@/lib/utils";
+import { getChainName, getCurrencySymbol } from "@/lib/utils";
 import { Campaign, FinancialVisibilityType } from "@prisma/client";
 
 const defaultAmount = 0;
@@ -42,6 +42,9 @@ export default function CampaignContributeSection({
         >
           {isDeadlineExceeded ? "Ended" : fundButtonText || defaultFundText}
         </Button>
+        <div className="text-left text-xs mt-4 italic">
+          Contributions can be made on {getChainName(campaign.chainId)} using a Metamask wallet
+        </div>
       </div>
     );
   }
@@ -64,6 +67,9 @@ export default function CampaignContributeSection({
             {isDeadlineExceeded ? "Ended" : fundButtonText || defaultFundText}
           </Button>
         </div>
+        <div className="text-left text-xs mt-4 italic">
+          Contributions can be made on {getChainName(campaign.chainId)} using a Metamask wallet
+        </div>
       </div>
     );
   }
@@ -84,6 +90,9 @@ export default function CampaignContributeSection({
         >
           {isDeadlineExceeded ? "Ended" : fundButtonText || defaultFundText}
         </Button>
+      </div>
+      <div className="text-left text-xs mt-4 italic">
+        Contributions can be made on {getChainName(campaign.chainId)} using a Metamask wallet
       </div>
     </div>
   );
