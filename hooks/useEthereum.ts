@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { ApplicationStatus, Campaign, CampaignApplication, CampaignContribution, CampaignTier, CurrencyType, FormResponse, User } from "@prisma/client";
 import { CampaignWithData, createCampaignApplication, getUserOrWalletCampaignContribution, launchCampaign, respondToCampaignApplication, withdrawCampaignApplication } from "@/lib/actions";
 import { useEffect, useState } from "react";
-import { getCampaignFactoryV1ContractAddress, getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals, getRPCUrl, getSupportedChainIds } from "@/lib/utils";
+import { getCampaignFactoryV1ContractAddress, getChainName, getCurrencySymbol, getCurrencyTokenAddress, getCurrencyTokenDecimals, getRPCUrl, getSupportedChainIds } from "@/lib/utils";
 
 interface LaunchCampaignData {
   id: string;
@@ -67,14 +67,14 @@ export default function useEthereum() {
     return newSigner;
   };
 
-  const getChainId = async () => {
+  const getChainId = async (campaign: Campaign) => {
     const provider = new ethers.BrowserProvider(window.ethereum);
     const network = await provider.getNetwork();
 
     const supportedChainIds = getSupportedChainIds();
 
     if (!supportedChainIds.includes(network.chainId.toString())) {
-      throw new Error(`Please switch to a supported network. Your current network is ${network.name}.`);
+      throw new Error(`Please switch to the ${getChainName(campaign.chainId)} network in your wallet.`);
     }
 
     return network.chainId;
@@ -88,7 +88,7 @@ export default function useEthereum() {
 
       const creatorAddress = await currentSigner.getAddress();
 
-      const chainId = await getChainId();
+      const chainId = await getChainId(campaign);
 
       if (!campaign.currency) {
         throw new Error("Campaign is missing currency setting");
@@ -174,14 +174,14 @@ export default function useEthereum() {
     try {
       const currentSigner = signer || await connectToWallet();
       const currentSignerAddress = await currentSigner.getAddress();
-      const chainId = await getChainId();
+      const chainId = await getChainId(campaign);
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
       }
 
       if (campaign.chainId && campaign.chainId !== chainId.toString()) {
-        throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
+        throw new Error(`This campaign is on a different network. Please switch to the ${getChainName(campaign.chainId)} network in your wallet.`);
       }
 
       const alreadyContributed = await getUserOrWalletCampaignContribution(campaign.id, userId, currentSignerAddress);
@@ -263,14 +263,14 @@ export default function useEthereum() {
   const withdrawContribution = async (campaign: Campaign, application: CampaignApplication, contribution: CampaignContribution): Promise<void> => {
     try {
       const currentSigner = signer || await connectToWallet();
-      const chainId = await getChainId();
+      const chainId = await getChainId(campaign);
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
       }
 
       if (campaign.chainId && campaign.chainId !== chainId.toString()) {
-        throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
+        throw new Error(`This campaign is on a different network. Please switch to the ${getChainName(campaign.chainId)} network in your wallet.`);
       }
 
       const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
@@ -309,14 +309,14 @@ export default function useEthereum() {
   const rejectContribution = async (campaign: CampaignWithData, application: CampaignApplication & { user: User }, contributor: string, justRejected: boolean): Promise<boolean | void> => {
     try {
       const currentSigner = signer || await connectToWallet();
-      const chainId = await getChainId();
+      const chainId = await getChainId(campaign);
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
       }
 
       if (campaign.chainId && campaign.chainId !== chainId.toString()) {
-        throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
+        throw new Error(`This campaign is on a different network. Please switch to the ${getChainName(campaign.chainId)} network in your wallet.`);
       }
 
       if (!contributor) {
@@ -364,14 +364,14 @@ export default function useEthereum() {
   const withdrawFromCampaign = async (amount: string, recipientAddress: string, campaign: Campaign): Promise<void> => {
     try {
       const currentSigner = signer || await connectToWallet();
-      const chainId = await getChainId();
+      const chainId = await getChainId(campaign);
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
       }
 
       if (campaign.chainId && campaign.chainId !== chainId.toString()) {
-        throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
+        throw new Error(`This campaign is on a different network. Please switch to the ${getChainName(campaign.chainId)} network in your wallet.`);
       }
 
       const tokenDecimals = getCurrencyTokenDecimals(campaign.currency);
@@ -408,14 +408,14 @@ export default function useEthereum() {
   const extendCampaignDeadline = async (campaign: Campaign, extendedDeadline: Date): Promise<boolean | void> => {
     try {
       const currentSigner = signer || await connectToWallet();
-      const chainId = await getChainId();
+      const chainId = await getChainId(campaign);
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
       }
 
       if (campaign.chainId && campaign.chainId !== chainId.toString()) {
-        throw new Error("This campaign is on a different network. Please switch to the appropriate network in your wallet.");
+        throw new Error(`This campaign is on a different network. Please switch to the ${getChainName(campaign.chainId)} network in your wallet.`);
       }
 
       if (!extendedDeadline) {
