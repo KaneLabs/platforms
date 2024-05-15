@@ -17,7 +17,7 @@ export default function CampaignPublicView(
   {campaignId, subdomain}:
   {campaignId: string, subdomain: string, isPublic: boolean}
 ) {
-  const { getContributionTotal, getContractBalance, isCampaignDeadlineExceeded } = useEthereum();
+  const { getContributionTotal, isCampaignDeadlineExceeded } = useEthereum();
   const [totalContributions, setTotalContributions] = useState(0);
   const [isDeadlineExceeded, setIsDeadlineExceeded] = useState(false);
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(undefined);
