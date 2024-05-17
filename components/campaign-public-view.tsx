@@ -83,9 +83,9 @@ export default function CampaignPublicView(
           <div className="flex space-x-16">
             <div className="flex flex-col grow space-y-6">
               <div className="flex items-center">
-                {campaign.organization.image && campaign.organization.name && <img
+                {campaign.organization.logo && campaign.organization.name && <img
                   className="w-12 h-12 rounded-full mr-4"
-                  src={campaign.organization.image}
+                  src={campaign.organization.logo}
                   alt={campaign.organization.name}
                 />}
                 <p className="text-lg italic">
