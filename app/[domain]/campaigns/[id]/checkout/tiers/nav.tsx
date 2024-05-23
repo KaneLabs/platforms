@@ -2,17 +2,16 @@
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useParams, useSelectedLayoutSegment } from "next/navigation";
+import { useParams } from "next/navigation";
 
 export default function CampaignSettingsNav() {
   const { subdomain, id } = useParams() as { subdomain: string, id: string };
-  const segment = useSelectedLayoutSegment();
 
   const navItems = [
     {
       name: "Select Tier",
       href: `/campaigns/${id}/checkout/tiers/`,
-      segment: null,
+      segment: "tiers",
       disabled: false
     },
     {
@@ -40,7 +39,7 @@ export default function CampaignSettingsNav() {
             item.disabled 
               ? "pointer-events-none cursor-not-allowed"
               : "",
-            segment === item.segment
+            "tiers" === item.segment
               ? "text-gray-800 dark:bg-gray-800 dark:text-gray-400"
               : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800",
           )}

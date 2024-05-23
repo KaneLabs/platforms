@@ -123,11 +123,7 @@ export default function CampaignPublicView(
                       tier={tier}
                       currency={campaign.currency}
                       onClickPrimaryButton={() => {
-                        if (tier.formId) {
-                          router.push(`${campaign.id}/checkout/${tier.id}/form/`)
-                        } else {
-                          router.push(`${campaign.id}/checkout/${tier.id}/fund/`)
-                        }
+                          router.push(`/campaigns/${campaign.id}/checkout/tiers/${tier.id}`)
                       }}
                     />
                   )}

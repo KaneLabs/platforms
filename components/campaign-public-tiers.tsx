@@ -14,9 +14,11 @@ import { CampaignTier } from "@prisma/client";
 export default function CampaignPublicTiers({
   campaignId,
   subdomain,
+  selectedTierId,
 }: {
   campaignId: string;
   subdomain: string;
+  selectedTierId?: string;
 }) {
   const router = useRouter();
   const [campaign, setCampaign] = useState<CampaignWithData | undefined>(
@@ -37,7 +39,9 @@ export default function CampaignPublicTiers({
       .then((result) => {
         if (result) {
           setCampaign(result);
-          setSelectedTier(result.campaignTiers[0]);
+
+          const initialIndex = result.campaignTiers.findIndex(t => t.id === selectedTierId);
+          setSelectedTier(result.campaignTiers[initialIndex > 0 ? initialIndex : 0]);
         }
       })
       .then(() => setLoading(false));
@@ -62,6 +66,7 @@ export default function CampaignPublicTiers({
               <div>
                 <h2 className="text-xl">Please select a Tier to continue.</h2>
                 <CampaignTierSelector
+                  selectedTierId={selectedTierId}
                   tiers={campaign.campaignTiers}
                   currency={campaign.currency}
                   onTierSelect={handleTierSelect}
@@ -74,9 +79,9 @@ export default function CampaignPublicTiers({
               onClick={() => {
                 setLoading(true);
                 if (selectedTier?.formId) {
-                  router.push(`${selectedTier?.id}/form/`)
+                  router.push(`/campaigns/${campaignId}/checkout/${selectedTier?.id}/form/`)
                 } else {
-                  router.push(`${selectedTier?.id}/fund/`)
+                  router.push(`/campaigns/${campaignId}/checkout/${selectedTier?.id}/fund/`)
                 }
               }}
               disabled={!selectedTier}

@@ -36,7 +36,7 @@ export default function CampaignContributeSection({
     return (
       <div className={`flex flex-col items-center justify-center ${className}`}>
         <Button
-          onClick={() => isPublic && router.push(`${campaign.id}/checkout/tiers`)}
+          onClick={() => isPublic && router.push(`/campaigns/${campaign.id}/checkout/tiers`)}
           className="w-full rounded-full"
           disabled={isDeadlineExceeded}
         >
@@ -60,7 +60,7 @@ export default function CampaignContributeSection({
         </div>
         <div className="mt-4">
           <Button
-            onClick={() => isPublic && router.push(`${campaign.id}/checkout/tiers`)}
+            onClick={() => isPublic && router.push(`/campaigns/${campaign.id}/checkout/tiers`)}
             className="w-full rounded-full"
             disabled={isDeadlineExceeded}
           >
@@ -84,7 +84,7 @@ export default function CampaignContributeSection({
       </div>
       <div className="mt-4">
         <Button
-          onClick={() => isPublic && router.push(`${campaign.id}/checkout/tiers`)}
+          onClick={() => isPublic && router.push(`/campaigns/${campaign.id}/checkout/tiers`)}
           className="w-full rounded-full"
           disabled={isDeadlineExceeded}
         >
