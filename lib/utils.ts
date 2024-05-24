@@ -167,10 +167,10 @@ export const getSupportedChainIds = () => [
 
 export const getChainName = (chainId: string | null | undefined) => {
   const names: { [key: string]: string } = {
-    "11155111": "Ethereum",   // Eth Sepolia
-    "11155420": "Optimism"    // OP Sepolia
+    "11155111": "Ethereum Sepolia",   // Eth Sepolia
+    "11155420": "Optimism Sepolia"    // OP Sepolia
   }
-  return chainId && names[chainId] ? names[chainId] : "Ethereum";
+  return chainId && names[chainId] ? names[chainId] : "Ethereum Mainnet";
 }
 
 export const getCampaignFactoryV1ContractAddress = (chainId: bigint) => {
