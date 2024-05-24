@@ -27,9 +27,9 @@ export default function CampaignPublicCheckoutSummary({
 
       return (
         <div key={value.id}>
-          <p className="text-sm">{question.text}</p>
-          <p className="text-sm">{question.description}</p>
-          <p className="text-xl">
+          <p className="font-semibold">{question.text}</p>
+          <p className="italic">{question.description}</p>
+          <p className="mt-2">
             {formatAnswer(question!, value)}
           </p>
         </div>
