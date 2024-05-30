@@ -56,25 +56,29 @@ export const PasscodeEmail = ({ org, token }: PasscodeEmailProps) => {
           },
         }}
       >
-        <Body className={"w-full font-sans"}>
-          <Container className="rounded bg-gray-100 px-16 pb-12 pt-10">
+        <Body className={"w-full font-sans bg-gray-100"}>
+          <Container className="max-w-lg mx-auto rounded bg-white shadow-sm px-8 pb-8 pt-12">
             <Img
               src={org?.logo ? org.logo : `https://fora.co/fora-logo.png`}
-              width="40"
-              height="40"
+              width="80"
+              height="80"
               alt="Fora Logo"
-              className={"rounded-full"}
+              className={"mx-auto"}
             />
-            <Text className="font-serif text-xl font-bold text-gray-800 py-3">
-              {getPasscodeSubjectLine(org)}
+            <Text className="text-center text-2xl font-semibold text-gray-800 py-4">
+              Welcome to {org?.name || "Fora"}
             </Text>
-            <Text className="text-sm font-light text-gray-800">
-              <ul className="text-sm font-light mt-2 mb-4">
-                  <li>Authentication code: <span className="font-medium">{token}</span></li>
-              </ul>
+            <Text className="my-6 text-center text-lg font-light text-gray-600">
+              Use the 4-digit authentication code below to sign in:
             </Text>
-            <Hr className="my-5 border-gray-600" />
-            <Text className={"text-md text-gray-700"}>
+            <Text className="text-center font-bold text-3xl py-4">
+              {token}
+            </Text>
+            <Text className="text-center text-md font-light">
+              If you didn't request this code, you can safely ignore this email. Someone else might have typed your email address by mistake.
+            </Text>
+            <Hr className="my-10 border-t border-gray-200" />
+            <Text className="text-center text-md font-light mt-4">
               {org?.name || "Fora Cities, Inc."}
             </Text>
           </Container>
