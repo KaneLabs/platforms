@@ -30,7 +30,7 @@ type ApplicationStatusEmailProps = {
 
 export const sendApplicationStatusEmail = (props: ApplicationStatusEmailProps) => {
   return resend.emails.send({
-    from: "Fora <no-reply@mail.fora.co>",
+    from: "Fora <no-reply@mail.fora.city>",
     to: [props.email],
     subject: `Application Status Update for ${props.campaignName}`,
     html: render(<ApplicationStatusEmail {...props}/>, {
@@ -87,7 +87,7 @@ export const ApplicationStatusEmail = ({
         <Body className={"font-sans"}>
           <Container className="mx-auto flex justify-center rounded bg-gray-100 px-16 pb-12 pt-10">
             <Img
-              src={`https://fora.co/fora-logo.png`}
+              src={`https://app.fora.city/fora-logo.png`}
               width="80"
               height="80"
               alt="Fora Logo"

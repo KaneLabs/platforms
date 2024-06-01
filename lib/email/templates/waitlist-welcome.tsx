@@ -43,7 +43,7 @@ export const WaitlistWelcomeEmail = ({
         <Body className={"font-sans"}>
           <Container className="mx-auto  rounded bg-gray-100 px-16 pb-12 pt-10">
             <Img
-              src={`https://fora.co/fora-logo.png`}
+              src={`https://app.fora.city/fora-logo.png`}
               width="45"
               height="45"
               alt="Fora Logo"

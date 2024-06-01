@@ -2184,14 +2184,14 @@ export const createEmailSubscriber = async ({
         indicatedInterest,
       }),
       resend.emails.send({
-        from: "Fora Cities<no-reply@mail.fora.co>",
+        from: "Fora Cities<no-reply@mail.fora.city>",
         to: [email],
         subject: "Added to Fora waitlist ",
         html: renderWaitlistWelcomeEmail({ userFirstname }),
       }),
       resend.emails.send({
-        from: "Fora Registration <no-reply@mail.fora.co>",
-        to: ["ryan@fora.co", "cassie@fora.co", "lily@fora.co", "tomas@fora.co"],
+        from: "Fora Registration <no-reply@mail.fora.city>",
+        to: ["ryan@fora.city", "cassie@fora.city", "lily@fora.city", "tomas@fora.city"],
         subject: `${fullName} registered for Fora`,
         html: `<p>${fullName} has registered on Fora with the email ${email} and the intent to ${indicatedInterest.toLowerCase()} a startup city.<br /><p>${description}</p></p>`,
       }),

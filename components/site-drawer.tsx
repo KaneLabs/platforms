@@ -36,18 +36,6 @@ import { SessionData } from "@/lib/auth";
 import { Button } from "./ui/button";
 
 const externalLinks: any[] = [
-  // {
-  //   name: "Powered by Fora",
-  //   href: "https://fora.city",
-  //   icon: (
-  //     <Image
-  //       alt={"Fora logo"}
-  //       src={"https://fora.co/fora-logo.png"}
-  //       height={20}
-  //       width={20}
-  //     />
-  //   ),
-  // },
 ];
 
 export type UsersUniqueOrgsWithRolesRecord = Record<

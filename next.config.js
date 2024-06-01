@@ -13,7 +13,6 @@ module.exports = {
   },
   images: {
     domains: [
-      "fora.co",
       "fora.city",
       "ooybxjivdvmpbxtwunrr.supabase.co",
       "agxfxvcrqbumicguksnl.supabase.co",

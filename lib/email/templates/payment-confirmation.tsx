@@ -32,7 +32,7 @@ type PaymentConfirmationEmailProps = {
 
 export const sendPaymentConfirmationEmail = (props: PaymentConfirmationEmailProps) => {
   return resend.emails.send({
-    from: "Fora <no-reply@mail.fora.co>",
+    from: "Fora <no-reply@mail.fora.city>",
     to: [props.email],
     subject: "Payment Confirmation for " + props.campaign,
     html: render(<PaymentConfirmationEmail {...props}/>, {
@@ -68,7 +68,7 @@ export const PaymentConfirmationEmail = ({
         <Body className={"font-sans"}>
           <Container className="mx-auto flex justify-center rounded bg-gray-100 px-16 pb-12 pt-10">
             <Img
-              src={`https://fora.co/fora-logo.png`}
+              src={`https://app.fora.city/fora-logo.png`}
               width="80"
               height="80"
               alt="Fora Logo"
