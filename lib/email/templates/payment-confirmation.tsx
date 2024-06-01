@@ -32,7 +32,7 @@ type PaymentConfirmationEmailProps = {
 
 export const sendPaymentConfirmationEmail = (props: PaymentConfirmationEmailProps) => {
   return resend.emails.send({
-    from: "Fora <no-reply@mail.fora.co>",
+    from: "Fora <no-reply@mail.fora.city>",
     to: [props.email],
     subject: "Payment Confirmation for " + props.campaign,
     html: render(<PaymentConfirmationEmail {...props}/>, {

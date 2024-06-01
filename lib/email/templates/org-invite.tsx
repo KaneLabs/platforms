@@ -69,7 +69,7 @@ function generateInviteSubjectLine(
 
 export const sendOrgInviteEmail = (props: OrgInviteEmailProps) => {
   return resend.emails.send({
-    from: "Fora <no-reply@mail.fora.co>",
+    from: "Fora <no-reply@mail.fora.city>",
     to: [props.invite.email],
     subject: generateInviteSubjectLine(props.inviter, props.org, props.role),
     html: render(<OrgInviteEmail {...props} />, {

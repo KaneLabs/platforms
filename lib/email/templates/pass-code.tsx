@@ -30,7 +30,7 @@ function getPasscodeSubjectLine(org?: Organization): string {
 
 export const sendPasscodeEmail = (props: PasscodeEmailProps) => {
   return resend.emails.send({
-    from: "Fora <no-reply@mail.fora.co>",
+    from: "Fora <no-reply@mail.fora.city>",
     to: [props.email],
     subject: getPasscodeSubjectLine(props.org),
     html: render(<PasscodeEmail {...props} />, {
@@ -75,7 +75,7 @@ export const PasscodeEmail = ({ org, token }: PasscodeEmailProps) => {
               {token}
             </Text>
             <Text className="text-center text-md font-light">
-              If you didn't request this code, you can safely ignore this email. Someone else might have typed your email address by mistake.
+              If you didn&apos;t request this code, you can safely ignore this email. Someone else might have typed your email address by mistake.
             </Text>
             <Hr className="my-10 border-t border-gray-200" />
             <Text className="text-center text-md font-light mt-4">

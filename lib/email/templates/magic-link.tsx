@@ -30,7 +30,7 @@ function getMagicLinkSubjectLine(org?: Organization): string {
 
 export const sendMagicLinkEmail = (props: MagicLinkEmailProps) => {
   return resend.emails.send({
-    from: "Fora <no-reply@mail.fora.co>",
+    from: "Fora <no-reply@mail.fora.city>",
     to: [props.email],
     subject: getMagicLinkSubjectLine(props.org),
     html: render(<MagicLinkEmail {...props} />, {
