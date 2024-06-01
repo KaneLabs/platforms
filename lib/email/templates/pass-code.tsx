@@ -59,7 +59,7 @@ export const PasscodeEmail = ({ org, token }: PasscodeEmailProps) => {
         <Body className={"w-full font-sans bg-gray-100"}>
           <Container className="max-w-lg mx-auto rounded bg-white shadow-sm px-8 pb-8 pt-12">
             <Img
-              src={org?.logo ? org.logo : `https://fora.co/fora-logo.png`}
+              src={org?.logo ? org.logo : `https://app.fora.city/fora-logo.png`}
               width="80"
               height="80"
               alt="Fora Logo"

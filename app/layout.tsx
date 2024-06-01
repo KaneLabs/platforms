@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     images: [image],
     creator: "@vercel",
   },
-  metadataBase: new URL("https://fora.co"),
+  metadataBase: new URL("https://app.fora.city"),
 };
 
 export default function RootLayout({

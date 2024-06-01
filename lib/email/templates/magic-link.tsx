@@ -59,7 +59,7 @@ export const MagicLinkEmail = ({ org, url }: MagicLinkEmailProps) => {
         <Body className={"w-full font-sans"}>
           <Container className="rounded bg-gray-100 px-16 pb-12 pt-10">
             <Img
-              src={org?.logo ? org.logo : `https://fora.co/fora-logo.png`}
+              src={org?.logo ? org.logo : `https://app.fora.city/fora-logo.png`}
               width="40"
               height="40"
               alt="Fora Logo"

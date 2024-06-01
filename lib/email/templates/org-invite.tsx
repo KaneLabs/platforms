@@ -103,7 +103,7 @@ export const OrgInviteEmail = ({
         <Body className={"font-sans"}>
           <Container className="mx-auto flex justify-center rounded bg-gray-100 px-16 pb-12 pt-10">
             <Img
-              src={org.logo ? org.logo : `https://fora.co/fora-logo.png`}
+              src={org.logo ? org.logo : `https://app.fora.city/fora-logo.png`}
               width="80"
               height="80"
               alt="Fora Logo"
