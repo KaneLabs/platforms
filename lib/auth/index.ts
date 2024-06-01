@@ -13,7 +13,7 @@ import EmailProvider from "next-auth/providers/email";
 import { userHasEventRole, userHasOrgRole } from "../actions";
 import { NextRequest } from "next/server";
 import { headers } from "next/headers";
-import sendVerificationRequest from "./send-verification-request";
+import { generateAuthtoken, sendVerificationRequestPasscode } from "./pass-code";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
@@ -25,10 +25,10 @@ export const authOptions = (req?: NextRequest): NextAuthOptions => {
 
   return {
     providers: [
-      // passwordless / magic link
+      // passwordless / pass code
       EmailProvider({
         id: "email",
-        name: "magic link",
+        name: "pass code",
         type: "email",
         server: {
           host: process.env.SMTP_HOST,
@@ -39,8 +39,12 @@ export const authOptions = (req?: NextRequest): NextAuthOptions => {
           },
         },
         from: process.env.SMTP_FROM,
-        maxAge: 24 * 60 * 60, // How long email links are valid for (default 24h)
-        sendVerificationRequest,
+        maxAge: 15 * 60, // (15 min)
+        generateVerificationToken: async () => {
+          const token = await generateAuthtoken();
+          return token;
+        },
+        sendVerificationRequest: sendVerificationRequestPasscode,
       }),
       // sign in with ethereum
       CredentialsProvider({

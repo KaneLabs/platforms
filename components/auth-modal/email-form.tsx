@@ -2,8 +2,6 @@
 import { FormHTMLAttributes, DetailedHTMLProps } from "react";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
 import PrimaryButton from "../buttons/primary-button";
 import { MailIcon } from "lucide-react";
 
@@ -19,7 +17,7 @@ export default function EmailForm({ loading, ...props }: EmailFormProps) {
   return (
     <form
       {...props}
-      className="mb-8 mt-4 flex w-full max-w-md flex-col rounded px-6 py-1"
+      className="mb-4 mt-4 flex w-full max-w-md flex-col rounded px-6 py-1"
     >
       <Input
         id="email"
@@ -41,7 +39,7 @@ export default function EmailForm({ loading, ...props }: EmailFormProps) {
         ) : (
           <div className="flex items-center">
             <MailIcon width={16} />
-            <span className="mx-2">{"Send Magic Link"}</span>
+            <span className="mx-2">{"Send Pass Code"}</span>
           </div>
         )}
       </PrimaryButton>
